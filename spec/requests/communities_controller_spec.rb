@@ -2,7 +2,7 @@
 
 RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
   fab!(:owner, :user)
-  fab!(:category)
+  fab!(:category, :category_with_definition)
   fab!(:private_group, :group)
   fab!(:community) do
     DiscourseCommunityPlatform::Community.create!(
@@ -22,7 +22,7 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       expect(response.status).to eq(200)
       expect(response.parsed_body.dig("community", "id")).to eq(community.id)
       expect(response.parsed_body.dig("community", "slug")).to eq("technology")
-      expect(response.parsed_body.dig("community", "path")).to eq("/r/technology")
+      expect(response.parsed_body.dig("community", "path")).to eq("/s/technology")
       expect(response.parsed_body.dig("community", "category_id")).to eq(category.id)
     end
 
