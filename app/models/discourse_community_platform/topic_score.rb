@@ -24,7 +24,7 @@ end
 #  upvotes      :integer          default(0), not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  community_id :integer          not null
+#  community_id :bigint           not null
 #  topic_id     :bigint           not null
 #
 # Indexes
