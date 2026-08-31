@@ -2,7 +2,12 @@
 
 RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
   fab!(:owner, :user)
-  fab!(:category, :category_with_definition)
+  fab!(:category, :category_with_definition) do
+    category = Fabricate(:category_with_definition)
+    category.set_permissions(everyone: :full)
+    category.save!
+    category
+  end
   fab!(:private_group, :group)
   fab!(:community) do
     DiscourseCommunityPlatform::Community.create!(
