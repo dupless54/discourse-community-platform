@@ -55,6 +55,7 @@ module ::DiscourseCommunityPlatform
           Topic
             .where(category_id: @community.category_id, deleted_at: nil, visible: true)
             .where(archetype: Archetype.default)
+            .where.not(id: @community.category.topic_id)
             .joins(
               <<~SQL.squish,
                 LEFT JOIN discourse_community_platform_topic_scores dcp_scores
