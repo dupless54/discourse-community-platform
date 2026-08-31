@@ -25,9 +25,16 @@ en:
         hot: "Hot"
         new: "New"
         top: "Top"
+        rising: "Rising"
         empty_title: "No topics yet"
         empty_description: "Start the first discussion in this community using the normal Discourse composer."
         create_topic: "Open community"
+      popular:
+        eyebrow: "Across communities"
+        title: "Popular"
+        description: "Trending public discussions across communities, ranked from recent votes, participation, views, and freshness."
+        empty_title: "Nothing is trending yet"
+        empty_description: "Popular discussions will appear here as public communities become active."
       voting:
         upvote: "Upvote"
         downvote: "Downvote"

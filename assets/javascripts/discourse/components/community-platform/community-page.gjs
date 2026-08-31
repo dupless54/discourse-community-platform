@@ -101,7 +101,11 @@ export default class CommunityPlatformCommunityPage extends Component {
           : item
       );
 
-      if (this.order === "hot" || this.order === "top") {
+      if (
+        this.order === "hot" ||
+        this.order === "top" ||
+        this.order === "rising"
+      ) {
         await this.loadOrder(this.order);
       }
     } catch {
@@ -312,6 +316,15 @@ export default class CommunityPlatformCommunityPage extends Component {
                 {{on "click" (fn this.changeOrder "top")}}
               >
                 {{i18n "community_platform.feed.top"}}
+              </button>
+              <button
+                type="button"
+                class="btn btn-flat dcp-feed-order__button"
+                aria-pressed={{if (eq this.order "rising") "true" "false"}}
+                disabled={{this.feedBusy}}
+                {{on "click" (fn this.changeOrder "rising")}}
+              >
+                {{i18n "community_platform.feed.rising"}}
               </button>
             </div>
           </div>

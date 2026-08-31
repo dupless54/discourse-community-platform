@@ -29,7 +29,8 @@ end
 #
 # Indexes
 #
-#  idx_dcp_votes_community_topic  (community_id,topic_id)
-#  idx_dcp_votes_topic            (topic_id)
-#  idx_dcp_votes_user_topic       (user_id,topic_id) UNIQUE
+#  idx_dcp_votes_community_topic    (community_id,topic_id)
+#  idx_dcp_votes_community_updated  (community_id,updated_at)
+#  idx_dcp_votes_topic              (topic_id)
+#  idx_dcp_votes_user_topic         (user_id,topic_id) UNIQUE
 #

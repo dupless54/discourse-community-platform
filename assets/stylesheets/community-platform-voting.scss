@@ -91,6 +91,99 @@
   pointer-events: none;
 }
 
+.dcp-popular-page {
+  width: min(100%, 980px);
+  padding-top: 1.75rem;
+  padding-bottom: 3rem;
+}
+
+.dcp-popular-hero {
+  margin-bottom: 1.1rem;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 18px;
+  background: var(--secondary);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 6%);
+}
+
+.dcp-popular-hero h1 {
+  margin: 0.1rem 0 0.45rem;
+  font-size: clamp(1.75rem, 4vw, 2.55rem);
+}
+
+.dcp-popular-hero > p:last-child {
+  max-width: 720px;
+  margin: 0;
+  color: var(--primary-medium);
+}
+
+.dcp-popular-feed {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.dcp-popular-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 16px;
+  background: var(--secondary);
+  transition:
+    border-color 120ms ease,
+    transform 120ms ease;
+}
+
+.dcp-popular-card:hover {
+  border-color: var(--primary-low-mid);
+  transform: translateY(-1px);
+}
+
+.dcp-popular-card__score {
+  display: flex;
+  min-height: 58px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--primary-very-low);
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+  text-transform: lowercase;
+}
+
+.dcp-popular-card__score strong {
+  color: var(--primary);
+  font-size: var(--font-up-1);
+}
+
+.dcp-popular-card__content {
+  min-width: 0;
+}
+
+.dcp-popular-card__community {
+  display: inline-flex;
+  margin-bottom: 0.35rem;
+  color: var(--tertiary-high-or-tertiary);
+  font-size: var(--font-down-1);
+  font-weight: 700;
+}
+
+.dcp-popular-card__title {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--primary);
+  font-size: var(--font-up-1);
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.dcp-popular-empty {
+  margin-top: 0;
+}
+
 @media (max-width: 700px) {
   .dcp-feed-order {
     width: 100%;
@@ -110,5 +203,25 @@
 
   .dcp-vote-button {
     width: 30px;
+  }
+
+  .dcp-popular-page {
+    padding-top: 0.8rem;
+  }
+
+  .dcp-popular-hero {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .dcp-popular-card {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 0.7rem;
+    padding: 0.85rem;
+    border-radius: 13px;
+  }
+
+  .dcp-popular-card__score {
+    min-height: 50px;
   }
 }

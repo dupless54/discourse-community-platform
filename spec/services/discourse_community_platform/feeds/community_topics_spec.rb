@@ -55,6 +55,23 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::CommunityTopics do
     expect(result.first[:score]).to eq(0)
   end
 
+  it "ranks recent vote velocity above stale lifetime score" do
+    community = create_community
+    recent_mover = Fabricate(:topic, category: community.category, user: owner, created_at: 2.days.ago)
+    stale_leader = Fabricate(:topic, category: community.category, user: owner, created_at: 1.day.ago)
+
+    DiscourseCommunityPlatform::Votes::Cast.call(user: voter, topic: recent_mover, value: 1)
+    DiscourseCommunityPlatform::Votes::Cast.call(user: voter, topic: stale_leader, value: 1)
+    DiscourseCommunityPlatform::Votes::Cast.call(user: second_voter, topic: stale_leader, value: 1)
+    DiscourseCommunityPlatform::Vote.where(topic_id: stale_leader.id).update_all(updated_at: 2.days.ago)
+
+    result = described_class.call(community:, guardian: Guardian.new(voter), order: "rising")
+
+    expect(result.map { |topic| topic[:id] }).to eq([recent_mover.id, stale_leader.id])
+    expect(result.first[:score]).to eq(1)
+    expect(result.second[:score]).to eq(2)
+  end
+
   it "filters topics through the current Guardian" do
     community = create_community
     visible_topic = Fabricate(:topic, category: community.category, user: owner)
