@@ -3,9 +3,9 @@
 class CreateCommunityTopicVotes < ActiveRecord::Migration[7.2]
   def change
     create_table :discourse_community_platform_votes do |t|
-      t.integer :community_id, null: false
+      t.bigint :community_id, null: false
       t.bigint :topic_id, null: false
-      t.integer :user_id, null: false
+      t.bigint :user_id, null: false
       t.integer :value, null: false, limit: 2
       t.timestamps null: false
     end
@@ -26,7 +26,7 @@ class CreateCommunityTopicVotes < ActiveRecord::Migration[7.2]
                          name: "dcp_votes_value"
 
     create_table :discourse_community_platform_topic_scores do |t|
-      t.integer :community_id, null: false
+      t.bigint :community_id, null: false
       t.bigint :topic_id, null: false
       t.integer :upvotes, null: false, default: 0
       t.integer :downvotes, null: false, default: 0
