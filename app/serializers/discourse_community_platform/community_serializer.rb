@@ -12,17 +12,41 @@ module ::DiscourseCommunityPlatform
                :owner_id,
                :member_group_id,
                :moderator_group_id,
+               :rules,
+               :icon_emoji,
+               :banner_color,
                :created_at
 
     attribute :path
+    attribute :category_url
+    attribute :owner_username
+    attribute :icon_url
+    attribute :banner_url
     attribute :is_member
     attribute :is_owner
     attribute :is_moderator
     attribute :can_join
     attribute :can_leave
+    attribute :can_manage
 
     def path
       "/s/#{object.slug}"
+    end
+
+    def category_url
+      object.category.url
+    end
+
+    def owner_username
+      object.owner.username
+    end
+
+    def icon_url
+      object.icon_upload&.url
+    end
+
+    def banner_url
+      object.banner_upload&.url
     end
 
     def is_member
@@ -56,6 +80,10 @@ module ::DiscourseCommunityPlatform
       return false if user.blank? || !is_member || is_owner || is_moderator
 
       true
+    end
+
+    def can_manage
+      CommunityAuthorization.can_manage?(scope&.user, object)
     end
   end
 end
