@@ -1,0 +1,4 @@
+plugins:
+  community_platform_enabled:
+    default: true
+    client: true
