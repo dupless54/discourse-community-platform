@@ -10,7 +10,7 @@ module ::DiscourseCommunityPlatform
 
       # Do not reveal that a private/restricted community exists unless Discourse's
       # own category permission model allows the current guardian to see it.
-      raise Discourse::NotFound unless guardian.can_see?(community.category)
+      raise Discourse::NotFound unless guardian.can_see_category?(community.category)
 
       render_serialized(community, CommunitySerializer, root: :community)
     end
