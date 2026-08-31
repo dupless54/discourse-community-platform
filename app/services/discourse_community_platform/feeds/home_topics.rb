@@ -17,24 +17,15 @@ module ::DiscourseCommunityPlatform
       end
 
       def call
-        popular_topics = PopularTopics.call(guardian: @guardian, limit: @limit)
         user = @guardian.user
-
-        return payload(topics: mark_popular(popular_topics), communities: [], personalized: false) if user.blank?
+        return popular_fallback_payload if user.blank?
 
         communities = visible_joined_communities(user)
-        return payload(topics: mark_popular(popular_topics), communities: [], personalized: false) if communities.empty?
+        return popular_fallback_payload if communities.empty?
 
         joined_topics = ranked_joined_topics(communities)
         joined_items = serialize_joined(joined_topics, communities)
-        joined_ids = joined_items.to_h { |topic| [topic[:id], true] }
-
-        fallback_items =
-          popular_topics.filter_map do |topic|
-            next if joined_ids[topic[:id]]
-
-            topic.merge(feed_source: "popular")
-          end
+        fallback_items = popular_fallback(joined_items)
 
         payload(
           topics: (joined_items + fallback_items).first(@limit),
@@ -123,6 +114,27 @@ module ::DiscourseCommunityPlatform
             },
           }
         end
+      end
+
+      def popular_fallback(joined_items)
+        remaining = @limit - joined_items.length
+        return [] unless remaining.positive?
+
+        joined_ids = joined_items.to_h { |topic| [topic[:id], true] }
+
+        PopularTopics
+          .call(guardian: @guardian, limit: @limit)
+          .filter_map do |topic|
+            next if joined_ids[topic[:id]]
+
+            topic.merge(feed_source: "popular")
+          end
+          .first(remaining)
+      end
+
+      def popular_fallback_payload
+        topics = PopularTopics.call(guardian: @guardian, limit: @limit)
+        payload(topics: mark_popular(topics), communities: [], personalized: false)
       end
 
       def user_votes(topics)
