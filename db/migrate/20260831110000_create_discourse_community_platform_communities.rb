@@ -19,10 +19,22 @@ class CreateDiscourseCommunityPlatformCommunities < ActiveRecord::Migration[7.0]
       t.timestamps null: false
     end
 
-    add_index :discourse_community_platform_communities, :slug, unique: true
-    add_index :discourse_community_platform_communities, :category_id, unique: true
-    add_index :discourse_community_platform_communities, :owner_id
-    add_index :discourse_community_platform_communities, :member_group_id
-    add_index :discourse_community_platform_communities, :moderator_group_id
+    add_index :discourse_community_platform_communities,
+              :slug,
+              unique: true,
+              name: "idx_dcp_communities_slug"
+    add_index :discourse_community_platform_communities,
+              :category_id,
+              unique: true,
+              name: "idx_dcp_communities_category"
+    add_index :discourse_community_platform_communities,
+              :owner_id,
+              name: "idx_dcp_communities_owner"
+    add_index :discourse_community_platform_communities,
+              :member_group_id,
+              name: "idx_dcp_communities_member_group"
+    add_index :discourse_community_platform_communities,
+              :moderator_group_id,
+              name: "idx_dcp_communities_mod_group"
   end
 end
