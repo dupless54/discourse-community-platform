@@ -2,3 +2,13 @@ plugins:
   community_platform_enabled:
     default: true
     client: true
+  community_platform_allow_user_community_creation:
+    default: true
+  community_platform_min_trust_level_to_create:
+    default: 1
+    min: 0
+    max: 4
+  community_platform_max_communities_per_user:
+    default: 3
+    min: 1
+    max: 100
