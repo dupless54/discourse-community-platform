@@ -14,3 +14,9 @@ module ::DiscourseCommunityPlatform
 end
 
 require_relative "lib/discourse_community_platform/engine"
+
+after_initialize do
+  Discourse::Application.routes.append do
+    mount ::DiscourseCommunityPlatform::Engine, at: "/community-platform"
+  end
+end
