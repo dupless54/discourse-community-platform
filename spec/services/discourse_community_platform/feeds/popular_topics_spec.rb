@@ -60,9 +60,16 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::PopularTopics do
   end
 
   it "filters cached candidates through Guardian before serializing them" do
-    community = create_community(name: "Technology", slug: "technology")
-    visible_topic = Fabricate(:topic, category: community.category, user: owner)
-    hidden_topic = Fabricate(:topic, category: community.category, user: owner, visible: false)
+    visible_community = create_community(name: "Technology", slug: "technology")
+    hidden_community = create_community(name: "Security", slug: "security")
+    visible_topic = Fabricate(:topic, category: visible_community.category, user: owner)
+    hidden_topic = Fabricate(:topic, category: hidden_community.category, user: owner)
+
+    hidden_community.category.set_permissions(hidden_community.member_group => :full)
+    hidden_community.category.save!
+
+    guardian = Guardian.new(voter)
+    expect(guardian.can_see_topic?(hidden_topic)).to eq(false)
 
     Discourse.cache.write(
       described_class::CACHE_KEY,
@@ -70,7 +77,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::PopularTopics do
       expires_in: described_class::CACHE_TTL,
     )
 
-    result = described_class.call(guardian: Guardian.new(voter))
+    result = described_class.call(guardian:)
 
     expect(result.map { |topic| topic[:id] }).to eq([visible_topic.id])
   end
