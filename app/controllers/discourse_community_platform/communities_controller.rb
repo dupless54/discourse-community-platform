@@ -23,6 +23,18 @@ module ::DiscourseCommunityPlatform
       render_serialized(find_visible_community, CommunitySerializer, root: :community)
     end
 
+    def topics
+      community = find_visible_community
+      order = params[:order].presence || "hot"
+      limit = params[:limit].presence || Feeds::CommunityTopics::DEFAULT_LIMIT
+
+      render json: {
+               community: { id: community.id, slug: community.slug },
+               order: Feeds::CommunityTopics::ORDERS.include?(order) ? order : "hot",
+               topics: Feeds::CommunityTopics.call(community:, guardian:, order:, limit:),
+             }
+    end
+
     def update
       community =
         Communities::Update.call(
