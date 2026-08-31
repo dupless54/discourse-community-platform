@@ -17,7 +17,7 @@ module ::DiscourseCommunityPlatform
     attribute :path
 
     def path
-      "/r/#{object.slug}"
+      "/s/#{object.slug}"
     end
   end
 end
