@@ -8,12 +8,14 @@
 # required_version: 3.5.0
 
 enabled_site_setting :community_platform_enabled
+register_asset "stylesheets/community-platform.scss"
 
 module ::DiscourseCommunityPlatform
   PLUGIN_NAME = "discourse-community-platform"
 end
 
 require_relative "lib/discourse_community_platform/engine"
+require_relative "lib/discourse_community_platform/community_authorization"
 
 after_initialize do
   Discourse::Application.routes.append do
