@@ -36,13 +36,7 @@ module ::DiscourseCommunityPlatform
           moderator_group = create_group(slug:, role: "x", owner: true)
           category = create_category(name:, slug:, description:)
 
-          configure_category_permissions(
-            category:,
-            visibility:,
-            member_group:,
-            moderator_group:,
-          )
-
+          Permissions::Apply.call(category:, visibility:, member_group:, moderator_group:)
           CategoryModerationGroup.create!(category:, group: moderator_group)
 
           Community.create!(
@@ -107,21 +101,6 @@ module ::DiscourseCommunityPlatform
           color: "0088CC",
           text_color: "FFFFFF",
         )
-      end
-
-      def configure_category_permissions(category:, visibility:, member_group:, moderator_group:)
-        permissions =
-          case visibility
-          when "public"
-            { everyone: :full }
-          when "restricted"
-            { everyone: :readonly, member_group => :full, moderator_group => :full }
-          when "private"
-            { member_group => :full, moderator_group => :full }
-          end
-
-        category.set_permissions(permissions)
-        category.save!
       end
     end
   end
