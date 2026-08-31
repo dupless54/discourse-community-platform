@@ -4,6 +4,12 @@ module ::DiscourseCommunityPlatform
   class FeedsController < ::ApplicationController
     requires_plugin PLUGIN_NAME
 
+    def home
+      limit = params[:limit].presence || Feeds::HomeTopics::DEFAULT_LIMIT
+
+      render json: Feeds::HomeTopics.call(guardian:, limit:)
+    end
+
     def popular
       limit = params[:limit].presence || Feeds::PopularTopics::DEFAULT_LIMIT
 
