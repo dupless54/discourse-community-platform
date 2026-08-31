@@ -32,8 +32,8 @@ module ::DiscourseCommunityPlatform
         raise Discourse::InvalidParameters.new(:slug) if Community.where("LOWER(slug) = ?", slug.downcase).exists?
 
         Community.transaction do
-          member_group = create_group(slug:, suffix: "members", owner: false)
-          moderator_group = create_group(slug:, suffix: "mods", owner: true)
+          member_group = create_group(slug:, role: "m", owner: false)
+          moderator_group = create_group(slug:, role: "x", owner: true)
           category = create_category(name:, slug:, description:)
 
           configure_category_permissions(
@@ -73,10 +73,10 @@ module ::DiscourseCommunityPlatform
         raise Discourse::InvalidAccess if owned_count >= SiteSetting.community_platform_max_communities_per_user
       end
 
-      def create_group(slug:, suffix:, owner:)
+      def create_group(slug:, role:, owner:)
         group =
           Group.new(
-            name: group_name(slug, suffix),
+            name: group_name(slug, role),
             visibility_level: Group.visibility_levels[owner ? :owners : :members],
             members_visibility_level: Group.visibility_levels[:members],
             mentionable_level: Group::ALIAS_LEVELS[:nobody],
@@ -90,10 +90,12 @@ module ::DiscourseCommunityPlatform
         group
       end
 
-      def group_name(slug, suffix)
-        stem = slug.tr("-", "_").gsub(/[^a-z0-9_]/, "_").first(18)
+      def group_name(slug, role)
+        # Discourse caps Group names at 20 characters. Keep a small readable slug
+        # prefix plus a stable digest to avoid collisions between similar slugs.
+        stem = slug.tr("-", "_").gsub(/[^a-z0-9_]/, "_").first(4).presence || "comm"
         digest = Digest::SHA1.hexdigest(slug).first(8)
-        "dcp_#{stem}_#{digest}_#{suffix}"
+        "dcp_#{stem}_#{digest}_#{role}"
       end
 
       def create_category(name:, slug:, description:)
