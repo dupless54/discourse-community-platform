@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
-  fab!(:owner) { Fabricate(:user) }
-  fab!(:category) { Fabricate(:category) }
+  fab!(:owner, :user)
+  fab!(:category)
   fab!(:community) do
     DiscourseCommunityPlatform::Community.create!(
       name: "Technology",
