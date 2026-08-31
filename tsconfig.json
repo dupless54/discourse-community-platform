@@ -1,0 +1,11 @@
+{
+  "extends": "discourse/tsconfig-plugin",
+  "include": ["assets/javascripts/**/*", "test/javascripts/**/*"],
+  "compilerOptions": {
+    "paths": {
+      "discourse/plugins/discourse-community-platform/*": [
+        "./assets/javascripts/*"
+      ]
+    }
+  }
+}

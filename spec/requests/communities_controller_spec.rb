@@ -31,12 +31,27 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       get "/community-platform/communities/#{community.slug}.json"
 
       expect(response.status).to eq(200)
-      expect(response.parsed_body.dig("community", "id")).to eq(community.id)
-      expect(response.parsed_body.dig("community", "slug")).to eq("technology")
-      expect(response.parsed_body.dig("community", "path")).to eq("/s/technology")
-      expect(response.parsed_body.dig("community", "category_id")).to eq(category.id)
-      expect(response.parsed_body.dig("community", "is_member")).to eq(false)
-      expect(response.parsed_body.dig("community", "can_join")).to eq(false)
+      body = response.parsed_body.fetch("community")
+
+      expect(body["id"]).to eq(community.id)
+      expect(body["slug"]).to eq("technology")
+      expect(body["path"]).to eq("/s/technology")
+      expect(body["category_id"]).to eq(category.id)
+      expect(body["category_url"]).to eq(category.url)
+      expect(body["rules"]).to eq([])
+      expect(body["is_member"]).to eq(false)
+      expect(body["can_join"]).to eq(false)
+      expect(body["can_manage"]).to eq(false)
+    end
+
+    it "exposes management capability only to an authorized manager" do
+      sign_in(owner)
+
+      get "/community-platform/communities/#{community.slug}.json"
+
+      expect(response.status).to eq(200)
+      expect(response.parsed_body.dig("community", "can_manage")).to eq(true)
+      expect(response.parsed_body.dig("community", "owner_username")).to eq(owner.username)
     end
 
     it "does not leak community metadata when Discourse category permissions deny access" do
@@ -85,6 +100,7 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       expect(body["is_moderator"]).to eq(true)
       expect(body["can_join"]).to eq(false)
       expect(body["can_leave"]).to eq(false)
+      expect(body["can_manage"]).to eq(true)
     end
 
     it "requires an authenticated user" do
@@ -92,6 +108,74 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
            params: { community: { name: "Gaming", slug: "gaming" } }
 
       expect(response.status).to eq(403)
+    end
+  end
+
+  describe "PATCH /community-platform/communities/:slug.json" do
+    fab!(:outsider, :user)
+
+    def create_managed_community
+      DiscourseCommunityPlatform::Communities::Create.call(
+        user: owner,
+        params: {
+          name: "Managed",
+          slug: "managed",
+          description: "Managed community",
+          visibility: "public",
+        },
+      )
+    end
+
+    it "updates metadata and category visibility for the owner" do
+      managed = create_managed_community
+      sign_in(owner)
+
+      patch "/community-platform/communities/#{managed.slug}.json",
+            params: {
+              community: {
+                description: "Updated community",
+                visibility: "private",
+                icon_emoji: "🧭",
+                banner_color: "#112233",
+                rules: ["Be respectful", "No spam"],
+              },
+            }
+
+      expect(response.status).to eq(200)
+
+      managed.reload
+      body = response.parsed_body.fetch("community")
+
+      expect(managed.description).to eq("Updated community")
+      expect(managed.visibility).to eq("private")
+      expect(managed.rules).to eq(["Be respectful", "No spam"])
+      expect(managed.icon_emoji).to eq("🧭")
+      expect(managed.banner_color).to eq("112233")
+      expect(managed.category.reload.description).to eq("Updated community")
+      expect(managed.category.read_restricted).to eq(true)
+      expect(body["can_manage"]).to eq(true)
+      expect(body["banner_color"]).to eq("112233")
+    end
+
+    it "rejects an unrelated authenticated user" do
+      managed = create_managed_community
+      sign_in(outsider)
+
+      patch "/community-platform/communities/#{managed.slug}.json",
+            params: { community: { description: "Hijacked" } }
+
+      expect(response.status).to eq(403)
+      expect(managed.reload.description).to eq("Managed community")
+    end
+
+    it "requires authentication" do
+      managed = create_managed_community
+
+      patch "/community-platform/communities/#{managed.slug}.json",
+            params: { community: { description: "Anonymous change" } }
+
+      expect(response.status).to eq(403)
+      expect(managed.reload.description).to eq("Managed community")
     end
   end
 
