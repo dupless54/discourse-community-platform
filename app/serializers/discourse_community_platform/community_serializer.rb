@@ -46,7 +46,7 @@ module ::DiscourseCommunityPlatform
 
     def can_join
       user = scope&.user
-      return false if user.blank? || is_member || object.private?
+      return false if user.blank? || object.member_group.blank? || is_member || object.private?
 
       scope.can_see_category?(object.category)
     end
