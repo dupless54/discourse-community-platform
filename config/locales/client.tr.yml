@@ -1,0 +1,42 @@
+tr:
+  js:
+    community_platform:
+      join: "Katıl"
+      leave: "Ayrıl"
+      joined: "Katıldın"
+      open_category: "Topluluğu aç"
+      membership_error: "Topluluk üyeliğin güncellenemedi."
+      members: "üye"
+      posts: "gönderi"
+      views: "görüntülenme"
+      likes: "beğeni"
+      about: "Topluluk hakkında"
+      owner: "Sahip"
+      visibility_label: "Görünürlük"
+      visibility:
+        public: "Herkese açık"
+        restricted: "Kısıtlı"
+        private: "Özel"
+      feed:
+        eyebrow: "Topluluk akışı"
+        latest: "Son konular"
+        empty_title: "Henüz konu yok"
+        empty_description: "Discourse'un normal konu oluşturucusunu kullanarak bu topluluktaki ilk tartışmayı başlat."
+        create_topic: "Topluluğu aç"
+      rules:
+        eyebrow: "Moderasyon"
+        title: "Topluluk kuralları"
+        empty: "Henüz topluluğa özel bir kural eklenmemiş."
+      management:
+        eyebrow: "Topluluk araçları"
+        title: "Topluluğu yönet"
+        description: "Açıklama"
+        visibility: "Görünürlük"
+        icon: "Simge emojisi"
+        banner_color: "Banner rengi"
+        rules: "Kurallar"
+        rules_hint: "Her satıra bir kural yaz. En fazla 15 kural ve kural başına 200 karakter."
+        save: "Değişiklikleri kaydet"
+        saving: "Kaydediliyor..."
+        saved: "Topluluk ayarları kaydedildi."
+        error: "Topluluk ayarları kaydedilemedi. Değerleri kontrol edip tekrar dene."
