@@ -28,7 +28,7 @@ module ::DiscourseCommunityPlatform
         raise Discourse::InvalidParameters.new(:name) if name.blank? || name.length > MAX_NAME_LENGTH
         raise Discourse::InvalidParameters.new(:slug) if slug.blank?
         raise Discourse::InvalidParameters.new(:description) if description&.length.to_i > MAX_DESCRIPTION_LENGTH
-        raise Discourse::InvalidParameters.new(:visibility) unless Community::VISIBILITIES.include?(visibility)
+        raise Discourse::InvalidParameters.new(:visibility) if Community::VISIBILITIES.exclude?(visibility)
         raise Discourse::InvalidParameters.new(:slug) if Community.where("LOWER(slug) = ?", slug.downcase).exists?
 
         Community.transaction do
