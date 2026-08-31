@@ -23,9 +23,9 @@ end
 #  value        :integer          not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  community_id :integer          not null
+#  community_id :bigint           not null
 #  topic_id     :bigint           not null
-#  user_id      :integer          not null
+#  user_id      :bigint           not null
 #
 # Indexes
 #
