@@ -10,6 +10,7 @@
 enabled_site_setting :community_platform_enabled
 register_asset "stylesheets/community-platform.scss"
 register_asset "stylesheets/community-platform-voting.scss"
+register_asset "stylesheets/community-platform-home.scss"
 
 module ::DiscourseCommunityPlatform
   PLUGIN_NAME = "discourse-community-platform"
