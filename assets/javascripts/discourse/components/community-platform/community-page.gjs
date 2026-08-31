@@ -289,7 +289,7 @@ export default class CommunityPlatformCommunityPage extends Component {
               <button
                 type="button"
                 class="btn btn-flat dcp-feed-order__button"
-                aria-pressed={{eq this.order "hot"}}
+                aria-pressed={{if (eq this.order "hot") "true" "false"}}
                 disabled={{this.feedBusy}}
                 {{on "click" (fn this.changeOrder "hot")}}
               >
@@ -298,7 +298,7 @@ export default class CommunityPlatformCommunityPage extends Component {
               <button
                 type="button"
                 class="btn btn-flat dcp-feed-order__button"
-                aria-pressed={{eq this.order "new"}}
+                aria-pressed={{if (eq this.order "new") "true" "false"}}
                 disabled={{this.feedBusy}}
                 {{on "click" (fn this.changeOrder "new")}}
               >
@@ -307,7 +307,7 @@ export default class CommunityPlatformCommunityPage extends Component {
               <button
                 type="button"
                 class="btn btn-flat dcp-feed-order__button"
-                aria-pressed={{eq this.order "top"}}
+                aria-pressed={{if (eq this.order "top") "true" "false"}}
                 disabled={{this.feedBusy}}
                 {{on "click" (fn this.changeOrder "top")}}
               >
@@ -325,7 +325,7 @@ export default class CommunityPlatformCommunityPage extends Component {
                       type="button"
                       class="dcp-vote-button dcp-vote-button--up"
                       aria-label={{i18n "community_platform.voting.upvote"}}
-                      aria-pressed={{eq topic.user_vote 1}}
+                      aria-pressed={{if (eq topic.user_vote 1) "true" "false"}}
                       disabled={{eq this.votingTopicId topic.id}}
                       {{on "click" (fn this.vote topic 1)}}
                     >↑</button>
@@ -338,7 +338,7 @@ export default class CommunityPlatformCommunityPage extends Component {
                       type="button"
                       class="dcp-vote-button dcp-vote-button--down"
                       aria-label={{i18n "community_platform.voting.downvote"}}
-                      aria-pressed={{eq topic.user_vote -1}}
+                      aria-pressed={{if (eq topic.user_vote -1) "true" "false"}}
                       disabled={{eq this.votingTopicId topic.id}}
                       {{on "click" (fn this.vote topic -1)}}
                     >↓</button>
