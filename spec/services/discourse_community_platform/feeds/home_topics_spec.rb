@@ -44,6 +44,18 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
     expect(result[:topics].find { |topic| topic[:id] == popular_topic.id }[:feed_source]).to eq("popular")
   end
 
+  it "does not load Popular when joined topics already fill the requested feed" do
+    joined_community = create_community(name: "Hardware", slug: "hardware")
+    DiscourseCommunityPlatform::Memberships::Join.call(user: member, community: joined_community)
+    joined_topic = Fabricate(:topic, category: joined_community.category, user: owner)
+    allow(DiscourseCommunityPlatform::Feeds::PopularTopics).to receive(:call)
+
+    result = described_class.call(guardian: Guardian.new(member), limit: 1)
+
+    expect(result[:topics].map { |topic| topic[:id] }).to eq([joined_topic.id])
+    expect(DiscourseCommunityPlatform::Feeds::PopularTopics).not_to have_received(:call)
+  end
+
   it "uses the Guardian-filtered popular feed for guests" do
     community = create_community(name: "Technology", slug: "technology")
     topic = Fabricate(:topic, category: community.category, user: owner)
