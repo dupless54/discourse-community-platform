@@ -1,14 +1,23 @@
 import Component from "@glimmer/component";
+import { fn } from "@ember/helper";
 import { action } from "@ember/object";
+import { service } from "@ember/service";
 import { on } from "@ember/modifier";
 import { htmlSafe } from "@ember/template";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
+import { eq } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
 
 export default class CommunityPlatformCommunityPage extends Component {
+  @service currentUser;
+
   @tracked community;
+  @tracked topics = [];
+  @tracked order = "hot";
   @tracked membershipBusy = false;
+  @tracked feedBusy = false;
+  @tracked votingTopicId = null;
   @tracked saving = false;
   @tracked errorMessage = null;
   @tracked savedMessage = null;
@@ -21,14 +30,9 @@ export default class CommunityPlatformCommunityPage extends Component {
   constructor(owner, args) {
     super(owner, args);
     this.community = args.community;
+    this.topics = args.topics || [];
+    this.order = args.order || "hot";
     this.syncManagementForm();
-  }
-
-  get topics() {
-    return (this.args.topics || []).map((topic) => ({
-      ...topic,
-      url: `/t/${topic.slug}/${topic.id}`,
-    }));
   }
 
   get communityInitial() {
@@ -54,6 +58,57 @@ export default class CommunityPlatformCommunityPage extends Component {
   @action
   async leave() {
     await this.updateMembership("DELETE");
+  }
+
+  @action
+  async changeOrder(order) {
+    if (this.feedBusy || this.order === order) {
+      return;
+    }
+
+    await this.loadOrder(order);
+  }
+
+  @action
+  async vote(topic, value) {
+    if (!this.currentUser || this.votingTopicId) {
+      return;
+    }
+
+    const nextValue = topic.user_vote === value ? 0 : value;
+    this.votingTopicId = topic.id;
+    this.errorMessage = null;
+
+    try {
+      const response = await ajax(
+        `/community-platform/topics/${topic.id}/vote.json`,
+        {
+          type: "PUT",
+          data: { value: nextValue },
+        }
+      );
+      const vote = response.vote;
+
+      this.topics = this.topics.map((item) =>
+        item.id === topic.id
+          ? {
+              ...item,
+              score: vote.score,
+              upvotes: vote.upvotes,
+              downvotes: vote.downvotes,
+              user_vote: vote.user_vote,
+            }
+          : item
+      );
+
+      if (this.order === "hot" || this.order === "top") {
+        await this.loadOrder(this.order);
+      }
+    } catch {
+      this.errorMessage = i18n("community_platform.vote_error");
+    } finally {
+      this.votingTopicId = null;
+    }
   }
 
   @action
@@ -114,6 +169,23 @@ export default class CommunityPlatformCommunityPage extends Component {
       this.errorMessage = i18n("community_platform.management.error");
     } finally {
       this.saving = false;
+    }
+  }
+
+  async loadOrder(order) {
+    this.feedBusy = true;
+    this.errorMessage = null;
+
+    try {
+      const response = await ajax(
+        `/community-platform/communities/${encodeURIComponent(this.community.slug)}/topics.json?order=${encodeURIComponent(order)}`
+      );
+      this.topics = response.topics || [];
+      this.order = response.order || order;
+    } catch {
+      this.errorMessage = i18n("community_platform.vote_error");
+    } finally {
+      this.feedBusy = false;
     }
   }
 
@@ -207,27 +279,82 @@ export default class CommunityPlatformCommunityPage extends Component {
 
       <div class="dcp-community-layout">
         <main class="dcp-community-main">
-          <div class="dcp-section-heading">
+          <div class="dcp-section-heading dcp-feed-heading">
             <div>
               <p class="dcp-eyebrow">{{i18n "community_platform.feed.eyebrow"}}</p>
               <h2>{{i18n "community_platform.feed.latest"}}</h2>
             </div>
-            <span class="dcp-section-count">
-              {{this.community.members_count}}
-              {{i18n "community_platform.members"}}
-            </span>
+
+            <div class="dcp-feed-order" aria-label={{i18n "community_platform.feed.eyebrow"}}>
+              <button
+                type="button"
+                class="btn btn-flat dcp-feed-order__button"
+                aria-pressed={{eq this.order "hot"}}
+                disabled={{this.feedBusy}}
+                {{on "click" (fn this.changeOrder "hot")}}
+              >
+                {{i18n "community_platform.feed.hot"}}
+              </button>
+              <button
+                type="button"
+                class="btn btn-flat dcp-feed-order__button"
+                aria-pressed={{eq this.order "new"}}
+                disabled={{this.feedBusy}}
+                {{on "click" (fn this.changeOrder "new")}}
+              >
+                {{i18n "community_platform.feed.new"}}
+              </button>
+              <button
+                type="button"
+                class="btn btn-flat dcp-feed-order__button"
+                aria-pressed={{eq this.order "top"}}
+                disabled={{this.feedBusy}}
+                {{on "click" (fn this.changeOrder "top")}}
+              >
+                {{i18n "community_platform.feed.top"}}
+              </button>
+            </div>
           </div>
 
-          <div class="dcp-topic-feed">
+          <div class="dcp-topic-feed" aria-busy={{this.feedBusy}}>
             {{#each this.topics as |topic|}}
               <article class="dcp-topic-card">
-                <a class="dcp-topic-card__title" href={{topic.url}}>
-                  {{topic.title}}
-                </a>
-                <div class="dcp-topic-card__meta">
-                  <span>{{topic.posts_count}} {{i18n "community_platform.posts"}}</span>
-                  <span>{{topic.views}} {{i18n "community_platform.views"}}</span>
-                  <span>{{topic.like_count}} {{i18n "community_platform.likes"}}</span>
+                <div class="dcp-topic-vote">
+                  {{#if this.currentUser}}
+                    <button
+                      type="button"
+                      class="dcp-vote-button dcp-vote-button--up"
+                      aria-label={{i18n "community_platform.voting.upvote"}}
+                      aria-pressed={{eq topic.user_vote 1}}
+                      disabled={{eq this.votingTopicId topic.id}}
+                      {{on "click" (fn this.vote topic 1)}}
+                    >↑</button>
+                  {{/if}}
+
+                  <strong class="dcp-topic-vote__score">{{topic.score}}</strong>
+
+                  {{#if this.currentUser}}
+                    <button
+                      type="button"
+                      class="dcp-vote-button dcp-vote-button--down"
+                      aria-label={{i18n "community_platform.voting.downvote"}}
+                      aria-pressed={{eq topic.user_vote -1}}
+                      disabled={{eq this.votingTopicId topic.id}}
+                      {{on "click" (fn this.vote topic -1)}}
+                    >↓</button>
+                  {{/if}}
+                </div>
+
+                <div class="dcp-topic-card__content">
+                  <a class="dcp-topic-card__title" href={{topic.path}}>
+                    {{topic.title}}
+                  </a>
+                  <div class="dcp-topic-card__meta">
+                    <span>{{topic.posts_count}} {{i18n "community_platform.posts"}}</span>
+                    <span>{{topic.views}} {{i18n "community_platform.views"}}</span>
+                    <span>{{topic.like_count}} {{i18n "community_platform.likes"}}</span>
+                    <span>{{topic.score}} {{i18n "community_platform.score"}}</span>
+                  </div>
                 </div>
               </article>
             {{else}}
