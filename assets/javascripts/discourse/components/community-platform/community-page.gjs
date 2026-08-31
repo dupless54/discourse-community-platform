@@ -31,6 +31,10 @@ export default class CommunityPlatformCommunityPage extends Component {
     }));
   }
 
+  get communityInitial() {
+    return this.community.name?.charAt(0).toUpperCase() || "S";
+  }
+
   get bannerStyle() {
     const color = this.community.banner_color || "0088CC";
     return htmlSafe(`--dcp-community-banner: #${color}`);
@@ -150,7 +154,7 @@ export default class CommunityPlatformCommunityPage extends Component {
               {{else if this.community.icon_emoji}}
                 <span>{{this.community.icon_emoji}}</span>
               {{else}}
-                <span>{{this.community.name.[0]}}</span>
+                <span>{{this.communityInitial}}</span>
               {{/if}}
             </div>
 
