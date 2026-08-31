@@ -1,0 +1,114 @@
+.dcp-feed-heading {
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.dcp-feed-order {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.dcp-feed-order__button {
+  min-height: 34px;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+  font-weight: 700;
+}
+
+.dcp-feed-order__button[aria-pressed="true"] {
+  background: var(--tertiary-low);
+  color: var(--tertiary-high-or-tertiary);
+}
+
+.dcp-topic-card {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 0.9rem;
+}
+
+.dcp-topic-card__content {
+  min-width: 0;
+}
+
+.dcp-topic-vote {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: start;
+  gap: 0.2rem;
+  padding: 0.2rem 0;
+}
+
+.dcp-topic-vote__score {
+  min-width: 2.3rem;
+  color: var(--primary);
+  font-size: var(--font-down-1);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.dcp-vote-button {
+  display: grid;
+  width: 32px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--primary-medium);
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.dcp-vote-button:hover:not(:disabled) {
+  background: var(--primary-very-low);
+  color: var(--primary);
+}
+
+.dcp-vote-button--up[aria-pressed="true"] {
+  background: var(--tertiary-low);
+  color: var(--tertiary-high-or-tertiary);
+}
+
+.dcp-vote-button--down[aria-pressed="true"] {
+  background: var(--danger-low);
+  color: var(--danger);
+}
+
+.dcp-vote-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.dcp-topic-feed[aria-busy="true"] {
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+@media (max-width: 700px) {
+  .dcp-feed-order {
+    width: 100%;
+  }
+
+  .dcp-feed-order__button {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .dcp-topic-card {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 0.65rem;
+    padding-right: 0.85rem;
+    padding-left: 0.65rem;
+  }
+
+  .dcp-vote-button {
+    width: 30px;
+  }
+}
