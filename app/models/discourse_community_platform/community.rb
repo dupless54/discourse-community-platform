@@ -43,3 +43,31 @@ module ::DiscourseCommunityPlatform
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: discourse_community_platform_communities
+#
+#  id                 :bigint           not null, primary key
+#  description        :text
+#  members_count      :integer          default(0), not null
+#  name               :string           not null
+#  slug               :string           not null
+#  visibility         :string           default("public"), not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  banner_upload_id   :integer
+#  category_id        :integer          not null
+#  icon_upload_id     :integer
+#  member_group_id    :integer
+#  moderator_group_id :integer
+#  owner_id           :integer          not null
+#
+# Indexes
+#
+#  idx_dcp_communities_category      (category_id) UNIQUE
+#  idx_dcp_communities_member_group  (member_group_id)
+#  idx_dcp_communities_mod_group     (moderator_group_id)
+#  idx_dcp_communities_owner         (owner_id)
+#  idx_dcp_communities_slug          (slug) UNIQUE
+#
