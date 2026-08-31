@@ -29,6 +29,17 @@ tr:
         empty_title: "Henüz konu yok"
         empty_description: "Discourse'un normal konu oluşturucusunu kullanarak bu topluluktaki ilk tartışmayı başlat."
         create_topic: "Topluluğu aç"
+      home:
+        eyebrow: "Topluluk akışın"
+        title: "Ana Sayfa"
+        personalized_description: "Katıldığın topluluklardaki konular önce gelir; kalan alanlar görünür ve popüler tartışmalarla tamamlanır."
+        fallback_description: "Topluluklara katılana kadar herkese açık popüler tartışmalar burada gösterilir."
+        joined_title: "Toplulukların"
+        open_popular: "Popüler'i aç"
+        source_joined: "Katıldığın"
+        source_popular: "Popüler"
+        empty_title: "Akışın şu anda sakin"
+        empty_description: "Aktif tartışmaları bulmak için topluluklara katılabilir veya Popüler sayfasını keşfedebilirsin."
       popular:
         eyebrow: "Topluluklar genelinde"
         title: "Popüler"

@@ -29,6 +29,17 @@ en:
         empty_title: "No topics yet"
         empty_description: "Start the first discussion in this community using the normal Discourse composer."
         create_topic: "Open community"
+      home:
+        eyebrow: "Your community feed"
+        title: "Home"
+        personalized_description: "Topics from communities you joined come first, with relevant public discussions filling the rest of your feed."
+        fallback_description: "Popular public discussions across communities are shown until you join communities."
+        joined_title: "Your communities"
+        open_popular: "Open Popular"
+        source_joined: "Joined"
+        source_popular: "Popular"
+        empty_title: "Your feed is quiet"
+        empty_description: "Join communities or explore Popular to find active discussions."
       popular:
         eyebrow: "Across communities"
         title: "Popular"
