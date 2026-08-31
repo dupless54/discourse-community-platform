@@ -10,7 +10,7 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 2. A Community is a plugin-owned domain record mapped 1:1 to a real Discourse Category.
 3. Authorization must extend or defer to Discourse Guardian/category/group permissions. Never return private or restricted community data merely because a plugin record exists.
 4. Do not patch files in Discourse core. Use plugin APIs, Rails engine routes, serializers, services, event hooks, Guardian extensions, and supported frontend APIs.
-5. Do not create duplicate indexable topic copies. `/r/:slug` is a community UX route; canonical topic SEO must remain single-source unless a later SEO design explicitly and safely changes it.
+5. Do not create duplicate indexable topic copies. `/s/:slug` is a community UX route; canonical topic SEO must remain single-source unless a later SEO design explicitly and safely changes it.
 6. Public feed/ranking/search endpoints must filter through visibility rules before serialization.
 7. Background ranking/recommendation work must use jobs/cache; do not build expensive per-request full-table scoring queries.
 8. Community owners and moderators must never receive global Discourse admin/moderator privileges merely to manage a community.
@@ -26,7 +26,7 @@ Current scope:
 - Category/User/Group references
 - public/restricted/private visibility field
 - read-only community API
-- `/r/:slug` path contract for future frontend routing
+- `/s/:slug` path contract for future frontend routing
 - model/request tests
 - official Discourse plugin CI
 
@@ -36,7 +36,7 @@ Next slices:
 2. Join/leave membership service.
 3. Community owner/moderator authorization policies.
 4. Community rules and appearance metadata.
-5. Frontend `/r/:slug` page.
+5. Frontend `/s/:slug` page.
 6. Voting and ranking engine.
 
 ## SEO contract
