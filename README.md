@@ -22,9 +22,30 @@ The first milestone establishes the Community Core:
 - category/community mapping
 - owner/member/moderator group references
 - public/restricted/private visibility model
-- `/r/:slug` API contract
+- `/r/:slug` path contract
 - authorization and validation foundations
 - automated tests
+
+### Current backend contract
+
+A visible community can be read from:
+
+```text
+GET /community-platform/communities/:slug.json
+```
+
+The response includes the future user-facing community path (`/r/:slug`) while the plugin continues to defer access decisions to Discourse Guardian/category permissions.
+
+## Roadmap
+
+1. Atomic community creation: Category + member Group + moderator Group + Community.
+2. Join/leave membership APIs.
+3. Owner and community-moderator authorization.
+4. Rules, flair, banner/icon configuration.
+5. `/r/:slug` frontend experience.
+6. Upvote/downvote and ranking engine.
+7. Popular, Explore, Following, and personalized feeds.
+8. AutoModerator and community analytics.
 
 ## License
 
