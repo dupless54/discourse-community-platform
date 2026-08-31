@@ -1,4 +1,4 @@
-import CommunityPage from "../components/community-platform/community-page";
+import CommunityPage from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/community-page";
 
 export default <template>
   <CommunityPage
