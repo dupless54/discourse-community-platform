@@ -11,7 +11,7 @@ A community-platform plugin for Discourse that adds Reddit-inspired communities,
 - Community permissions extend Discourse Guardian/group/category permissions instead of bypassing them.
 - Public content remains compatible with Discourse SEO/crawler behavior; private or restricted content must never leak through plugin endpoints.
 - Do not patch Discourse core files.
-- New public aliases such as `/r/:slug` must not create duplicate indexable copies of the same topic content.
+- New public aliases such as `/s/:slug` must not create duplicate indexable copies of the same topic content.
 
 ## Phase 1
 
@@ -22,7 +22,7 @@ The first milestone establishes the Community Core:
 - category/community mapping
 - owner/member/moderator group references
 - public/restricted/private visibility model
-- `/r/:slug` path contract
+- `/s/:slug` path contract
 - authorization and validation foundations
 - automated tests
 
@@ -34,7 +34,7 @@ A visible community can be read from:
 GET /community-platform/communities/:slug.json
 ```
 
-The response includes the future user-facing community path (`/r/:slug`) while the plugin continues to defer access decisions to Discourse Guardian/category permissions.
+The response includes the future user-facing community path (`/s/:slug`) while the plugin continues to defer access decisions to Discourse Guardian/category permissions.
 
 ## Roadmap
 
@@ -42,7 +42,7 @@ The response includes the future user-facing community path (`/r/:slug`) while t
 2. Join/leave membership APIs.
 3. Owner and community-moderator authorization.
 4. Rules, flair, banner/icon configuration.
-5. `/r/:slug` frontend experience.
+5. `/s/:slug` frontend experience.
 6. Upvote/downvote and ranking engine.
 7. Popular, Explore, Following, and personalized feeds.
 8. AutoModerator and community analytics.
