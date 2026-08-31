@@ -3,6 +3,7 @@
 RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
   fab!(:owner, :user)
   fab!(:category)
+  fab!(:private_group, :group)
   fab!(:community) do
     DiscourseCommunityPlatform::Community.create!(
       name: "Technology",
@@ -23,6 +24,15 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       expect(response.parsed_body.dig("community", "slug")).to eq("technology")
       expect(response.parsed_body.dig("community", "path")).to eq("/r/technology")
       expect(response.parsed_body.dig("community", "category_id")).to eq(category.id)
+    end
+
+    it "does not leak community metadata when Discourse category permissions deny access" do
+      category.set_permissions(private_group => :full)
+      category.save!
+
+      get "/community-platform/communities/#{community.slug}.json"
+
+      expect(response.status).to eq(404)
     end
 
     it "returns not found for an unknown community" do
