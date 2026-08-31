@@ -71,7 +71,7 @@ module ::DiscourseCommunityPlatform
       def ensure_vote_allowed!
         raise Discourse::InvalidAccess if @user.blank?
         raise Discourse::InvalidAccess if @user.staged? || @user.suspended? || @user.silenced?
-        raise Discourse::InvalidParameters.new(:value) unless VALID_VALUES.include?(@value)
+        raise Discourse::InvalidParameters.new(:value) if VALID_VALUES.exclude?(@value)
         raise Discourse::NotFound if @topic.blank? || @topic.trashed? || @topic.private_message?
         raise Discourse::InvalidAccess if @topic.is_category_topic?
       end
