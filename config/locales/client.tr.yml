@@ -25,9 +25,16 @@ tr:
         hot: "Popüler"
         new: "Yeni"
         top: "En iyi"
+        rising: "Yükselen"
         empty_title: "Henüz konu yok"
         empty_description: "Discourse'un normal konu oluşturucusunu kullanarak bu topluluktaki ilk tartışmayı başlat."
         create_topic: "Topluluğu aç"
+      popular:
+        eyebrow: "Topluluklar genelinde"
+        title: "Popüler"
+        description: "Herkese açık topluluklardaki güncel tartışmalar; son oylar, katılım, görüntülenme ve güncelliğe göre sıralanır."
+        empty_title: "Henüz yükselen bir konu yok"
+        empty_description: "Herkese açık topluluklar hareketlendikçe popüler tartışmalar burada görünecek."
       voting:
         upvote: "Artı oy"
         downvote: "Eksi oy"
