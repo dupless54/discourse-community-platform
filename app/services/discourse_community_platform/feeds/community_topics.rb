@@ -3,10 +3,11 @@
 module ::DiscourseCommunityPlatform
   module Feeds
     class CommunityTopics
-      ORDERS = %w[hot new top].freeze
+      ORDERS = %w[hot new top rising].freeze
       DEFAULT_LIMIT = 30
       MAX_LIMIT = 50
       HOT_EPOCH_SECONDS = Time.utc(2020, 1, 1).to_i
+      RISING_WINDOW = 24.hours
 
       def self.call(community:, guardian:, order: "hot", limit: DEFAULT_LIMIT)
         new(community:, guardian:, order:, limit:).call
@@ -64,11 +65,22 @@ module ::DiscourseCommunityPlatform
               SQL
             )
 
+        scope = scope.joins(rising_join_sql) if @order == "rising"
+
         case @order
         when "new"
           scope.order(created_at: :desc, id: :desc)
         when "top"
           scope.order(Arel.sql("COALESCE(dcp_scores.score, 0) DESC, topics.created_at DESC"))
+        when "rising"
+          scope.order(
+            Arel.sql(
+              "(COALESCE(dcp_rising.recent_score, 0) * 4.0 + " \
+                "COALESCE(dcp_rising.recent_votes, 0) * 1.5 + " \
+                "LEAST(GREATEST(topics.posts_count - 1, 0), 20) * 0.15) DESC, " \
+                "COALESCE(topics.last_posted_at, topics.created_at) DESC, topics.id DESC",
+            ),
+          )
         else
           scope.order(
             Arel.sql(
@@ -78,6 +90,20 @@ module ::DiscourseCommunityPlatform
             ),
           )
         end
+      end
+
+      def rising_join_sql
+        cutoff = ActiveRecord::Base.connection.quote(RISING_WINDOW.ago)
+
+        <<~SQL.squish
+          LEFT JOIN (
+            SELECT topic_id, SUM(value) AS recent_score, COUNT(*) AS recent_votes
+            FROM discourse_community_platform_votes
+            WHERE community_id = #{@community.id.to_i}
+              AND updated_at >= #{cutoff}
+            GROUP BY topic_id
+          ) dcp_rising ON dcp_rising.topic_id = topics.id
+        SQL
       end
 
       def user_votes(topics)
