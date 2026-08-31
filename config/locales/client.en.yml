@@ -1,0 +1,42 @@
+en:
+  js:
+    community_platform:
+      join: "Join"
+      leave: "Leave"
+      joined: "Joined"
+      open_category: "Open category"
+      membership_error: "Your community membership could not be updated."
+      members: "members"
+      posts: "posts"
+      views: "views"
+      likes: "likes"
+      about: "About community"
+      owner: "Owner"
+      visibility_label: "Visibility"
+      visibility:
+        public: "Public"
+        restricted: "Restricted"
+        private: "Private"
+      feed:
+        eyebrow: "Community feed"
+        latest: "Latest topics"
+        empty_title: "No topics yet"
+        empty_description: "Start the first discussion in this community using the normal Discourse composer."
+        create_topic: "Open community"
+      rules:
+        eyebrow: "Moderation"
+        title: "Community rules"
+        empty: "No community-specific rules have been added yet."
+      management:
+        eyebrow: "Community tools"
+        title: "Manage community"
+        description: "Description"
+        visibility: "Visibility"
+        icon: "Icon emoji"
+        banner_color: "Banner color"
+        rules: "Rules"
+        rules_hint: "One rule per line. Up to 15 rules, 200 characters each."
+        save: "Save changes"
+        saving: "Saving..."
+        saved: "Community settings saved."
+        error: "Community settings could not be saved. Check the values and try again."
