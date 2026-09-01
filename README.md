@@ -39,6 +39,7 @@ A community-platform plugin for Discourse that adds Reddit-inspired communities,
 - matching new and meaningfully edited community posts are evaluated in background jobs through Discourse `PostActionCreator` review primitives instead of being automatically deleted
 - manager-only AutoModerator audit history with rule snapshots, post references, create/edit triggers, review outcomes, SHA-256 content deduplication, and 90-day retention
 - manager-only moderation insights derived from bounded 7/30-day AutoModerator audit aggregates without returning post content or user metadata
+- manager-only 7/30-day community activity analytics for new topics, posts, replies, active topics, and unique contributors, rebuilt in background cache jobs rather than request-time aggregate scans
 
 ### Feed backend contracts
 
@@ -50,6 +51,14 @@ GET /community-platform/feeds/popular.json
 ```
 
 All plugin feeds continue to filter candidate content through Discourse visibility/Guardian rules before serialization. Explore recommendation signals are calculated asynchronously; when that cache is cold, topic discovery safely falls back to the existing cached Popular candidate order instead of running an aggregate recommendation query during the request.
+
+### Manager analytics contracts
+
+```text
+GET /community-platform/communities/:slug/activity-analytics.json
+```
+
+Community activity analytics are available only to users who can manage the Community and can see its mapped Discourse Category. The response contains only cached numerical aggregates for 7- and 30-day windows: new topics, posts, replies, active topics, and unique contributors. It never serializes contributor IDs/usernames, post IDs/URLs, raw content, email/IP/device data, or other user-identifying metadata. The underlying aggregate scan runs every 15 minutes in a scheduled job and the cache expires after 30 minutes. A cold cache returns a zeroed `warming` snapshot instead of rebuilding synchronously in the request.
 
 ### AutoModerator contracts
 
@@ -74,9 +83,9 @@ Moderation insights query only the plugin-owned audit table, which is already bo
 
 ## Roadmap
 
-1. Expand community analytics carefully with non-sensitive, permission-safe operational signals only where they add clear manager value.
-2. Expand AutoModerator only through additional explicit, bounded, review-first conditions/actions with dedicated tests and security review.
-3. Finish responsive polish, accessibility, SEO/crawler validation, and release hardening.
+1. Expand AutoModerator only through additional explicit, bounded, review-first conditions/actions with dedicated tests and security review.
+2. Finish responsive polish, accessibility, SEO/crawler validation, and release hardening.
+3. Prepare a first release candidate after the remaining hardening gates are green.
 
 ## License
 
