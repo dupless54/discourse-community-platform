@@ -9,15 +9,21 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
       `/community-platform/communities/${slug}/topics.json?order=hot`
     );
     let automodRules = [];
+    let automodExecutions = [];
 
     if (payload.community?.can_manage) {
       try {
-        const automodPayload = await ajax(
-          `/community-platform/communities/${slug}/automod-rules.json`
-        );
-        automodRules = automodPayload.automod_rules || [];
+        const [rulesPayload, executionsPayload] = await Promise.all([
+          ajax(`/community-platform/communities/${slug}/automod-rules.json`),
+          ajax(
+            `/community-platform/communities/${slug}/automod-executions.json`
+          ),
+        ]);
+        automodRules = rulesPayload.automod_rules || [];
+        automodExecutions = executionsPayload.automod_executions || [];
       } catch {
         automodRules = [];
+        automodExecutions = [];
       }
     }
 
@@ -26,6 +32,7 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
       topics: feedPayload.topics || [],
       order: feedPayload.order || "hot",
       automodRules,
+      automodExecutions,
     };
   }
 
