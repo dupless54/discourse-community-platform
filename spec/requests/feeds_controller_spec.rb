@@ -33,4 +33,16 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["topics"].first).not_to have_key("raw")
     expect(payload["topics"].first).not_to have_key("posts")
   end
+
+  it "returns no personalized Following data to guests" do
+    get "/community-platform/feeds/following.json"
+
+    expect(response.status).to eq(200)
+    payload = response.parsed_body
+    expect(payload["order"]).to eq("following")
+    expect(payload["login_required"]).to eq(true)
+    expect(payload["personalized"]).to eq(false)
+    expect(payload["joined_communities"]).to eq([])
+    expect(payload["topics"]).to eq([])
+  end
 end

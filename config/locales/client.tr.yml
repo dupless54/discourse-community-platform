@@ -41,6 +41,16 @@ tr:
         source_popular: "Popüler"
         empty_title: "Akışın şu anda sakin"
         empty_description: "Aktif tartışmaları bulmak için topluluklara katılabilir, kişileri takip edebilir veya Popüler sayfasını keşfedebilirsin."
+      following:
+        eyebrow: "Kişisel akış"
+        title: "Takip Ettiklerin"
+        description: "Katıldığın topluluklar ve takip ettiğin kişilerden gelen, Popüler önerileri içermeyen odaklı kişisel akış."
+        empty_title: "Ağından yeni bir içerik yok"
+        empty_description: "Odaklı bir kişisel akış oluşturmak için topluluklara katılabilir veya kişileri takip edebilirsin."
+        login_title: "Takip Ettiklerini görmek için giriş yap"
+        login_description: "Takip Ettiklerin; katıldığın topluluklar ve takip ettiğin kişilerden oluşturulan özel, kişiselleştirilmiş bir akıştır."
+        log_in: "Giriş yap"
+        open_home: "Ana Sayfayı aç"
       popular:
         eyebrow: "Topluluklar genelinde"
         title: "Popüler"

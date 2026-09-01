@@ -20,10 +20,52 @@ export default class CommunityPlatformHomePage extends Component {
     this.topics = args.topics || [];
   }
 
+  get followingFeed() {
+    return this.args.feedVariant === "following";
+  }
+
+  get eyebrowKey() {
+    return this.followingFeed
+      ? "community_platform.following.eyebrow"
+      : "community_platform.home.eyebrow";
+  }
+
+  get titleKey() {
+    return this.followingFeed
+      ? "community_platform.following.title"
+      : "community_platform.home.title";
+  }
+
   get descriptionKey() {
+    if (this.followingFeed) {
+      return this.args.loginRequired
+        ? "community_platform.following.login_description"
+        : "community_platform.following.description";
+    }
+
     return this.args.personalized
       ? "community_platform.home.personalized_description"
       : "community_platform.home.fallback_description";
+  }
+
+  get emptyTitleKey() {
+    if (this.followingFeed) {
+      return this.args.loginRequired
+        ? "community_platform.following.login_title"
+        : "community_platform.following.empty_title";
+    }
+
+    return "community_platform.home.empty_title";
+  }
+
+  get emptyDescriptionKey() {
+    if (this.followingFeed) {
+      return this.args.loginRequired
+        ? "community_platform.following.login_description"
+        : "community_platform.following.empty_description";
+    }
+
+    return "community_platform.home.empty_description";
   }
 
   @action
@@ -68,14 +110,16 @@ export default class CommunityPlatformHomePage extends Component {
     <div class="dcp-home-page container">
       <header class="dcp-home-hero">
         <div>
-          <p class="dcp-eyebrow">{{i18n "community_platform.home.eyebrow"}}</p>
-          <h1>{{i18n "community_platform.home.title"}}</h1>
+          <p class="dcp-eyebrow">{{i18n this.eyebrowKey}}</p>
+          <h1>{{i18n this.titleKey}}</h1>
           <p>{{i18n this.descriptionKey}}</p>
         </div>
 
-        <a class="btn btn-default dcp-home-popular-link" href="/popular">
-          {{i18n "community_platform.home.open_popular"}}
-        </a>
+        {{#unless this.followingFeed}}
+          <a class="btn btn-default dcp-home-popular-link" href="/popular">
+            {{i18n "community_platform.home.open_popular"}}
+          </a>
+        {{/unless}}
       </header>
 
       {{#if @joinedCommunities.length}}
@@ -166,11 +210,24 @@ export default class CommunityPlatformHomePage extends Component {
           </article>
         {{else}}
           <div class="dcp-empty-state dcp-home-empty">
-            <h2>{{i18n "community_platform.home.empty_title"}}</h2>
-            <p>{{i18n "community_platform.home.empty_description"}}</p>
-            <a class="btn btn-primary" href="/popular">
-              {{i18n "community_platform.home.open_popular"}}
-            </a>
+            <h2>{{i18n this.emptyTitleKey}}</h2>
+            <p>{{i18n this.emptyDescriptionKey}}</p>
+
+            {{#if this.followingFeed}}
+              {{#if @loginRequired}}
+                <a class="btn btn-primary" href="/login">
+                  {{i18n "community_platform.following.log_in"}}
+                </a>
+              {{else}}
+                <a class="btn btn-primary" href="/home">
+                  {{i18n "community_platform.following.open_home"}}
+                </a>
+              {{/if}}
+            {{else}}
+              <a class="btn btn-primary" href="/popular">
+                {{i18n "community_platform.home.open_popular"}}
+              </a>
+            {{/if}}
           </div>
         {{/each}}
       </main>

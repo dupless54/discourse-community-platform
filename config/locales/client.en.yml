@@ -41,6 +41,16 @@ en:
         source_popular: "Popular"
         empty_title: "Your feed is quiet"
         empty_description: "Join communities, follow people, or explore Popular to find active discussions."
+      following:
+        eyebrow: "Personal feed"
+        title: "Following"
+        description: "A focused feed from communities you joined and people you follow, without Popular recommendations."
+        empty_title: "Nothing new from your network"
+        empty_description: "Join communities or follow people to build a focused personal feed."
+        login_title: "Log in to view Following"
+        login_description: "Following is a private personalized feed built from your joined communities and followed people."
+        log_in: "Log in"
+        open_home: "Open Home"
       popular:
         eyebrow: "Across communities"
         title: "Popular"
