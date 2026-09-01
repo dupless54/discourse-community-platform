@@ -15,6 +15,8 @@ module ::DiscourseCommunityPlatform
                :rules,
                :icon_emoji,
                :banner_color,
+               :icon_upload_id,
+               :banner_upload_id,
                :created_at
 
     attribute :path
