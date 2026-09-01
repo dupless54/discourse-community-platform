@@ -20,7 +20,7 @@ module ::DiscourseCommunityPlatform
         return if community.blank?
 
         matched_rule =
-          AutomodRule.where(community_id: community.id, enabled: true).order(:id).find do |rule|
+          AutomodRule.where(community_id: community.id, enabled: true).order(:id).detect do |rule|
             rule.matches?(@post.raw)
           end
         return if matched_rule.blank?
