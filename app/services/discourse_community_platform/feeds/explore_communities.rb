@@ -77,7 +77,10 @@ module ::DiscourseCommunityPlatform
 
         community_ids = signals.map(&:first)
         communities =
-          Community.where(id: community_ids, visibility: "public").includes(:category).index_by(&:id)
+          Community
+            .where(id: community_ids, visibility: "public")
+            .includes(:category, :icon_upload)
+            .index_by(&:id)
         joined_category_ids = joined_category_ids_for(@guardian.user)
 
         signals.filter_map do |community_id, recent_topics_count, _activity_score|
@@ -85,6 +88,9 @@ module ::DiscourseCommunityPlatform
           next if community.blank?
           next if joined_category_ids[community.category_id]
           next unless @guardian.can_see_category?(community.category)
+
+          icon_upload = community.icon_upload
+          icon_url = icon_upload&.url if icon_upload.blank? || @guardian.can_see_upload?(icon_upload)
 
           {
             id: community.id,
@@ -94,6 +100,7 @@ module ::DiscourseCommunityPlatform
             description: community.description,
             members_count: community.members_count,
             icon_emoji: community.icon_emoji,
+            icon_url:,
             banner_color: community.banner_color,
             recent_topics_count:,
           }
