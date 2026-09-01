@@ -20,9 +20,11 @@ module ::DiscourseCommunityPlatform
         return if community.blank?
 
         matched_rule =
-          AutomodRule.where(community_id: community.id, enabled: true).order(:id).detect do |rule|
-            rule.matches?(@post.raw)
-          end
+          AutomodRule
+            .where(community_id: community.id, enabled: true)
+            .order(:id)
+            .limit(AutomodRule::MAX_RULES_PER_COMMUNITY)
+            .detect { |rule| rule.matches?(@post.raw) }
         return if matched_rule.blank?
         return if already_flagged?
 
