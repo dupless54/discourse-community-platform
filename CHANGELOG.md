@@ -25,6 +25,10 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Manager-only 7/30-day community activity analytics rebuilt in scheduled cache jobs.
 - English and Turkish client copy for Community Platform management surfaces.
 
+### Fixed
+
+- Direct browser navigation to `/home`, `/following`, `/explore`, and `/popular` now boots the Discourse Ember shell instead of falling through to a Rails routing error.
+
 ### Security and privacy
 
 - Community/category visibility is checked through Discourse Guardian before plugin data is serialized.
