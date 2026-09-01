@@ -4,7 +4,7 @@ All notable changes to Discourse Community Platform are documented here.
 
 The project is still pre-stable. Until the first stable release, breaking changes may occur between release candidates when required to preserve Discourse compatibility, permission boundaries, or data safety.
 
-## [0.1.0-rc.1] - Unreleased
+## [0.1.0-rc.1] - 2026-09-02
 
 ### Added
 
@@ -29,6 +29,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 
 - Direct browser navigation to `/home`, `/following`, `/explore`, and `/popular` now boots the Discourse Ember shell instead of falling through to a Rails routing error.
 - AutoModerator edit re-evaluation now recognizes an existing system `inappropriate` review score even when Discourse has retired the original `PostAction`, preventing duplicate system flags on the same post.
+- Community hero identity/actions now wrap cleanly on constrained tablet widths where Discourse keeps the desktop sidebar visible, preventing community titles from breaking inside words on iPad-class layouts.
 
 ### Security and privacy
 
