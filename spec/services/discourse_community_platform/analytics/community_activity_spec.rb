@@ -42,10 +42,11 @@ RSpec.describe DiscourseCommunityPlatform::Analytics::CommunityActivity do
 
   it "returns a zeroed warming snapshot without rebuilding synchronously" do
     community = create_community(name: "Technology", slug: "technology")
-    expect(described_class).not_to receive(:rebuild_cache)
+    allow(described_class).to receive(:rebuild_cache)
 
     result = described_class.call(community:)
 
+    expect(described_class).not_to have_received(:rebuild_cache)
     expect(result).to eq(
       status: "warming",
       generated_at: nil,
