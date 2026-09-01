@@ -7,3 +7,5 @@ en:
   community_platform:
     homepage:
       title: "Community Home"
+    automod:
+      flag_reason: "Community AutoModerator rule '%{rule}' matched in %{community}."
