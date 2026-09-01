@@ -5,6 +5,7 @@ import { service } from "@ember/service";
 import { on } from "@ember/modifier";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
+import CommunityIdentity from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/community-identity";
 import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
 import TopicPreview from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-preview";
 import { eq } from "discourse/truth-helpers";
@@ -135,9 +136,10 @@ export default class CommunityPlatformHomePage extends Component {
 
           <div class="dcp-home-community-list">
             {{#each @joinedCommunities as |community|}}
-              <a class="dcp-home-community-chip" href={{community.path}}>
-                s/{{community.slug}}
-              </a>
+              <CommunityIdentity
+                @community={{community}}
+                class="dcp-home-community-chip"
+              />
             {{/each}}
           </div>
         </section>
@@ -180,7 +182,7 @@ export default class CommunityPlatformHomePage extends Component {
 
             <div class="dcp-home-card__content">
               <div class="dcp-home-card__context">
-                <a href={{topic.community.path}}>s/{{topic.community.slug}}</a>
+                <CommunityIdentity @community={{topic.community}} />
 
                 {{#if topic.author}}
                   <a class="dcp-home-card__author" href={{topic.author.path}}>
