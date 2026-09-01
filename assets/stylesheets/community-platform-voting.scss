@@ -141,6 +141,10 @@
   line-height: 1.45;
 }
 
+.dcp-explore-membership-error {
+  margin-bottom: 0.85rem;
+}
+
 .dcp-explore-community-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -158,7 +162,6 @@
   border-radius: 14px;
   background: var(--primary-very-low);
   color: var(--primary);
-  text-decoration: none;
   transition:
     border-color 120ms ease,
     background 120ms ease,
@@ -170,6 +173,20 @@
   background: var(--secondary);
   color: var(--primary);
   transform: translateY(-1px);
+}
+
+.dcp-explore-community-card__link {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.7rem;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.dcp-explore-community-card__link:hover {
+  color: var(--primary);
 }
 
 .dcp-explore-community-card__top {
@@ -211,7 +228,7 @@
   font-size: 1.45rem;
 }
 
-.dcp-explore-community-card > p {
+.dcp-explore-community-card__link > p {
   display: -webkit-box;
   overflow: hidden;
   margin: 0;
@@ -230,6 +247,38 @@
   color: var(--primary-medium);
   font-size: var(--font-down-2);
   font-weight: 650;
+}
+
+.dcp-explore-community-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 34px;
+}
+
+.dcp-explore-community-card__actions:empty {
+  display: none;
+}
+
+.dcp-explore-community-card__join {
+  min-width: 84px;
+  justify-content: center;
+}
+
+.dcp-explore-community-card__join[aria-busy="true"] {
+  cursor: wait;
+}
+
+.dcp-explore-community-card__joined {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  background: var(--success-low, var(--primary-very-low));
+  color: var(--success, var(--primary));
+  font-size: var(--font-down-1);
+  font-weight: 700;
 }
 
 .dcp-popular-feed {
@@ -342,6 +391,16 @@
     min-height: 0;
     padding: 0.8rem;
     border-radius: 12px;
+  }
+
+  .dcp-explore-community-card__actions {
+    justify-content: stretch;
+  }
+
+  .dcp-explore-community-card__join,
+  .dcp-explore-community-card__joined {
+    width: 100%;
+    justify-content: center;
   }
 
   .dcp-popular-card {
