@@ -12,6 +12,7 @@ register_asset "stylesheets/community-platform.scss"
 register_asset "stylesheets/community-platform-voting.scss"
 register_asset "stylesheets/community-platform-home.scss"
 register_asset "stylesheets/community-platform-social-discovery.scss"
+register_asset "stylesheets/community-platform-automod.scss"
 
 register_homepage(
   "community-home",
@@ -33,4 +34,11 @@ after_initialize do
   Discourse::Application.routes.append do
     mount ::DiscourseCommunityPlatform::Engine, at: "/community-platform"
   end
+end
+
+on(:post_created) do |post|
+  next unless SiteSetting.community_platform_enabled
+  next if post.topic&.category_id.blank?
+
+  Jobs.enqueue(Jobs::DiscourseCommunityPlatform::EvaluateAutomodPost, post_id: post.id)
 end

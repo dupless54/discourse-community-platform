@@ -1,18 +1,19 @@
 # Discourse Community Platform
 
-A community-platform plugin for Discourse that adds Reddit-inspired communities, membership, moderation, voting, ranking, discovery, and personalized feeds while preserving Discourse core models, permissions, search, and SEO behavior.
+A community-platform plugin for Discourse that adds Reddit-inspired communities, membership, moderation, voting, ranking, discovery, personalized feeds, and community-scoped safety automation while preserving Discourse core models, permissions, search, review, and SEO behavior.
 
-> Status: active development / Phase 3 — Feeds & Discovery
+> Status: active development / Phase 4 — Community Moderation Automation
 
 ## Architecture principles
 
-- Discourse remains the source of truth for users, topics, posts, categories, groups, tags, uploads, notifications, search, and bookmarks.
+- Discourse remains the source of truth for users, topics, posts, categories, groups, tags, uploads, notifications, search, bookmarks, and moderation/review primitives.
 - Communities are a plugin-owned layer mapped to real Discourse categories.
 - Community permissions extend Discourse Guardian/group/category permissions instead of bypassing them.
 - Public content remains compatible with Discourse SEO/crawler behavior; private or restricted content must never leak through plugin endpoints.
 - Do not patch Discourse core files.
 - New public aliases such as `/s/:slug` must not create duplicate indexable copies of the same topic content.
 - User-follow personalization integrates with Discourse Follow when its `UserFollower` API is available instead of creating a competing follow graph.
+- Community automation must remain scoped to the mapped Category and reuse Discourse moderation primitives rather than granting community managers global moderator powers.
 
 ## Implemented foundations
 
@@ -29,6 +30,10 @@ A community-platform plugin for Discourse that adds Reddit-inspired communities,
 - diversified `/explore` discovery feed that prioritizes communities the signed-in user has not joined
 - scheduled Explore community activity scoring stored in cache instead of recalculated during requests
 - recommended community cards and cached community-signal promotion inside `/explore`
+- people discovery sourced from visible cached public activity while preserving Discourse Follow opt-out rules
+- community-scoped AutoModerator phrase rules with `any` / `all` matching
+- manager-only AutoModerator CRUD UI and API
+- matching new community posts are queued through Discourse `PostActionCreator` review primitives instead of being automatically deleted
 
 ### Feed backend contracts
 
@@ -41,12 +46,22 @@ GET /community-platform/feeds/popular.json
 
 All plugin feeds continue to filter candidate content through Discourse visibility/Guardian rules before serialization. Explore recommendation signals are calculated asynchronously; when that cache is cold, topic discovery safely falls back to the existing cached Popular candidate order instead of running an aggregate recommendation query during the request.
 
+### AutoModerator contracts
+
+```text
+GET    /community-platform/communities/:slug/automod-rules.json
+POST   /community-platform/communities/:slug/automod-rules.json
+PATCH  /community-platform/communities/:slug/automod-rules/:id.json
+DELETE /community-platform/communities/:slug/automod-rules/:id.json
+```
+
+AutoModerator rule management is limited to users who can manage that Community. Rules are evaluated only for new posts inside the Community's mapped Discourse Category. The first automation slice is deliberately review-first: a match creates an `inappropriate` flag through the Discourse system user with `queue_for_review: true`; it does not directly delete posts, ban users, or grant global moderation privileges.
+
 ## Roadmap
 
-1. Add social/profile discovery surfaces without duplicating Discourse Follow relationships.
-2. Add AutoModerator and community-scoped moderation automation.
-3. Add community analytics and moderation insights.
-4. Finish responsive polish, accessibility, SEO/crawler validation, and release hardening.
+1. Harden community AutoModerator with audit history, safe additional triggers, and carefully bounded actions.
+2. Add community analytics and moderation insights.
+3. Finish responsive polish, accessibility, SEO/crawler validation, and release hardening.
 
 ## License
 
