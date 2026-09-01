@@ -65,7 +65,17 @@ module ::DiscourseCommunityPlatform
     end
 
     def management_params
-      params.require(:community).permit(:description, :visibility, :icon_emoji, :banner_color, rules: [])
+      params
+        .require(:community)
+        .permit(
+          :description,
+          :visibility,
+          :icon_emoji,
+          :banner_color,
+          :icon_upload_id,
+          :banner_upload_id,
+          rules: [],
+        )
     end
 
     def find_visible_community
