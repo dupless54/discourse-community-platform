@@ -2,6 +2,8 @@
 
 module ::DiscourseCommunityPlatform
   class AutomodRule < ActiveRecord::Base
+    self.table_name = "discourse_community_platform_automod_rules"
+
     MATCH_MODES = %w[any all].freeze
     MAX_NAME_LENGTH = 80
     MAX_TERMS = 20
@@ -43,3 +45,25 @@ module ::DiscourseCommunityPlatform
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: discourse_community_platform_automod_rules
+#
+#  id            :bigint           not null, primary key
+#  enabled       :boolean          default(TRUE), not null
+#  match_mode    :string           default("any"), not null
+#  name          :string           not null
+#  terms         :jsonb            not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  community_id  :bigint           not null
+#  created_by_id :bigint           not null
+#  updated_by_id :bigint           not null
+#
+# Indexes
+#
+#  idx_dcp_automod_rules_community_enabled  (community_id,enabled)
+#  idx_dcp_automod_rules_created_by         (created_by_id)
+#  idx_dcp_automod_rules_updated_by         (updated_by_id)
+#
