@@ -1,5 +1,5 @@
 import Component from "@glimmer/component";
-import FeedNavigation from "discourse/components/community-platform/feed-navigation";
+import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
 import { i18n } from "discourse-i18n";
 
 export default class CommunityPlatformPopularPage extends Component {
