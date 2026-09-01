@@ -27,6 +27,11 @@ module ::DiscourseCommunityPlatform
             .where(id: topic_ids.first(CANDIDATE_TOPIC_LIMIT))
             .includes(:user, :category)
             .index_by(&:id)
+        public_category_ids =
+          Community
+            .where(category_id: topics.values.map(&:category_id), visibility: "public")
+            .pluck(:category_id)
+            .to_h { |category_id| [category_id, true] }
 
         contribution_counts = Hash.new(0)
         ordered_user_ids = []
@@ -34,6 +39,7 @@ module ::DiscourseCommunityPlatform
         topic_ids.first(CANDIDATE_TOPIC_LIMIT).each do |topic_id|
           topic = topics[topic_id]
           next if topic.blank? || topic.user.blank?
+          next unless public_category_ids[topic.category_id]
           next unless @guardian.can_see_topic?(topic)
 
           user_id = topic.user_id
