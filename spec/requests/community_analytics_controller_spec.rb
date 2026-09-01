@@ -53,10 +53,13 @@ RSpec.describe DiscourseCommunityPlatform::CommunityAnalyticsController do
     community = create_community
     cache_snapshot(community)
     sign_in(owner)
-    expect(DiscourseCommunityPlatform::Analytics::CommunityActivity).not_to receive(:rebuild_cache)
+    allow(DiscourseCommunityPlatform::Analytics::CommunityActivity).to receive(:rebuild_cache)
 
     get "/community-platform/communities/#{community.slug}/activity-analytics.json"
 
+    expect(DiscourseCommunityPlatform::Analytics::CommunityActivity).not_to have_received(
+      :rebuild_cache,
+    )
     expect(response.status).to eq(200)
     analytics = response.parsed_body.fetch("community_activity_analytics")
     expect(analytics.fetch("status")).to eq("ready")
