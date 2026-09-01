@@ -4,3 +4,6 @@ en:
     community_platform_allow_user_community_creation: "Allow non-admin users to create communities."
     community_platform_min_trust_level_to_create: "Minimum trust level required for a non-admin user to create a community."
     community_platform_max_communities_per_user: "Maximum number of communities a non-admin user can own."
+  community_platform:
+    homepage:
+      title: "Community Home"

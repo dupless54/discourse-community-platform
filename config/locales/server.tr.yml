@@ -1,0 +1,9 @@
+tr:
+  site_settings:
+    community_platform_enabled: "Discourse Community Platform eklentisini etkinleştir."
+    community_platform_allow_user_community_creation: "Yönetici olmayan kullanıcıların topluluk oluşturmasına izin ver."
+    community_platform_min_trust_level_to_create: "Yönetici olmayan bir kullanıcının topluluk oluşturması için gereken minimum güven seviyesi."
+    community_platform_max_communities_per_user: "Yönetici olmayan bir kullanıcının sahip olabileceği maksimum topluluk sayısı."
+  community_platform:
+    homepage:
+      title: "Topluluk Ana Sayfası"
