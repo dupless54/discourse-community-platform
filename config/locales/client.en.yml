@@ -61,6 +61,10 @@ en:
         recommended_title: "Communities worth exploring"
         recommended_description: "Background activity signals highlight public communities with fresh, active discussions."
         active_topics: "active topics"
+        people_title: "People worth discovering"
+        people_description: "Active contributors from visible public community discussions. Follow actions remain on their normal Discourse profiles through Discourse Follow."
+        recent_public_topics: "recent public topics"
+        open_profile: "Open profile"
         empty_title: "No new communities to explore"
         empty_description: "There are no other active public communities in the current discovery window yet."
       popular:

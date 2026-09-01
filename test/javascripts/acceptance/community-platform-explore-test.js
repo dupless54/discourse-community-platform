@@ -21,6 +21,16 @@ acceptance("Community Platform | explore page", function (needs) {
             recent_topics_count: 6,
           },
         ],
+        recommended_people: [
+          {
+            id: 41,
+            username: "ada",
+            name: "Ada Lovelace",
+            path: "/u/ada",
+            avatar_template: "/user_avatar/example.com/ada/{size}/41_2.png",
+            recent_public_topics_count: 3,
+          },
+        ],
         topics: [
           {
             id: 301,
@@ -46,7 +56,7 @@ acceptance("Community Platform | explore page", function (needs) {
     });
   });
 
-  test("renders cached community recommendations and diversified discovery topics", async function (assert) {
+  test("renders community, people, and topic discovery surfaces", async function (assert) {
     await visit("/explore");
 
     assert.dom(".dcp-feed-navigation").exists();
@@ -66,6 +76,10 @@ acceptance("Community Platform | explore page", function (needs) {
     assert
       .dom(".dcp-explore-community-card__meta")
       .includesText("6 active topics");
+    assert.dom(".dcp-explore-person-card").exists({ count: 1 });
+    assert.dom(".dcp-explore-person-card").hasAttribute("href", "/u/ada");
+    assert.dom(".dcp-explore-person-card__identity strong").hasText("@ada");
+    assert.dom(".dcp-explore-person-card").includesText("3 recent public topics");
     assert.dom(".dcp-explore-card").exists({ count: 1 });
     assert
       .dom(".dcp-explore-card .dcp-popular-card__community")
