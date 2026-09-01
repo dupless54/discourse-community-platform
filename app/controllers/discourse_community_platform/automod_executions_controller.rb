@@ -20,6 +20,12 @@ module ::DiscourseCommunityPlatform
       render json: { automod_executions: executions.map { |execution| serialize_execution(execution) } }
     end
 
+    def insights
+      community = find_manageable_community
+
+      render json: { moderation_insights: Automod::Insights.call(community:) }
+    end
+
     private
 
     def find_manageable_community
