@@ -60,6 +60,44 @@ export default class CommunityPlatformExplorePage extends Component {
         </section>
       {{/if}}
 
+      {{#if @recommendedPeople.length}}
+        <section class="dcp-explore-people" aria-labelledby="dcp-explore-people-title">
+          <header class="dcp-explore-people__heading">
+            <div>
+              <h2 id="dcp-explore-people-title">
+                {{i18n "community_platform.explore.people_title"}}
+              </h2>
+              <p>{{i18n "community_platform.explore.people_description"}}</p>
+            </div>
+          </header>
+
+          <div class="dcp-explore-people-grid">
+            {{#each @recommendedPeople as |person|}}
+              <a class="dcp-explore-person-card" href={{person.path}}>
+                <div class="dcp-explore-person-card__identity">
+                  <span class="dcp-explore-person-card__avatar" aria-hidden="true">
+                    {{person.username.[0]}}
+                  </span>
+                  <div>
+                    <strong>@{{person.username}}</strong>
+                    {{#if person.name}}
+                      <span>{{person.name}}</span>
+                    {{/if}}
+                  </div>
+                </div>
+                <p>
+                  {{person.recent_public_topics_count}}
+                  {{i18n "community_platform.explore.recent_public_topics"}}
+                </p>
+                <span class="dcp-explore-person-card__action">
+                  {{i18n "community_platform.explore.open_profile"}}
+                </span>
+              </a>
+            {{/each}}
+          </div>
+        </section>
+      {{/if}}
+
       <main class="dcp-popular-feed dcp-explore-feed">
         {{#each @topics as |topic|}}
           <article class="dcp-popular-card dcp-explore-card">
