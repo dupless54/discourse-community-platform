@@ -1,4 +1,4 @@
-import { click, fillIn, visit } from "@ember/test-helpers";
+import { click, fillIn, select, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
 
@@ -162,6 +162,8 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
               match_mode: "any",
               target: "replies",
               action: "flag_only",
+              max_account_age_days: 14,
+              max_trust_level: 1,
               terms: ["buy now", "telegram"],
             },
           ],
@@ -198,13 +200,15 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
             match_mode: "any",
             target: "all_posts",
             action: "queue_for_review",
+            max_account_age_days: 7,
+            max_trust_level: 0,
             terms: ["guaranteed profit"],
           },
         })
     );
   });
 
-  test("renders bounded scopes, review actions, audit history, and adds a rule", async function (assert) {
+  test("renders bounded scopes, author conditions, audit history, and adds a rule", async function (assert) {
     await visit("/s/technology");
 
     assert.dom(".dcp-automod-card").exists();
@@ -212,6 +216,8 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
     assert.dom(".dcp-automod-rule").includesText("Spam phrases");
     assert.dom(".dcp-automod-rule").includesText("Replies only");
     assert.dom(".dcp-automod-rule").includesText("Standard Discourse flag");
+    assert.dom(".dcp-automod-rule").includesText("Maximum account age: 14 days");
+    assert.dom(".dcp-automod-rule").includesText("Maximum trust level: TL1");
     assert.dom(".dcp-automod-terms").includesText("telegram");
     assert.dom("[data-test-automod-execution]").exists({ count: 1 });
     assert.dom(".dcp-automod-history").includesText("Standard flag created");
@@ -220,11 +226,15 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
       .dom(".dcp-automod-execution__meta a")
       .hasAttribute("href", "/t/future-of-computing/101/1");
 
-    await fillIn(".dcp-automod-form input", "Scam links");
+    await fillIn('.dcp-automod-form input[type="text"]', "Scam links");
+    await fillIn("[data-test-automod-max-account-age]", "7");
+    await select("[data-test-automod-max-trust-level]", "0");
     await fillIn(".dcp-automod-form textarea", "guaranteed profit");
     await click(".dcp-automod-add");
 
     assert.dom(".dcp-automod-rule").exists({ count: 2 });
     assert.dom(".dcp-automod-rules").includesText("Scam links");
+    assert.dom(".dcp-automod-rules").includesText("Maximum account age: 7 days");
+    assert.dom(".dcp-automod-rules").includesText("Maximum trust level: TL0");
   });
 });
