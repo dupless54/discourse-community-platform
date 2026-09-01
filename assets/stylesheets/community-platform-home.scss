@@ -152,6 +152,11 @@
   font-weight: 700;
 }
 
+.dcp-home-card__context > .dcp-home-card__author {
+  color: var(--primary-medium);
+  font-weight: 600;
+}
+
 .dcp-home-card__source {
   display: inline-flex;
   padding: 0.18rem 0.48rem;
@@ -164,6 +169,11 @@
 .dcp-home-card__source--joined {
   background: var(--tertiary-low);
   color: var(--tertiary-high-or-tertiary);
+}
+
+.dcp-home-card__source--followed {
+  background: var(--highlight-low, var(--primary-very-low));
+  color: var(--primary-high);
 }
 
 .dcp-home-card__source--popular {
