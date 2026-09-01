@@ -28,6 +28,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 ### Fixed
 
 - Direct browser navigation to `/home`, `/following`, `/explore`, and `/popular` now boots the Discourse Ember shell instead of falling through to a Rails routing error.
+- AutoModerator edit re-evaluation now recognizes an existing system `inappropriate` review score even when Discourse has retired the original `PostAction`, preventing duplicate system flags on the same post.
 
 ### Security and privacy
 
