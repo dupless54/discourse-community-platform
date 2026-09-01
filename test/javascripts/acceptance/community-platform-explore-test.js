@@ -8,6 +8,19 @@ acceptance("Community Platform | explore page", function (needs) {
       return helper.response({
         order: "explore",
         personalized: false,
+        recommended_communities: [
+          {
+            id: 12,
+            name: "Research",
+            slug: "research",
+            path: "/s/research",
+            description: "A community for active research discussions.",
+            members_count: 84,
+            icon_emoji: "🔬",
+            banner_color: "334455",
+            recent_topics_count: 6,
+          },
+        ],
         topics: [
           {
             id: 301,
@@ -33,7 +46,7 @@ acceptance("Community Platform | explore page", function (needs) {
     });
   });
 
-  test("renders diversified discovery topics and marks Explore active", async function (assert) {
+  test("renders cached community recommendations and diversified discovery topics", async function (assert) {
     await visit("/explore");
 
     assert.dom(".dcp-feed-navigation").exists();
@@ -45,6 +58,14 @@ acceptance("Community Platform | explore page", function (needs) {
       .hasAttribute("href", "/explore");
     assert.dom('[data-feed="popular"]').hasAttribute("href", "/popular");
     assert.dom(".dcp-explore-hero h1").hasText("Explore");
+    assert.dom(".dcp-explore-community-card").exists({ count: 1 });
+    assert
+      .dom(".dcp-explore-community-card")
+      .hasAttribute("href", "/s/research");
+    assert.dom(".dcp-explore-community-card__top strong").hasText("s/research");
+    assert
+      .dom(".dcp-explore-community-card__meta")
+      .includesText("6 active topics");
     assert.dom(".dcp-explore-card").exists({ count: 1 });
     assert
       .dom(".dcp-explore-card .dcp-popular-card__community")

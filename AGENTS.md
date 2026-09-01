@@ -32,15 +32,16 @@ Implemented foundations:
 - Home blends joined communities, followed users through Discourse Follow, and public fallback topics.
 - Following contains only joined-community and followed-user content and returns no personalized data to guests.
 - Shared Home/Following/Explore/Popular navigation uses Discourse UI-kit route primitives.
-- Explore prioritizes active public topics from communities the signed-in user has not joined and applies a per-community diversity cap.
+- Explore excludes joined communities, applies a per-community diversity cap, and keeps every candidate behind Guardian visibility checks.
+- Explore community activity signals are computed by a scheduled job and stored in cache; requests never rebuild the aggregate ranking synchronously.
+- Cached Explore signals promote recommended public communities and influence topic ordering while preserving the existing Popular candidate fallback.
 
 Next slices:
 
-1. Improve Explore signals through cached/background recommendation inputs rather than expensive request-time scans.
-2. Add profile/social discovery surfaces by extending Discourse and Discourse Follow rather than duplicating their models.
-3. Add AutoModerator rules and community-scoped automation.
-4. Add community analytics/moderation insights.
-5. Perform responsive, accessibility, SEO/crawler, and release hardening.
+1. Add profile/social discovery surfaces by extending Discourse and Discourse Follow rather than duplicating their models.
+2. Add AutoModerator rules and community-scoped automation.
+3. Add community analytics/moderation insights.
+4. Perform responsive, accessibility, SEO/crawler, and release hardening.
 
 ## SEO contract
 

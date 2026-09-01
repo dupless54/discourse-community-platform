@@ -9,9 +9,13 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::ExploreTopics do
     SiteSetting.community_platform_min_trust_level_to_create = 1
     SiteSetting.community_platform_max_communities_per_user = 6
     Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_KEY)
   end
 
-  after { Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY) }
+  after do
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_KEY)
+  end
 
   def create_community(name:, slug:)
     DiscourseCommunityPlatform::Communities::Create.call(
@@ -46,6 +50,25 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::ExploreTopics do
     expect(topic_ids).to include(technology_topics[0].id, technology_topics[1].id, gaming_topic.id)
     expect(topic_ids).not_to include(technology_topics[2].id)
     expect(result.count { |topic| topic.dig(:community, :slug) == "technology" }).to eq(2)
+  end
+
+  it "uses cached community signals to promote discovery without rebuilding them on request" do
+    technology = create_community(name: "Technology", slug: "technology")
+    science = create_community(name: "Science", slug: "science")
+    technology_topic = Fabricate(:topic, category: technology.category, user: owner)
+    science_topic = Fabricate(:topic, category: science.category, user: owner)
+    cache_candidates(technology_topic, science_topic)
+    Discourse.cache.write(
+      DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_KEY,
+      [[science.id, 3, 50.0], [technology.id, 2, 20.0]],
+      expires_in: DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_TTL,
+    )
+    allow(DiscourseCommunityPlatform::Feeds::ExploreCommunities).to receive(:rebuild_cache)
+
+    result = described_class.call(guardian: Guardian.new(member))
+
+    expect(result.map { |topic| topic[:id] }).to eq([science_topic.id, technology_topic.id])
+    expect(DiscourseCommunityPlatform::Feeds::ExploreCommunities).not_to have_received(:rebuild_cache)
   end
 
   it "filters cached public candidates through Guardian before serialization" do

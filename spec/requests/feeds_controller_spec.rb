@@ -9,9 +9,13 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     SiteSetting.community_platform_min_trust_level_to_create = 1
     SiteSetting.community_platform_max_communities_per_user = 3
     Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_KEY)
   end
 
-  after { Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY) }
+  after do
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_KEY)
+  end
 
   it "returns cached popular topic summaries without duplicating Discourse topic content" do
     community =
@@ -34,7 +38,7 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["topics"].first).not_to have_key("posts")
   end
 
-  it "returns a public Explore payload without duplicating topic content" do
+  it "returns cached community recommendations with the public Explore payload" do
     community =
       DiscourseCommunityPlatform::Communities::Create.call(
         user: owner,
@@ -46,6 +50,11 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
       [topic.id],
       expires_in: DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_TTL,
     )
+    Discourse.cache.write(
+      DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_KEY,
+      [[community.id, 3, 20.0]],
+      expires_in: DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_TTL,
+    )
 
     get "/community-platform/feeds/explore.json"
 
@@ -53,6 +62,8 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     payload = response.parsed_body
     expect(payload["order"]).to eq("explore")
     expect(payload["personalized"]).to eq(false)
+    expect(payload["recommended_communities"].first["id"]).to eq(community.id)
+    expect(payload["recommended_communities"].first["recent_topics_count"]).to eq(3)
     expect(payload["topics"].first["id"]).to eq(topic.id)
     expect(payload["topics"].first.dig("community", "slug")).to eq("gaming")
     expect(payload["topics"].first).not_to have_key("raw")
