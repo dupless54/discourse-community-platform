@@ -263,17 +263,28 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
     );
   });
 
-  test("renders activity and moderation insights, bounded rules, audit history, and adds a rule", async function (assert) {
+  test("renders accessible insights, bounded rules, audit history, and adds a rule", async function (assert) {
     await visit("/s/technology");
 
-    assert.dom("[data-test-community-activity-insights]").exists();
+    assert
+      .dom("[data-test-community-activity-insights]")
+      .hasAttribute("aria-labelledby", "dcp-community-activity-insights-title");
+    assert
+      .dom("#dcp-community-activity-insights-title")
+      .hasText("Activity insights");
+    assert.dom(".dcp-community-activity-insights__table").hasAttribute("role", "table");
+    assert.dom('.dcp-community-activity-insights__row[role="row"]').exists({ count: 6 });
+    assert.dom('[role="rowheader"]').exists({ count: 5 });
     assert.dom("[data-test-community-activity-insights]").includesText("4");
     assert.dom("[data-test-community-activity-insights]").includesText("17");
     assert.dom("[data-test-community-activity-insights]").includesText("18");
     assert.dom("[data-test-community-activity-insights]").includesText("73");
     assert.dom("[data-test-community-activity-insights]").includesText("31");
 
-    assert.dom("[data-test-moderation-insights]").exists();
+    assert
+      .dom("[data-test-moderation-insights]")
+      .hasAttribute("aria-labelledby", "dcp-moderation-insights-title");
+    assert.dom("#dcp-moderation-insights-title").hasText("Moderation insights");
     assert.dom("[data-test-moderation-insights]").includesText("8");
     assert.dom("[data-test-moderation-insights]").includesText("21");
     assert.dom("[data-test-moderation-insights]").includesText("Spam phrases");
