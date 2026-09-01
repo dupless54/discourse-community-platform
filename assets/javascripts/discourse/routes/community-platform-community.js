@@ -11,6 +11,7 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
     let automodRules = [];
     let automodExecutions = [];
     let moderationInsights = null;
+    let activityAnalytics = null;
 
     if (payload.community?.can_manage) {
       try {
@@ -39,6 +40,16 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
       } catch {
         moderationInsights = null;
       }
+
+      try {
+        const analyticsPayload = await ajax(
+          `/community-platform/communities/${slug}/activity-analytics.json`
+        );
+        activityAnalytics =
+          analyticsPayload.community_activity_analytics || null;
+      } catch {
+        activityAnalytics = null;
+      }
     }
 
     return {
@@ -48,6 +59,7 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
       automodRules,
       automodExecutions,
       moderationInsights,
+      activityAnalytics,
     };
   }
 
