@@ -16,6 +16,16 @@ module ::DiscourseCommunityPlatform
       render json: Feeds::FollowingTopics.call(guardian:, limit:)
     end
 
+    def explore
+      limit = params[:limit].presence || Feeds::ExploreTopics::DEFAULT_LIMIT
+
+      render json: {
+               order: "explore",
+               personalized: current_user.present?,
+               topics: Feeds::ExploreTopics.call(guardian:, limit:),
+             }
+    end
+
     def popular
       limit = params[:limit].presence || Feeds::PopularTopics::DEFAULT_LIMIT
 
