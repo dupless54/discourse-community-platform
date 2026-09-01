@@ -17,6 +17,11 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
     )
   end
 
+  def expect_management_headers
+    expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+    expect(response.headers["Cache-Control"]).to include("private", "no-store")
+  end
+
   it "lets a community manager create, update, list, and remove rules" do
     community = create_community
     sign_in(owner)
@@ -35,6 +40,7 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
          }
 
     expect(response.status).to eq(201)
+    expect_management_headers
     rule = response.parsed_body.fetch("automod_rule")
     expect(rule["terms"]).to eq(["buy now", "telegram"])
     expect(rule["enabled"]).to eq(true)
@@ -56,6 +62,7 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
           }
 
     expect(response.status).to eq(200)
+    expect_management_headers
     updated = response.parsed_body.fetch("automod_rule")
     expect(updated["enabled"]).to eq(false)
     expect(updated["match_mode"]).to eq("all")
@@ -67,11 +74,13 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
     get "/community-platform/communities/#{community.slug}/automod-rules.json"
 
     expect(response.status).to eq(200)
+    expect_management_headers
     expect(response.parsed_body.fetch("automod_rules").length).to eq(1)
 
     delete "/community-platform/communities/#{community.slug}/automod-rules/#{rule.fetch("id")}.json"
 
     expect(response.status).to eq(204)
+    expect_management_headers
     expect(DiscourseCommunityPlatform::AutomodRule.where(community_id: community.id)).to be_empty
   end
 
@@ -90,6 +99,7 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
          }
 
     expect(response.status).to eq(422)
+    expect_management_headers
     expect(DiscourseCommunityPlatform::AutomodRule.count).to eq(0)
   end
 
@@ -108,6 +118,7 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
          }
 
     expect(response.status).to eq(422)
+    expect_management_headers
     expect(DiscourseCommunityPlatform::AutomodRule.count).to eq(0)
   end
 
@@ -117,11 +128,13 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
 
     get "/community-platform/communities/#{community.slug}/automod-rules.json"
     expect(response.status).to eq(403)
+    expect_management_headers
 
     post "/community-platform/communities/#{community.slug}/automod-rules.json",
          params: { automod_rule: { name: "Hijack", terms: ["anything"] } }
 
     expect(response.status).to eq(403)
+    expect_management_headers
     expect(DiscourseCommunityPlatform::AutomodRule.count).to eq(0)
   end
 
@@ -141,6 +154,7 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
          params: { automod_rule: { name: "Empty", terms: [] } }
 
     expect(response.status).to eq(422)
+    expect_management_headers
     expect(DiscourseCommunityPlatform::AutomodRule.count).to eq(0)
   end
 end
