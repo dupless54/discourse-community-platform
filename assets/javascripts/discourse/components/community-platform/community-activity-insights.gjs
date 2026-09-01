@@ -17,6 +17,7 @@ export default class CommunityPlatformCommunityActivityInsights extends Componen
   <template>
     <section
       class="dcp-sidebar-card dcp-community-activity-insights"
+      aria-labelledby="dcp-community-activity-insights-title"
       data-test-community-activity-insights
     >
       <div class="dcp-section-heading dcp-section-heading--compact">
@@ -24,7 +25,9 @@ export default class CommunityPlatformCommunityActivityInsights extends Componen
           <p class="dcp-eyebrow">
             {{i18n "community_platform.community_activity_insights.eyebrow"}}
           </p>
-          <h2>{{i18n "community_platform.community_activity_insights.title"}}</h2>
+          <h2 id="dcp-community-activity-insights-title">
+            {{i18n "community_platform.community_activity_insights.title"}}
+          </h2>
         </div>
       </div>
 
@@ -33,45 +36,66 @@ export default class CommunityPlatformCommunityActivityInsights extends Componen
           {{i18n "community_platform.community_activity_insights.description"}}
         </p>
 
-        <div class="dcp-community-activity-insights__table">
-          <div class="dcp-community-activity-insights__row dcp-community-activity-insights__row--header">
-            <span></span>
-            <strong>{{i18n "community_platform.community_activity_insights.window_7d"}}</strong>
-            <strong>{{i18n "community_platform.community_activity_insights.window_30d"}}</strong>
+        <div
+          class="dcp-community-activity-insights__table"
+          role="table"
+          aria-labelledby="dcp-community-activity-insights-title"
+        >
+          <div
+            class="dcp-community-activity-insights__row dcp-community-activity-insights__row--header"
+            role="row"
+          >
+            <span aria-hidden="true"></span>
+            <strong role="columnheader">
+              {{i18n "community_platform.community_activity_insights.window_7d"}}
+            </strong>
+            <strong role="columnheader">
+              {{i18n "community_platform.community_activity_insights.window_30d"}}
+            </strong>
           </div>
 
-          <div class="dcp-community-activity-insights__row">
-            <span>{{i18n "community_platform.community_activity_insights.new_topics"}}</span>
-            <strong>{{this.sevenDays.new_topics}}</strong>
-            <strong>{{this.thirtyDays.new_topics}}</strong>
+          <div class="dcp-community-activity-insights__row" role="row">
+            <span role="rowheader">
+              {{i18n "community_platform.community_activity_insights.new_topics"}}
+            </span>
+            <strong role="cell">{{this.sevenDays.new_topics}}</strong>
+            <strong role="cell">{{this.thirtyDays.new_topics}}</strong>
           </div>
 
-          <div class="dcp-community-activity-insights__row">
-            <span>{{i18n "community_platform.community_activity_insights.posts"}}</span>
-            <strong>{{this.sevenDays.posts}}</strong>
-            <strong>{{this.thirtyDays.posts}}</strong>
+          <div class="dcp-community-activity-insights__row" role="row">
+            <span role="rowheader">
+              {{i18n "community_platform.community_activity_insights.posts"}}
+            </span>
+            <strong role="cell">{{this.sevenDays.posts}}</strong>
+            <strong role="cell">{{this.thirtyDays.posts}}</strong>
           </div>
 
-          <div class="dcp-community-activity-insights__row">
-            <span>{{i18n "community_platform.community_activity_insights.replies"}}</span>
-            <strong>{{this.sevenDays.replies}}</strong>
-            <strong>{{this.thirtyDays.replies}}</strong>
+          <div class="dcp-community-activity-insights__row" role="row">
+            <span role="rowheader">
+              {{i18n "community_platform.community_activity_insights.replies"}}
+            </span>
+            <strong role="cell">{{this.sevenDays.replies}}</strong>
+            <strong role="cell">{{this.thirtyDays.replies}}</strong>
           </div>
 
-          <div class="dcp-community-activity-insights__row">
-            <span>{{i18n "community_platform.community_activity_insights.active_topics"}}</span>
-            <strong>{{this.sevenDays.active_topics}}</strong>
-            <strong>{{this.thirtyDays.active_topics}}</strong>
+          <div class="dcp-community-activity-insights__row" role="row">
+            <span role="rowheader">
+              {{i18n "community_platform.community_activity_insights.active_topics"}}
+            </span>
+            <strong role="cell">{{this.sevenDays.active_topics}}</strong>
+            <strong role="cell">{{this.thirtyDays.active_topics}}</strong>
           </div>
 
-          <div class="dcp-community-activity-insights__row">
-            <span>{{i18n "community_platform.community_activity_insights.contributors"}}</span>
-            <strong>{{this.sevenDays.contributors}}</strong>
-            <strong>{{this.thirtyDays.contributors}}</strong>
+          <div class="dcp-community-activity-insights__row" role="row">
+            <span role="rowheader">
+              {{i18n "community_platform.community_activity_insights.contributors"}}
+            </span>
+            <strong role="cell">{{this.sevenDays.contributors}}</strong>
+            <strong role="cell">{{this.thirtyDays.contributors}}</strong>
           </div>
         </div>
       {{else}}
-        <p class="dcp-community-activity-insights__warming">
+        <p class="dcp-community-activity-insights__warming" role="status">
           {{i18n "community_platform.community_activity_insights.warming"}}
         </p>
       {{/if}}

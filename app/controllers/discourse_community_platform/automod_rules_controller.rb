@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 module ::DiscourseCommunityPlatform
-  class AutomodRulesController < ::ApplicationController
-    requires_plugin PLUGIN_NAME
-
-    before_action :ensure_logged_in
-
+  class AutomodRulesController < ManagementController
     def index
       community = find_manageable_community
       rules = AutomodRule.where(community_id: community.id).order(:id)

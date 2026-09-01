@@ -49,6 +49,11 @@ RSpec.describe DiscourseCommunityPlatform::CommunityAnalyticsController do
     )
   end
 
+  def expect_management_headers
+    expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+    expect(response.headers["Cache-Control"]).to include("private", "no-store")
+  end
+
   it "returns cached aggregate activity only to a community manager" do
     community = create_community
     cache_snapshot(community)
@@ -61,6 +66,7 @@ RSpec.describe DiscourseCommunityPlatform::CommunityAnalyticsController do
       :rebuild_cache,
     )
     expect(response.status).to eq(200)
+    expect_management_headers
     analytics = response.parsed_body.fetch("community_activity_analytics")
     expect(analytics.fetch("status")).to eq("ready")
     expect(analytics.fetch("last_7_days")).to include(
@@ -84,6 +90,7 @@ RSpec.describe DiscourseCommunityPlatform::CommunityAnalyticsController do
     get "/community-platform/communities/#{community.slug}/activity-analytics.json"
 
     expect(response.status).to eq(403)
+    expect_management_headers
   end
 
   it "requires authentication" do
@@ -92,5 +99,6 @@ RSpec.describe DiscourseCommunityPlatform::CommunityAnalyticsController do
     get "/community-platform/communities/#{community.slug}/activity-analytics.json"
 
     expect(response.status).to eq(403)
+    expect_management_headers
   end
 end

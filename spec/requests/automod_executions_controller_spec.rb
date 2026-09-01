@@ -43,6 +43,11 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
     )
   end
 
+  def expect_management_headers
+    expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+    expect(response.headers["Cache-Control"]).to include("private", "no-store")
+  end
+
   it "returns manager-only AutoModerator audit history" do
     community = create_community
     execution = create_execution(community:)
@@ -51,6 +56,7 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
     get "/community-platform/communities/#{community.slug}/automod-executions.json"
 
     expect(response.status).to eq(200)
+    expect_management_headers
     item = response.parsed_body.fetch("automod_executions").first
     expect(item).to include(
       "id" => execution.id,
@@ -71,6 +77,7 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
     get "/community-platform/communities/#{community.slug}/moderation-insights.json"
 
     expect(response.status).to eq(200)
+    expect_management_headers
     insights = response.parsed_body.fetch("moderation_insights")
     expect(insights.dig("last_7_days", "executions")).to eq(1)
     expect(insights.dig("last_30_days", "unique_posts")).to eq(1)
@@ -118,9 +125,11 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
 
     get "/community-platform/communities/#{community.slug}/automod-executions.json"
     expect(response.status).to eq(403)
+    expect_management_headers
 
     get "/community-platform/communities/#{community.slug}/moderation-insights.json"
     expect(response.status).to eq(403)
+    expect_management_headers
   end
 
   it "requires authentication for history and insights" do
@@ -128,8 +137,10 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
 
     get "/community-platform/communities/#{community.slug}/automod-executions.json"
     expect(response.status).to eq(403)
+    expect_management_headers
 
     get "/community-platform/communities/#{community.slug}/moderation-insights.json"
     expect(response.status).to eq(403)
+    expect_management_headers
   end
 end

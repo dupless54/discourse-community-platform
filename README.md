@@ -40,6 +40,8 @@ A community-platform plugin for Discourse that adds Reddit-inspired communities,
 - manager-only AutoModerator audit history with rule snapshots, post references, create/edit triggers, review outcomes, SHA-256 content deduplication, and 90-day retention
 - manager-only moderation insights derived from bounded 7/30-day AutoModerator audit aggregates without returning post content or user metadata
 - manager-only 7/30-day community activity analytics for new topics, posts, replies, active topics, and unique contributors, rebuilt in background cache jobs rather than request-time aggregate scans
+- authenticated management JSON surfaces hardened with `X-Robots-Tag: noindex, nofollow` and `Cache-Control: private, no-store`
+- manager insight regions labeled for assistive technology, with activity metrics exposed through explicit table/row/header semantics
 
 ### Feed backend contracts
 
@@ -81,10 +83,12 @@ A successful match always stays inside Discourse's normal review system. `queue_
 
 Moderation insights query only the plugin-owned audit table, which is already bounded by 90-day retention and indexed by community/time. The manager-only response summarizes 7- and 30-day execution counts, distinct audited posts, outcome/trigger distributions, and the five most-triggered rule-name snapshots. It does not serialize post IDs, post URLs, usernames, raw post content, email/IP/device data, or private community content.
 
+Management-only AutoModerator and analytics endpoints are additionally marked `noindex, nofollow` and `private, no-store`, so authenticated management payloads are neither crawler targets nor reusable shared-cache responses. These headers are additive hardening and do not replace Guardian or community-manager authorization.
+
 ## Roadmap
 
 1. Expand AutoModerator only through additional explicit, bounded, review-first conditions/actions with dedicated tests and security review.
-2. Finish responsive polish, accessibility, SEO/crawler validation, and release hardening.
+2. Continue responsive polish, accessibility, SEO/crawler validation, and release hardening.
 3. Prepare a first release candidate after the remaining hardening gates are green.
 
 ## License
