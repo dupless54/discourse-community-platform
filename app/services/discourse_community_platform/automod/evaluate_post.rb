@@ -18,7 +18,7 @@ module ::DiscourseCommunityPlatform
 
       def call
         return if @post.blank? || @post.deleted_at.present? || @post.topic.blank?
-        return unless AutomodExecution::TRIGGERS.include?(@trigger)
+        return if AutomodExecution::TRIGGERS.exclude?(@trigger)
         return if @post.topic.archetype == Archetype.private_message
         return if @post.user_id == Discourse.system_user.id
 
