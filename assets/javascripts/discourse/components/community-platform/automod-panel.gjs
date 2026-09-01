@@ -1,8 +1,10 @@
 import Component from "@glimmer/component";
+import { fn } from "@ember/helper";
 import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import { ajax } from "discourse/lib/ajax";
+import { eq } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
 
 export default class CommunityPlatformAutomodPanel extends Component {
@@ -50,7 +52,7 @@ export default class CommunityPlatformAutomodPanel extends Component {
     this.errorMessage = null;
 
     try {
-      const response = await ajax(this.rulesUrl, {
+      const response = await ajax(`${this.rulesUrl}.json`, {
         type: "POST",
         data: {
           automod_rule: {
