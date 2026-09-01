@@ -34,7 +34,7 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
     create_rule(community:, terms: ["buy now", "crypto"])
     topic = Fabricate(:topic, category: community.category, user: author)
     post = Fabricate(:post, topic:, user: author, raw: "Best crypto deal — buy now")
-    creator = double("post_action_creator", perform: true)
+    creator = instance_double(PostActionCreator, perform: true)
     allow(PostActionCreator).to receive(:new).and_return(creator)
 
     described_class.call(post:)
