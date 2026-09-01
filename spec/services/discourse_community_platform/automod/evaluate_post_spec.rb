@@ -17,12 +17,21 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
     )
   end
 
-  def create_rule(community:, terms:, match_mode: "any", enabled: true)
+  def create_rule(
+    community:,
+    terms:,
+    match_mode: "any",
+    enabled: true,
+    target: "all_posts",
+    action: "queue_for_review"
+  )
     DiscourseCommunityPlatform::AutomodRule.create!(
       community:,
       name: "Keyword guard",
       enabled:,
       match_mode:,
+      target:,
+      action:,
       terms:,
       created_by: owner,
       updated_by: owner,
@@ -67,6 +76,38 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
       outcome: "queued_for_review",
     )
     expect(execution.content_sha256).to eq(Digest::SHA256.hexdigest(post.raw))
+  end
+
+  it "uses a standard Discourse flag when the bounded action is flag_only" do
+    community = create_community(name: "Flag only", slug: "flag-only")
+    create_rule(community:, terms: ["blocked phrase"], action: "flag_only")
+    topic = Fabricate(:topic, category: community.category, user: author)
+    post = Fabricate(:post, topic:, user: author, raw: "blocked phrase")
+    creator = successful_creator
+    allow(PostActionCreator).to receive(:new).and_return(creator)
+
+    described_class.call(post:)
+
+    expect(PostActionCreator).to have_received(:new).with(
+      Discourse.system_user,
+      post,
+      PostActionType.types[:inappropriate],
+      hash_including(queue_for_review: false),
+    )
+    expect(DiscourseCommunityPlatform::AutomodExecution.last.outcome).to eq("flagged_for_review")
+  end
+
+  it "does not apply a reply-only rule to the topic starter" do
+    community = create_community(name: "Replies", slug: "replies")
+    create_rule(community:, terms: ["blocked phrase"], target: "replies")
+    topic = Fabricate(:topic, category: community.category, user: author)
+    post = Fabricate(:post, topic:, user: author, raw: "blocked phrase", post_number: 1)
+    allow(PostActionCreator).to receive(:new)
+
+    described_class.call(post:)
+
+    expect(PostActionCreator).not_to have_received(:new)
+    expect(DiscourseCommunityPlatform::AutomodExecution.where(post_id: post.id)).to be_empty
   end
 
   it "records an edited matching post that was already queued without creating another flag" do
