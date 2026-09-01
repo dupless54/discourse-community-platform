@@ -76,6 +76,40 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       expect(body["banner_url"]).to eq(banner.url)
     end
 
+    it "keeps secure branding urls behind the current Guardian upload boundary" do
+      logo =
+        Fabricate(
+          :upload,
+          user: owner,
+          original_filename: "secure-community-logo.png",
+          extension: "png",
+        )
+      banner =
+        Fabricate(
+          :upload,
+          user: owner,
+          original_filename: "secure-community-banner.jpg",
+          extension: "jpg",
+        )
+      logo.update!(secure: true)
+      banner.update!(secure: true)
+      community.update!(icon_upload: logo, banner_upload: banner)
+      sign_in(owner)
+
+      guardian = Guardian.new(owner)
+      expect(guardian.can_see_upload?(logo)).to eq(false)
+      expect(guardian.can_see_upload?(banner)).to eq(false)
+
+      get "/community-platform/communities/#{community.slug}.json"
+
+      expect(response.status).to eq(200)
+      body = response.parsed_body.fetch("community")
+      expect(body["icon_upload_id"]).to eq(logo.id)
+      expect(body["banner_upload_id"]).to eq(banner.id)
+      expect(body["icon_url"]).to be_nil
+      expect(body["banner_url"]).to be_nil
+    end
+
     it "does not leak community metadata when Discourse category permissions deny access" do
       category.set_permissions(private_group => :full)
       category.save!
