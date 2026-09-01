@@ -11,6 +11,12 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::FollowingTopics do
     SiteSetting.community_platform_max_communities_per_user = 8
   end
 
+  after do
+    if @created_user_follower_constant && Object.const_defined?(:UserFollower, false)
+      Object.send(:remove_const, :UserFollower)
+    end
+  end
+
   def create_community(name:, slug:, visibility: "public")
     DiscourseCommunityPlatform::Communities::Create.call(
       user: owner,
@@ -19,7 +25,11 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::FollowingTopics do
   end
 
   def enable_follow_integration_with(*topics)
-    stub_const(Object, :UserFollower, Class.new)
+    unless Object.const_defined?(:UserFollower, false)
+      Object.const_set(:UserFollower, Class.new)
+      @created_user_follower_constant = true
+    end
+
     UserFollower.stubs(:topics_for).returns(topics)
     SiteSetting.stubs(:discourse_follow_enabled).returns(true)
   end
