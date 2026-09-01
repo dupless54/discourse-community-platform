@@ -1,5 +1,6 @@
 import Component from "@glimmer/component";
 import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
+import TopicPreview from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-preview";
 import { i18n } from "discourse-i18n";
 
 export default class CommunityPlatformPopularPage extends Component {
@@ -28,6 +29,7 @@ export default class CommunityPlatformPopularPage extends Component {
               <a class="dcp-popular-card__title" href={{topic.path}}>
                 {{topic.title}}
               </a>
+              <TopicPreview @topic={{topic}} />
               <div class="dcp-topic-card__meta">
                 <span>{{topic.posts_count}} {{i18n "community_platform.posts"}}</span>
                 <span>{{topic.views}} {{i18n "community_platform.views"}}</span>
