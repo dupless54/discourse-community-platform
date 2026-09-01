@@ -32,7 +32,7 @@ module ::DiscourseCommunityPlatform
           PostActionType.types[:inappropriate],
           message:
             I18n.t(
-              "discourse_community_platform.automod.flag_reason",
+              "community_platform.automod.flag_reason",
               community: community.name,
               rule: matched_rule.name,
             ),
