@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Community feed identity" do
+RSpec.describe DiscourseCommunityPlatform::Feeds::PopularTopics do
   fab!(:owner) { Fabricate(:user, trust_level: 1) }
   fab!(:member, :user)
 
