@@ -38,6 +38,7 @@ end
 
 on(:post_created) do |post|
   next unless SiteSetting.community_platform_enabled
+  next if post.topic&.category_id.blank?
 
-  ::DiscourseCommunityPlatform::Automod::EvaluatePost.call(post:)
+  Jobs.enqueue(Jobs::DiscourseCommunityPlatform::EvaluateAutomodPost, post_id: post.id)
 end
