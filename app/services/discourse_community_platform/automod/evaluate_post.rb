@@ -104,11 +104,23 @@ module ::DiscourseCommunityPlatform
       end
 
       def already_flagged?
-        PostAction.exists?(
-          post_id: @post.id,
-          user_id: Discourse.system_user.id,
-          post_action_type_id: PostActionType.types[:inappropriate],
-          deleted_at: nil,
+        inappropriate_type_id = PostActionType.types[:inappropriate]
+        system_user_id = Discourse.system_user.id
+
+        return true if
+          PostAction.exists?(
+            post_id: @post.id,
+            user_id: system_user_id,
+            post_action_type_id: inappropriate_type_id,
+            deleted_at: nil,
+          )
+
+        reviewable = ReviewableFlaggedPost.find_by(target: @post)
+        return false if reviewable.blank?
+
+        reviewable.reviewable_scores.exists?(
+          user_id: system_user_id,
+          reviewable_score_type: inappropriate_type_id,
         )
       end
     end
