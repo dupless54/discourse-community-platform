@@ -4,8 +4,8 @@ module ::DiscourseCommunityPlatform
   class ManagementController < ::ApplicationController
     requires_plugin PLUGIN_NAME
 
-    before_action :ensure_logged_in
     before_action :set_management_response_headers
+    before_action :ensure_logged_in
 
     private
 
