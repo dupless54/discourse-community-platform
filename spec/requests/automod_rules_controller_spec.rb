@@ -28,6 +28,8 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
              match_mode: "any",
              target: "replies",
              action: "flag_only",
+             max_account_age_days: 14,
+             max_trust_level: 1,
              terms: ["  BUY NOW ", "telegram", "telegram"],
            },
          }
@@ -38,6 +40,8 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
     expect(rule["enabled"]).to eq(true)
     expect(rule["target"]).to eq("replies")
     expect(rule["action"]).to eq("flag_only")
+    expect(rule["max_account_age_days"]).to eq(14)
+    expect(rule["max_trust_level"]).to eq(1)
 
     patch "/community-platform/communities/#{community.slug}/automod-rules/#{rule.fetch("id")}.json",
           params: {
@@ -46,6 +50,8 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
               match_mode: "all",
               target: "topic_starters",
               action: "queue_for_review",
+              max_account_age_days: 7,
+              max_trust_level: 0,
             },
           }
 
@@ -55,6 +61,8 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
     expect(updated["match_mode"]).to eq("all")
     expect(updated["target"]).to eq("topic_starters")
     expect(updated["action"]).to eq("queue_for_review")
+    expect(updated["max_account_age_days"]).to eq(7)
+    expect(updated["max_trust_level"]).to eq(0)
 
     get "/community-platform/communities/#{community.slug}/automod-rules.json"
 
@@ -65,6 +73,24 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
 
     expect(response.status).to eq(204)
     expect(DiscourseCommunityPlatform::AutomodRule.where(community_id: community.id)).to be_empty
+  end
+
+  it "rejects author conditions outside the bounded ranges" do
+    community = create_community
+    sign_in(owner)
+
+    post "/community-platform/communities/#{community.slug}/automod-rules.json",
+         params: {
+           automod_rule: {
+             name: "Unsafe conditions",
+             max_account_age_days: 9999,
+             max_trust_level: 99,
+             terms: ["blocked phrase"],
+           },
+         }
+
+    expect(response.status).to eq(422)
+    expect(DiscourseCommunityPlatform::AutomodRule.count).to eq(0)
   end
 
   it "rejects unknown target and action values" do

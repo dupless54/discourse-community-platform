@@ -23,6 +23,8 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 15. AutoModerator audit history is management data. Preserve rule-name snapshots when rules are later deleted, do not expose the history endpoint to ordinary community members or crawlers, and keep retention bounded rather than allowing unbounded audit-table growth.
 16. AutoModerator trigger/target options must come from explicit allowlists. Current post targets are `all_posts`, `topic_starters`, and `replies`; do not add arbitrary executable conditions through user input.
 17. AutoModerator actions must remain review-first. Current actions are `queue_for_review` and `flag_only`, both implemented through Discourse `PostActionCreator`; do not silently turn a community rule into delete, ban, silence, or global moderation authority.
+18. AutoModerator author/account conditions must remain optional, explicit, and bounded. Current conditions are `max_account_age_days` (1–365) and `max_trust_level` (a current Discourse `TrustLevel.levels` value). Do not extend this surface to email, IP address, device data, sensitive profile fields, or arbitrary executable predicates.
+19. Author conditions only narrow phrase-rule eligibility. They must never create an action by themselves, and when multiple author conditions are present all configured conditions must match.
 
 ## Current phase — Community Moderation Automation
 
@@ -47,18 +49,20 @@ Implemented foundations:
 - AutoModerator evaluates only posts whose `topic.category_id` maps to the configured Community.
 - AutoModerator phrase matching uses normalized bounded term arrays with `any` and `all` modes; arbitrary user regex is intentionally not supported.
 - Rules may target all posts, topic starters only, or replies only.
+- Rules may optionally require the author account to be no older than 1–365 days and/or the current author trust level to be at or below an allowed Discourse trust level.
+- Author conditions use only `User#created_at` and `User#trust_level`; leaving both unset preserves the original all-author behavior.
 - New posts and meaningful `post_edited` content changes enqueue background AutoModerator evaluation jobs.
 - Per-post AutoModerator evaluation is serialized with `DistributedMutex` and identical rule/post/content SHA-256 combinations are deduplicated.
 - A matching post is sent to the normal Discourse review flow via `PostActionCreator`, `Discourse.system_user`, and the `inappropriate` flag type.
 - `queue_for_review` keeps the existing priority review behavior; `flag_only` creates a standard Discourse flag with `queue_for_review: false` and therefore does not force the priority hiding path.
 - Manager-only execution history records rule-name snapshots, post references, create/edit triggers, and `queued_for_review` / `flagged_for_review` / `already_queued` outcomes.
 - Audit UI returns the latest 50 executions and a daily scheduled job removes records older than 90 days.
-- The current AutoModerator slice does not auto-delete content, ban/silence users, run arbitrary regex, or elevate community managers to global staff.
+- The current AutoModerator slice does not auto-delete content, ban/silence users, run arbitrary regex, inspect email/IP/device data, or elevate community managers to global staff.
 
 Next slices:
 
-1. Add carefully bounded author/account conditions while keeping review-first defaults and avoiding arbitrary regex execution.
-2. Add community analytics/moderation insights.
+1. Add community analytics/moderation insights without bypassing Guardian or leaking private community information.
+2. Expand AutoModerator only with explicit bounded conditions/actions backed by dedicated security and regression tests.
 3. Perform responsive, accessibility, SEO/crawler, and release hardening.
 
 ## SEO contract

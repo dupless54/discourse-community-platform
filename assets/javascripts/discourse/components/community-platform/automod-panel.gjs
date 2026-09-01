@@ -16,6 +16,8 @@ export default class CommunityPlatformAutomodPanel extends Component {
   @tracked matchMode = "any";
   @tracked target = "all_posts";
   @tracked reviewAction = "queue_for_review";
+  @tracked maxAccountAgeDays = "";
+  @tracked maxTrustLevel = "";
   @tracked saving = false;
   @tracked busyRuleId = null;
   @tracked refreshingHistory = false;
@@ -53,6 +55,16 @@ export default class CommunityPlatformAutomodPanel extends Component {
   }
 
   @action
+  updateMaxAccountAgeDays(event) {
+    this.maxAccountAgeDays = event.target.value;
+  }
+
+  @action
+  updateMaxTrustLevel(event) {
+    this.maxTrustLevel = event.target.value;
+  }
+
+  @action
   async createRule(event) {
     event.preventDefault();
     const terms = this.termsText
@@ -64,21 +76,29 @@ export default class CommunityPlatformAutomodPanel extends Component {
       return;
     }
 
+    const rulePayload = {
+      name: this.name.trim(),
+      match_mode: this.matchMode,
+      target: this.target,
+      action: this.reviewAction,
+      terms,
+    };
+
+    if (this.maxAccountAgeDays !== "") {
+      rulePayload.max_account_age_days = Number(this.maxAccountAgeDays);
+    }
+
+    if (this.maxTrustLevel !== "") {
+      rulePayload.max_trust_level = Number(this.maxTrustLevel);
+    }
+
     this.saving = true;
     this.errorMessage = null;
 
     try {
       const response = await ajax(`${this.rulesUrl}.json`, {
         type: "POST",
-        data: {
-          automod_rule: {
-            name: this.name.trim(),
-            match_mode: this.matchMode,
-            target: this.target,
-            action: this.reviewAction,
-            terms,
-          },
-        },
+        data: { automod_rule: rulePayload },
       });
 
       this.rules = [...this.rules, response.automod_rule];
@@ -87,6 +107,8 @@ export default class CommunityPlatformAutomodPanel extends Component {
       this.matchMode = "any";
       this.target = "all_posts";
       this.reviewAction = "queue_for_review";
+      this.maxAccountAgeDays = "";
+      this.maxTrustLevel = "";
     } catch {
       this.errorMessage = i18n("community_platform.automod.error");
     } finally {
@@ -220,6 +242,25 @@ export default class CommunityPlatformAutomodPanel extends Component {
               {{/if}}
             </p>
 
+            {{#if rule.max_account_age_days}}
+              <p class="dcp-automod-rule__condition">
+                {{i18n "community_platform.automod.condition_account_age"}}:
+                {{rule.max_account_age_days}}
+                {{i18n "community_platform.automod.days"}}
+              </p>
+            {{/if}}
+            {{#if rule.max_trust_level}}
+              <p class="dcp-automod-rule__condition">
+                {{i18n "community_platform.automod.condition_max_trust_level"}}:
+                TL{{rule.max_trust_level}}
+              </p>
+            {{else if (eq rule.max_trust_level 0)}}
+              <p class="dcp-automod-rule__condition">
+                {{i18n "community_platform.automod.condition_max_trust_level"}}:
+                TL0
+              </p>
+            {{/if}}
+
             <div class="dcp-automod-terms">
               {{#each rule.terms as |term|}}
                 <span>{{term}}</span>
@@ -291,6 +332,40 @@ export default class CommunityPlatformAutomodPanel extends Component {
             <option value="flag_only">{{i18n "community_platform.automod.action_flag_only"}}</option>
           </select>
         </label>
+
+        <fieldset class="dcp-automod-conditions">
+          <legend>{{i18n "community_platform.automod.author_conditions"}}</legend>
+          <p>{{i18n "community_platform.automod.author_conditions_hint"}}</p>
+
+          <label class="dcp-field">
+            <span>{{i18n "community_platform.automod.max_account_age_days"}}</span>
+            <input
+              type="number"
+              min="1"
+              max="365"
+              value={{this.maxAccountAgeDays}}
+              data-test-automod-max-account-age
+              {{on "input" this.updateMaxAccountAgeDays}}
+            />
+            <small>{{i18n "community_platform.automod.max_account_age_days_hint"}}</small>
+          </label>
+
+          <label class="dcp-field">
+            <span>{{i18n "community_platform.automod.max_trust_level"}}</span>
+            <select
+              value={{this.maxTrustLevel}}
+              data-test-automod-max-trust-level
+              {{on "change" this.updateMaxTrustLevel}}
+            >
+              <option value="">{{i18n "community_platform.automod.any_trust_level"}}</option>
+              <option value="0">TL0</option>
+              <option value="1">TL1</option>
+              <option value="2">TL2</option>
+              <option value="3">TL3</option>
+              <option value="4">TL4</option>
+            </select>
+          </label>
+        </fieldset>
 
         <label class="dcp-field">
           <span>{{i18n "community_platform.automod.terms"}}</span>

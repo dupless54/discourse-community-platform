@@ -45,11 +45,13 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRule do
     expect(rule.matches?("Buy now")).to eq(false)
   end
 
-  it "defaults existing-style rules to all posts and priority review" do
+  it "defaults existing-style rules to all posts, priority review, and any author" do
     rule = create_rule(community: create_community)
 
     expect(rule.target).to eq("all_posts")
     expect(rule.action).to eq("queue_for_review")
+    expect(rule.max_account_age_days).to be_nil
+    expect(rule.max_trust_level).to be_nil
     expect(rule.queue_for_review?).to eq(true)
   end
 
@@ -66,6 +68,34 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRule do
     expect(starter_rule.applies_to_post?(reply)).to eq(false)
     expect(reply_rule.applies_to_post?(first_post)).to eq(false)
     expect(reply_rule.applies_to_post?(reply)).to eq(true)
+  end
+
+  it "applies bounded account-age and trust-level conditions together" do
+    community = create_community
+    now = Time.zone.parse("2026-09-01 12:00:00")
+    rule = create_rule(community:, max_account_age_days: 7, max_trust_level: TrustLevel[1])
+
+    young_low_trust = Fabricate(:user, trust_level: TrustLevel[1])
+    young_low_trust.update_column(:created_at, now - 3.days)
+    old_low_trust = Fabricate(:user, trust_level: TrustLevel[1])
+    old_low_trust.update_column(:created_at, now - 30.days)
+    young_high_trust = Fabricate(:user, trust_level: TrustLevel[2])
+    young_high_trust.update_column(:created_at, now - 2.days)
+
+    expect(rule.applies_to_author?(young_low_trust, now:)).to eq(true)
+    expect(rule.applies_to_author?(old_low_trust, now:)).to eq(false)
+    expect(rule.applies_to_author?(young_high_trust, now:)).to eq(false)
+  end
+
+  it "rejects author conditions outside the explicit bounds" do
+    rule = create_rule(community: create_community)
+
+    rule.max_account_age_days = described_class::MAX_ACCOUNT_AGE_DAYS + 1
+    rule.max_trust_level = 99
+
+    expect(rule).not_to be_valid
+    expect(rule.errors[:max_account_age_days]).to be_present
+    expect(rule.errors[:max_trust_level]).to be_present
   end
 
   it "rejects unknown targets and actions" do

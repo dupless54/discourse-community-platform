@@ -11,6 +11,8 @@ module ::DiscourseCommunityPlatform
     MAX_RULES_PER_COMMUNITY = 25
     MAX_TERMS = 20
     MAX_TERM_LENGTH = 80
+    MAX_ACCOUNT_AGE_DAYS = 365
+    TRUST_LEVELS = TrustLevel.levels.values.freeze
 
     belongs_to :community, class_name: "DiscourseCommunityPlatform::Community"
     belongs_to :created_by, class_name: "User"
@@ -23,6 +25,14 @@ module ::DiscourseCommunityPlatform
     validates :target, inclusion: { in: TARGETS }
     validates :action, inclusion: { in: ACTIONS }
     validates :terms, presence: true
+    validates :max_account_age_days,
+              numericality: {
+                only_integer: true,
+                greater_than_or_equal_to: 1,
+                less_than_or_equal_to: MAX_ACCOUNT_AGE_DAYS,
+              },
+              allow_nil: true
+    validates :max_trust_level, inclusion: { in: TRUST_LEVELS }, allow_nil: true
     validate :validate_terms
     validate :validate_community_rule_limit, on: :create
 
@@ -48,6 +58,23 @@ module ::DiscourseCommunityPlatform
       else
         true
       end
+    end
+
+    def applies_to_author?(user, now: Time.zone.now)
+      return false if user.blank?
+
+      if max_account_age_days.present?
+        return false if user.created_at.blank?
+        return false if user.created_at < now - max_account_age_days.days
+      end
+
+      return false if max_trust_level.present? && user.trust_level.to_i > max_trust_level
+
+      true
+    end
+
+    def applies_to?(post, now: Time.zone.now)
+      applies_to_post?(post) && applies_to_author?(post&.user, now:)
     end
 
     def queue_for_review?
@@ -86,18 +113,20 @@ end
 #
 # Table name: discourse_community_platform_automod_rules
 #
-#  id            :bigint           not null, primary key
-#  action        :string           default("queue_for_review"), not null
-#  enabled       :boolean          default(TRUE), not null
-#  match_mode    :string           default("any"), not null
-#  name          :string           not null
-#  target        :string           default("all_posts"), not null
-#  terms         :jsonb            not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  community_id  :bigint           not null
-#  created_by_id :bigint           not null
-#  updated_by_id :bigint           not null
+#  id                   :bigint           not null, primary key
+#  action               :string           default("queue_for_review"), not null
+#  enabled              :boolean          default(TRUE), not null
+#  match_mode           :string           default("any"), not null
+#  max_account_age_days :integer
+#  max_trust_level      :integer
+#  name                 :string           not null
+#  target               :string           default("all_posts"), not null
+#  terms                :jsonb            not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  community_id         :bigint           not null
+#  created_by_id        :bigint           not null
+#  updated_by_id        :bigint           not null
 #
 # Indexes
 #

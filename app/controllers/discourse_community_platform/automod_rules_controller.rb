@@ -51,7 +51,16 @@ module ::DiscourseCommunityPlatform
     def rule_params
       params
         .require(:automod_rule)
-        .permit(:name, :enabled, :match_mode, :target, :action, terms: [])
+        .permit(
+          :name,
+          :enabled,
+          :match_mode,
+          :target,
+          :action,
+          :max_account_age_days,
+          :max_trust_level,
+          terms: [],
+        )
         .to_h
         .symbolize_keys
     end
@@ -72,6 +81,8 @@ module ::DiscourseCommunityPlatform
         match_mode: rule.match_mode,
         target: rule.target,
         action: rule.action,
+        max_account_age_days: rule.max_account_age_days,
+        max_trust_level: rule.max_trust_level,
         terms: rule.terms,
         created_by_id: rule.created_by_id,
         updated_by_id: rule.updated_by_id,
