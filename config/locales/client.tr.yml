@@ -58,6 +58,9 @@ tr:
         title: "Keşfet"
         description: "Henüz katılmadığın topluluklardaki aktif herkese açık tartışmalar; tek bir topluluğun keşfi domine etmemesi için çeşitlendirilir."
         guest_description: "Topluluklar genelindeki aktif herkese açık tartışmalardan çeşitlendirilmiş bir seçki. Giriş yapıp topluluklara katıldığında keşif daha kişisel hale gelir."
+        recommended_title: "Keşfetmeye değer topluluklar"
+        recommended_description: "Arka planda hesaplanan aktivite sinyalleri, güncel ve hareketli herkese açık toplulukları öne çıkarır."
+        active_topics: "aktif konu"
         empty_title: "Keşfedilecek yeni topluluk yok"
         empty_description: "Mevcut keşif aralığında henüz başka aktif herkese açık topluluk bulunmuyor."
       popular:
