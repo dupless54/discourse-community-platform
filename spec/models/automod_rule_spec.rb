@@ -16,16 +16,25 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRule do
     )
   end
 
+  def create_rule(community:, **attrs)
+    described_class.create!(
+      {
+        community:,
+        name: "Scam phrases",
+        terms: ["telegram"],
+        created_by: owner,
+        updated_by: owner,
+      }.merge(attrs),
+    )
+  end
+
   it "normalizes terms and supports any/all matching without user regex" do
     community = create_community
     rule =
-      described_class.create!(
+      create_rule(
         community:,
-        name: "Scam phrases",
         terms: ["  BUY NOW ", "telegram", "telegram"],
         match_mode: "any",
-        created_by: owner,
-        updated_by: owner,
       )
 
     expect(rule.terms).to eq(["buy now", "telegram"])
@@ -34,6 +43,40 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRule do
     rule.update!(match_mode: "all")
     expect(rule.matches?("Buy now and message me on Telegram")).to eq(true)
     expect(rule.matches?("Buy now")).to eq(false)
+  end
+
+  it "defaults existing-style rules to all posts and priority review" do
+    rule = create_rule(community: create_community)
+
+    expect(rule.target).to eq("all_posts")
+    expect(rule.action).to eq("queue_for_review")
+    expect(rule.queue_for_review?).to eq(true)
+  end
+
+  it "supports bounded topic-starter and reply targets" do
+    community = create_community
+    topic = Fabricate(:topic, category: community.category, user: owner)
+    first_post = Fabricate(:post, topic:, user: owner, post_number: 1)
+    reply = Fabricate(:post, topic:, user: owner, post_number: 2)
+
+    starter_rule = create_rule(community:, target: "topic_starters")
+    reply_rule = create_rule(community:, name: "Reply rule", target: "replies")
+
+    expect(starter_rule.applies_to_post?(first_post)).to eq(true)
+    expect(starter_rule.applies_to_post?(reply)).to eq(false)
+    expect(reply_rule.applies_to_post?(first_post)).to eq(false)
+    expect(reply_rule.applies_to_post?(reply)).to eq(true)
+  end
+
+  it "rejects unknown targets and actions" do
+    rule = create_rule(community: create_community)
+
+    rule.target = "regex_everywhere"
+    rule.action = "delete"
+
+    expect(rule).not_to be_valid
+    expect(rule.errors[:target]).to be_present
+    expect(rule.errors[:action]).to be_present
   end
 
   it "bounds the number of rules that one community can evaluate" do
