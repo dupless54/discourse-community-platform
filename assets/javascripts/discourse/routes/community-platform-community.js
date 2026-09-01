@@ -10,6 +10,7 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
     );
     let automodRules = [];
     let automodExecutions = [];
+    let moderationInsights = null;
 
     if (payload.community?.can_manage) {
       try {
@@ -29,6 +30,15 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
       } catch {
         automodExecutions = [];
       }
+
+      try {
+        const insightsPayload = await ajax(
+          `/community-platform/communities/${slug}/moderation-insights.json`
+        );
+        moderationInsights = insightsPayload.moderation_insights || null;
+      } catch {
+        moderationInsights = null;
+      }
     }
 
     return {
@@ -37,6 +47,7 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
       order: feedPayload.order || "hot",
       automodRules,
       automodExecutions,
+      moderationInsights,
     };
   }
 

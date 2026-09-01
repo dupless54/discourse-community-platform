@@ -85,6 +85,7 @@ acceptance("Community Platform | community page", function (needs) {
     assert.dom(".dcp-rules-list li").exists({ count: 2 });
     assert.dom(".dcp-management-card").doesNotExist();
     assert.dom(".dcp-automod-card").doesNotExist();
+    assert.dom("[data-test-moderation-insights]").doesNotExist();
     assert.dom(".dcp-vote-button").doesNotExist();
 
     await click('.dcp-feed-order__button:nth-child(2)');
@@ -189,6 +190,34 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
         })
     );
 
+    server.get(
+      "/community-platform/communities/technology/moderation-insights.json",
+      () =>
+        helper.response({
+          moderation_insights: {
+            last_7_days: {
+              executions: 8,
+              unique_posts: 6,
+              queued_for_review: 4,
+              flagged_for_review: 3,
+              already_queued: 1,
+            },
+            last_30_days: {
+              executions: 21,
+              unique_posts: 14,
+              queued_for_review: 10,
+              flagged_for_review: 8,
+              already_queued: 3,
+            },
+            triggers_30_days: { create: 13, edit: 8 },
+            top_rules_30_days: [
+              { rule_name: "Spam phrases", executions: 12 },
+              { rule_name: "Scam links", executions: 9 },
+            ],
+          },
+        })
+    );
+
     server.post(
       "/community-platform/communities/technology/automod-rules.json",
       () =>
@@ -208,8 +237,16 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
     );
   });
 
-  test("renders bounded scopes, author conditions, audit history, and adds a rule", async function (assert) {
+  test("renders moderation insights, bounded rules, audit history, and adds a rule", async function (assert) {
     await visit("/s/technology");
+
+    assert.dom("[data-test-moderation-insights]").exists();
+    assert.dom("[data-test-moderation-insights]").includesText("8");
+    assert.dom("[data-test-moderation-insights]").includesText("21");
+    assert.dom("[data-test-moderation-insights]").includesText("Spam phrases");
+    assert.dom("[data-test-moderation-insights]").includesText("12");
+    assert.dom("[data-test-moderation-insights]").includesText("New post");
+    assert.dom("[data-test-moderation-insights]").includesText("Post edit");
 
     assert.dom(".dcp-automod-card").exists();
     assert.dom(".dcp-automod-rule").exists({ count: 1 });

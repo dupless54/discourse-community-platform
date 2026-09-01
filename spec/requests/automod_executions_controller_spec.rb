@@ -63,6 +63,27 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
     expect(item.fetch("post_url")).to be_present
   end
 
+  it "returns aggregate moderation insights without post or user metadata" do
+    community = create_community
+    create_execution(community:)
+    sign_in(owner)
+
+    get "/community-platform/communities/#{community.slug}/moderation-insights.json"
+
+    expect(response.status).to eq(200)
+    insights = response.parsed_body.fetch("moderation_insights")
+    expect(insights.dig("last_7_days", "executions")).to eq(1)
+    expect(insights.dig("last_30_days", "unique_posts")).to eq(1)
+    expect(insights.dig("triggers_30_days", "edit")).to eq(1)
+    expect(insights.fetch("top_rules_30_days").first).to include(
+      "rule_name" => "Keyword guard",
+      "executions" => 1,
+    )
+    expect(response.body).not_to include(author.username)
+    expect(response.body).not_to include("post_url")
+    expect(response.body).not_to include("post_id")
+  end
+
   it "hides post metadata when the audited post is no longer visible to the manager" do
     community = create_community
     execution = create_execution(community:)
@@ -90,21 +111,25 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
     expect(response.parsed_body.dig("automod_executions", 0, "rule_name")).to eq("Keyword guard")
   end
 
-  it "does not expose history to unrelated authenticated users" do
+  it "does not expose history or insights to unrelated authenticated users" do
     community = create_community
     create_execution(community:)
     sign_in(outsider)
 
     get "/community-platform/communities/#{community.slug}/automod-executions.json"
+    expect(response.status).to eq(403)
 
+    get "/community-platform/communities/#{community.slug}/moderation-insights.json"
     expect(response.status).to eq(403)
   end
 
-  it "requires authentication" do
+  it "requires authentication for history and insights" do
     community = create_community
 
     get "/community-platform/communities/#{community.slug}/automod-executions.json"
+    expect(response.status).to eq(403)
 
+    get "/community-platform/communities/#{community.slug}/moderation-insights.json"
     expect(response.status).to eq(403)
   end
 end
