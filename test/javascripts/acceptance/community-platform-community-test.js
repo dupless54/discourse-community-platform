@@ -86,6 +86,7 @@ acceptance("Community Platform | community page", function (needs) {
     assert.dom(".dcp-management-card").doesNotExist();
     assert.dom(".dcp-automod-card").doesNotExist();
     assert.dom("[data-test-moderation-insights]").doesNotExist();
+    assert.dom("[data-test-community-activity-insights]").doesNotExist();
     assert.dom(".dcp-vote-button").doesNotExist();
 
     await click('.dcp-feed-order__button:nth-child(2)');
@@ -218,6 +219,31 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
         })
     );
 
+    server.get(
+      "/community-platform/communities/technology/activity-analytics.json",
+      () =>
+        helper.response({
+          community_activity_analytics: {
+            status: "ready",
+            generated_at: "2026-09-01T12:00:00.000Z",
+            last_7_days: {
+              new_topics: 4,
+              posts: 18,
+              replies: 14,
+              active_topics: 6,
+              contributors: 9,
+            },
+            last_30_days: {
+              new_topics: 17,
+              posts: 73,
+              replies: 56,
+              active_topics: 22,
+              contributors: 31,
+            },
+          },
+        })
+    );
+
     server.post(
       "/community-platform/communities/technology/automod-rules.json",
       () =>
@@ -237,8 +263,15 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
     );
   });
 
-  test("renders moderation insights, bounded rules, audit history, and adds a rule", async function (assert) {
+  test("renders activity and moderation insights, bounded rules, audit history, and adds a rule", async function (assert) {
     await visit("/s/technology");
+
+    assert.dom("[data-test-community-activity-insights]").exists();
+    assert.dom("[data-test-community-activity-insights]").includesText("4");
+    assert.dom("[data-test-community-activity-insights]").includesText("17");
+    assert.dom("[data-test-community-activity-insights]").includesText("18");
+    assert.dom("[data-test-community-activity-insights]").includesText("73");
+    assert.dom("[data-test-community-activity-insights]").includesText("31");
 
     assert.dom("[data-test-moderation-insights]").exists();
     assert.dom("[data-test-moderation-insights]").includesText("8");
