@@ -29,6 +29,8 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 21. Request-time moderation insight queries must remain bounded by community and a short time window over indexed data. If later analytics require broader or expensive scans, move them to scheduled/background cache computation instead of expanding synchronous full-table aggregation.
 22. Community activity analytics are manager-only cached aggregates. Rebuild them in scheduled jobs from Discourse topic/post data, never by synchronous request-time full-table scans, and never serialize contributor identities, post IDs/URLs, raw content, email/IP/device data, or other user-identifying metadata.
 23. Community activity analytics must remain community/category scoped and cache-cold behavior must fail soft with a bounded warming/empty response rather than performing an emergency synchronous aggregate rebuild.
+24. Manager-only JSON surfaces must inherit the shared management-controller hardening and return `X-Robots-Tag: noindex, nofollow` plus `Cache-Control: private, no-store`. Those headers must be applied before authentication so unauthenticated and unauthorized responses are hardened too.
+25. Dynamic community and management UI must preserve accessible names, state, and structure. Keep feed loading regions labelled, use live/status semantics for asynchronous state where appropriate, and expose data grids/tables with meaningful row/header roles rather than visual-only layout semantics.
 
 ## Current phase — Community Moderation Automation
 
@@ -63,13 +65,15 @@ Implemented foundations:
 - Audit UI returns the latest 50 executions and a daily scheduled job removes records older than 90 days.
 - Manager-only moderation insights aggregate the bounded audit table into 7/30-day counts, distinct audited posts, outcome/trigger distributions, and the top five rule-name snapshots without returning raw content or user metadata.
 - Manager-only community activity analytics expose only cached 7/30-day counts for new topics, posts, replies, active topics, and unique contributors. A 15-minute scheduled job rebuilds the cache; requests never rebuild it synchronously.
+- AutoModerator rules, audit history, moderation insights, and community activity analytics share management response hardening so successful, unauthenticated, and unauthorized JSON responses remain non-indexable and non-cacheable by shared/public caches.
+- Dynamic community feed and manager insight surfaces expose explicit accessible region/table/status semantics while retaining keyboard-accessible native controls.
 - The current AutoModerator slice does not auto-delete content, ban/silence users, run arbitrary regex, inspect email/IP/device data, or elevate community managers to global staff.
 
 Next slices:
 
 1. Expand AutoModerator only with explicit bounded conditions/actions backed by dedicated security and regression tests.
-2. Perform responsive, accessibility, SEO/crawler, and release hardening.
-3. Prepare the first release candidate once the remaining hardening gates are green.
+2. Complete remaining release-hardening validation and prepare the first release candidate.
+3. Add broader analytics or automation only after the release candidate is stable.
 
 ## SEO contract
 
@@ -78,6 +82,7 @@ Next slices:
 - Private/restricted communities must not expose metadata, counts, titles, or topic content to unauthorized users or crawlers.
 - Never make both an alias URL and a Discourse topic URL independently canonical for the same content.
 - AutoModerator configuration, execution-history, moderation-insights, and community activity analytics endpoints are authenticated management surfaces and must not become indexable public content.
+- Manager-only JSON surfaces must send `X-Robots-Tag: noindex, nofollow` and `Cache-Control: private, no-store` even when authentication or authorization fails.
 
 ## Code style
 
