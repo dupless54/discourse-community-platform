@@ -34,3 +34,9 @@ after_initialize do
     mount ::DiscourseCommunityPlatform::Engine, at: "/community-platform"
   end
 end
+
+on(:post_created) do |post|
+  next unless SiteSetting.community_platform_enabled
+
+  ::DiscourseCommunityPlatform::Automod::EvaluatePost.call(post:)
+end
