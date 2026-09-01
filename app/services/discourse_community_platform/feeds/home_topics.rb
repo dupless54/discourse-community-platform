@@ -131,12 +131,20 @@ module ::DiscourseCommunityPlatform
         scores = TopicScore.where(topic_id: topics.map(&:id)).index_by(&:topic_id)
         communities_by_category = communities.index_by(&:category_id)
         votes = user_votes(topics)
+        previews = TopicPreviews.call(topics:, guardian: @guardian)
 
         topics.filter_map do |topic|
           community = communities_by_category[topic.category_id]
           next if community.blank?
 
-          serialize_topic(topic, community, scores[topic.id], votes, feed_source: "joined")
+          serialize_topic(
+            topic,
+            community,
+            scores[topic.id],
+            votes,
+            previews,
+            feed_source: "joined",
+          )
         end
       end
 
@@ -144,6 +152,7 @@ module ::DiscourseCommunityPlatform
         scores = TopicScore.where(topic_id: topics.map(&:id)).index_by(&:topic_id)
         communities = Community.where(category_id: topics.map(&:category_id)).index_by(&:category_id)
         votes = user_votes(topics)
+        previews = TopicPreviews.call(topics:, guardian: @guardian)
 
         topics.filter_map do |topic|
           community = communities[topic.category_id]
@@ -154,13 +163,15 @@ module ::DiscourseCommunityPlatform
             community,
             scores[topic.id],
             votes,
+            previews,
             feed_source: "followed",
             include_author: true,
           )
         end
       end
 
-      def serialize_topic(topic, community, score, votes, feed_source:, include_author: false)
+      def serialize_topic(topic, community, score, votes, previews, feed_source:, include_author: false)
+        preview = previews.fetch(topic.id, {})
         item = {
           id: topic.id,
           title: topic.title,
@@ -175,6 +186,8 @@ module ::DiscourseCommunityPlatform
           upvotes: score&.upvotes || 0,
           downvotes: score&.downvotes || 0,
           user_vote: votes.fetch(topic.id, 0),
+          excerpt: preview[:excerpt],
+          image_url: preview[:image_url],
           feed_source:,
           community: {
             id: community.id,
