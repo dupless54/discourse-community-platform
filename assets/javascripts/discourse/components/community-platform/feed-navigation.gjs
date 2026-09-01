@@ -28,6 +28,15 @@ export default <template>
       </li>
       <li>
         <LinkTo
+          @route="community-platform-explore"
+          class="dcp-feed-navigation__link"
+          data-feed="explore"
+        >
+          {{i18n "community_platform.explore.title"}}
+        </LinkTo>
+      </li>
+      <li>
+        <LinkTo
           @route="community-platform-popular"
           class="dcp-feed-navigation__link"
           data-feed="popular"

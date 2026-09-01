@@ -53,6 +53,13 @@ en:
         login_description: "Following is a private personalized feed built from your joined communities and followed people."
         log_in: "Log in"
         open_home: "Open Home"
+      explore:
+        eyebrow: "Discover communities"
+        title: "Explore"
+        description: "Active public discussions from communities you have not joined yet, diversified so one community does not dominate discovery."
+        guest_description: "A diversified selection of active public discussions across communities. Log in and join communities to make discovery more personal."
+        empty_title: "No new communities to explore"
+        empty_description: "There are no other active public communities in the current discovery window yet."
       popular:
         eyebrow: "Across communities"
         title: "Popular"

@@ -34,6 +34,31 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["topics"].first).not_to have_key("posts")
   end
 
+  it "returns a public Explore payload without duplicating topic content" do
+    community =
+      DiscourseCommunityPlatform::Communities::Create.call(
+        user: owner,
+        params: { name: "Gaming", slug: "gaming", visibility: "public" },
+      )
+    topic = Fabricate(:topic, category: community.category, user: owner)
+    Discourse.cache.write(
+      DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY,
+      [topic.id],
+      expires_in: DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_TTL,
+    )
+
+    get "/community-platform/feeds/explore.json"
+
+    expect(response.status).to eq(200)
+    payload = response.parsed_body
+    expect(payload["order"]).to eq("explore")
+    expect(payload["personalized"]).to eq(false)
+    expect(payload["topics"].first["id"]).to eq(topic.id)
+    expect(payload["topics"].first.dig("community", "slug")).to eq("gaming")
+    expect(payload["topics"].first).not_to have_key("raw")
+    expect(payload["topics"].first).not_to have_key("posts")
+  end
+
   it "returns no personalized Following data to guests" do
     get "/community-platform/feeds/following.json"
 
