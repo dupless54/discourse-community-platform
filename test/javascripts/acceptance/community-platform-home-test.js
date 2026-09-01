@@ -36,6 +36,32 @@ function homePayload() {
         },
       },
       {
+        id: 303,
+        title: "A discussion from someone I follow",
+        slug: "followed-discussion",
+        path: "/t/followed-discussion/303",
+        posts_count: 6,
+        views: 240,
+        like_count: 18,
+        score: 11,
+        upvotes: 12,
+        downvotes: 1,
+        user_vote: 0,
+        feed_source: "followed",
+        author: {
+          id: 44,
+          username: "followed-user",
+          name: "Followed User",
+          path: "/u/followed-user",
+        },
+        community: {
+          id: 9,
+          name: "Development",
+          slug: "development",
+          path: "/s/development",
+        },
+      },
+      {
         id: 302,
         title: "A popular fallback discussion",
         slug: "popular-fallback",
@@ -81,7 +107,7 @@ acceptance("Community Platform | personalized home page", function (needs) {
     });
   });
 
-  test("renders joined communities first and allows voting from the home feed", async function (assert) {
+  test("renders joined, followed, and popular sources and allows voting", async function (assert) {
     await visit("/home");
 
     assert.dom(".dcp-home-hero h1").hasText("Home");
@@ -89,7 +115,7 @@ acceptance("Community Platform | personalized home page", function (needs) {
       .dom(".dcp-home-community-chip")
       .hasText("s/hardware")
       .hasAttribute("href", "/s/hardware");
-    assert.dom(".dcp-home-card").exists({ count: 2 });
+    assert.dom(".dcp-home-card").exists({ count: 3 });
     assert
       .dom(".dcp-home-card:first-child .dcp-home-card__title")
       .hasText("A discussion from a joined community")
@@ -99,6 +125,13 @@ acceptance("Community Platform | personalized home page", function (needs) {
       .hasText("Joined");
     assert
       .dom(".dcp-home-card:nth-child(2) .dcp-home-card__source")
+      .hasText("Following");
+    assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-home-card__author")
+      .hasText("@followed-user")
+      .hasAttribute("href", "/u/followed-user");
+    assert
+      .dom(".dcp-home-card:nth-child(3) .dcp-home-card__source")
       .hasText("Popular");
 
     await click(".dcp-home-card:first-child .dcp-vote-button--up");
@@ -117,7 +150,7 @@ acceptance("Community Platform | guest home page", function (needs) {
         order: "home",
         personalized: false,
         joined_communities: [],
-        topics: [homePayload().topics[1]],
+        topics: [homePayload().topics[2]],
       });
     });
   });

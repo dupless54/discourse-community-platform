@@ -5,6 +5,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
   fab!(:member, :user)
   fab!(:voter, :user)
   fab!(:second_voter, :user)
+  fab!(:followed_user, :user)
 
   before do
     SiteSetting.community_platform_allow_user_community_creation = true
@@ -13,13 +14,29 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
     Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
   end
 
-  after { Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY) }
+  after do
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
+
+    if @created_user_follower_stub && Object.const_defined?(:UserFollower, false)
+      Object.send(:remove_const, :UserFollower)
+    end
+  end
 
   def create_community(name:, slug:, visibility: "public")
     DiscourseCommunityPlatform::Communities::Create.call(
       user: owner,
       params: { name:, slug:, visibility: },
     )
+  end
+
+  def enable_follow_integration_with(*topics)
+    unless Object.const_defined?(:UserFollower, false)
+      Object.const_set(:UserFollower, Class.new)
+      @created_user_follower_stub = true
+    end
+
+    UserFollower.stubs(:topics_for).returns(topics)
+    SiteSetting.stubs(:discourse_follow_enabled).returns(true)
   end
 
   it "prioritizes topics from joined communities before the global popular fallback" do
@@ -114,5 +131,63 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
 
     expect(result[:topics].count { |item| item[:id] == topic.id }).to eq(1)
     expect(result[:topics].first[:feed_source]).to eq("joined")
+  end
+
+  it "includes community topics from users followed through discourse-follow" do
+    community = create_community(name: "Development", slug: "development")
+    followed_topic = Fabricate(:topic, category: community.category, user: followed_user)
+    enable_follow_integration_with(followed_topic)
+
+    result = described_class.call(guardian: Guardian.new(member), limit: 10)
+    item = result[:topics].find { |topic| topic[:id] == followed_topic.id }
+
+    expect(result[:personalized]).to eq(true)
+    expect(result[:joined_communities]).to eq([])
+    expect(item[:feed_source]).to eq("followed")
+    expect(item.dig(:author, :username)).to eq(followed_user.username)
+    expect(item.dig(:author, :path)).to eq("/u/#{followed_user.username}")
+  end
+
+  it "reserves a minority of a joined-community feed for followed-user topics" do
+    joined_community = create_community(name: "Hardware", slug: "hardware")
+    followed_community = create_community(name: "Development", slug: "development")
+    DiscourseCommunityPlatform::Memberships::Join.call(user: member, community: joined_community)
+
+    4.times { Fabricate(:topic, category: joined_community.category, user: owner) }
+    followed_topic = Fabricate(:topic, category: followed_community.category, user: followed_user)
+    enable_follow_integration_with(followed_topic)
+
+    result = described_class.call(guardian: Guardian.new(member), limit: 4)
+
+    expect(result[:topics].count { |topic| topic[:feed_source] == "joined" }).to eq(3)
+    expect(result[:topics].count { |topic| topic[:feed_source] == "followed" }).to eq(1)
+    expect(result[:topics].map { |topic| topic[:id] }).to include(followed_topic.id)
+  end
+
+  it "keeps joined as the source when a followed-user topic is already in a joined community" do
+    community = create_community(name: "Technology", slug: "technology")
+    DiscourseCommunityPlatform::Memberships::Join.call(user: member, community:)
+    topic = Fabricate(:topic, category: community.category, user: followed_user)
+    enable_follow_integration_with(topic)
+
+    result = described_class.call(guardian: Guardian.new(member), limit: 10)
+    matching_items = result[:topics].select { |item| item[:id] == topic.id }
+
+    expect(matching_items.length).to eq(1)
+    expect(matching_items.first[:feed_source]).to eq("joined")
+  end
+
+  it "rechecks Guardian visibility for followed-user topics" do
+    private_community = create_community(name: "Private Follow", slug: "private-follow", visibility: "private")
+    private_topic = Fabricate(:topic, category: private_community.category, user: followed_user)
+    enable_follow_integration_with(private_topic)
+
+    guardian = Guardian.new(member)
+    expect(guardian.can_see_topic?(private_topic)).to eq(false)
+
+    result = described_class.call(guardian:, limit: 10)
+
+    expect(result[:topics].map { |topic| topic[:id] }).not_to include(private_topic.id)
+    expect(result[:personalized]).to eq(false)
   end
 end

@@ -6,6 +6,7 @@ module ::DiscourseCommunityPlatform
       DEFAULT_LIMIT = PopularTopics::DEFAULT_LIMIT
       MAX_LIMIT = PopularTopics::MAX_LIMIT
       CANDIDATE_MULTIPLIER = 3
+      FOLLOWED_TOPIC_RATIO = 0.25
 
       def self.call(guardian:, limit: DEFAULT_LIMIT)
         new(guardian:, limit:).call
@@ -21,14 +22,23 @@ module ::DiscourseCommunityPlatform
         return popular_fallback_payload if user.blank?
 
         communities = visible_joined_communities(user)
-        return popular_fallback_payload if communities.empty?
-
         joined_topics = ranked_joined_topics(communities)
         joined_items = serialize_joined(joined_topics, communities)
-        fallback_items = popular_fallback(joined_items)
+
+        followed_topics = followed_user_topics(user)
+        followed_items = serialize_followed(followed_topics)
+        followed_items = remove_duplicates(followed_items, joined_items)
+        followed_items = followed_items.first(followed_topic_limit(joined_items))
+
+        joined_items = joined_items.first(@limit - followed_items.length)
+        personalized_items = joined_items + followed_items
+
+        return popular_fallback_payload if communities.empty? && followed_items.empty?
+
+        fallback_items = popular_fallback(personalized_items)
 
         payload(
-          topics: (joined_items + fallback_items).first(@limit),
+          topics: (personalized_items + fallback_items).first(@limit),
           communities:,
           personalized: true,
         )
@@ -48,6 +58,8 @@ module ::DiscourseCommunityPlatform
       end
 
       def ranked_joined_topics(communities)
+        return [] if communities.empty?
+
         category_ids = communities.map(&:category_id)
         category_topic_ids = communities.filter_map { |community| community.category.topic_id }
 
@@ -80,6 +92,41 @@ module ::DiscourseCommunityPlatform
         topics.first(@limit)
       end
 
+      def followed_user_topics(user)
+        return [] unless follow_integration_available?
+
+        topics =
+          ::UserFollower
+            .topics_for(
+              user,
+              current_user: user,
+              limit: @limit * CANDIDATE_MULTIPLIER,
+            )
+            .to_a
+
+        communities =
+          Community.where(category_id: topics.map(&:category_id)).includes(:category).index_by(&:category_id)
+
+        topics.select do |topic|
+          community = communities[topic.category_id]
+          community.present? && topic.id != community.category.topic_id && @guardian.can_see_topic?(topic)
+        end.first(@limit)
+      end
+
+      def follow_integration_available?
+        return false unless defined?(::UserFollower)
+
+        SiteSetting.discourse_follow_enabled
+      rescue NoMethodError
+        false
+      end
+
+      def followed_topic_limit(joined_items)
+        return @limit if joined_items.empty?
+
+        (@limit * FOLLOWED_TOPIC_RATIO).floor
+      end
+
       def serialize_joined(topics, communities)
         scores = TopicScore.where(topic_id: topics.map(&:id)).index_by(&:topic_id)
         communities_by_category = communities.index_by(&:category_id)
@@ -89,43 +136,81 @@ module ::DiscourseCommunityPlatform
           community = communities_by_category[topic.category_id]
           next if community.blank?
 
-          score = scores[topic.id]
-
-          {
-            id: topic.id,
-            title: topic.title,
-            slug: topic.slug,
-            path: topic.relative_url,
-            posts_count: topic.posts_count,
-            views: topic.views,
-            like_count: topic.like_count,
-            created_at: topic.created_at,
-            last_posted_at: topic.last_posted_at,
-            score: score&.score || 0,
-            upvotes: score&.upvotes || 0,
-            downvotes: score&.downvotes || 0,
-            user_vote: votes.fetch(topic.id, 0),
-            feed_source: "joined",
-            community: {
-              id: community.id,
-              name: community.name,
-              slug: community.slug,
-              path: "/s/#{community.slug}",
-            },
-          }
+          serialize_topic(topic, community, scores[topic.id], votes, feed_source: "joined")
         end
       end
 
-      def popular_fallback(joined_items)
-        remaining = @limit - joined_items.length
+      def serialize_followed(topics)
+        scores = TopicScore.where(topic_id: topics.map(&:id)).index_by(&:topic_id)
+        communities = Community.where(category_id: topics.map(&:category_id)).index_by(&:category_id)
+        votes = user_votes(topics)
+
+        topics.filter_map do |topic|
+          community = communities[topic.category_id]
+          next if community.blank?
+
+          serialize_topic(
+            topic,
+            community,
+            scores[topic.id],
+            votes,
+            feed_source: "followed",
+            include_author: true,
+          )
+        end
+      end
+
+      def serialize_topic(topic, community, score, votes, feed_source:, include_author: false)
+        item = {
+          id: topic.id,
+          title: topic.title,
+          slug: topic.slug,
+          path: topic.relative_url,
+          posts_count: topic.posts_count,
+          views: topic.views,
+          like_count: topic.like_count,
+          created_at: topic.created_at,
+          last_posted_at: topic.last_posted_at,
+          score: score&.score || 0,
+          upvotes: score&.upvotes || 0,
+          downvotes: score&.downvotes || 0,
+          user_vote: votes.fetch(topic.id, 0),
+          feed_source:,
+          community: {
+            id: community.id,
+            name: community.name,
+            slug: community.slug,
+            path: "/s/#{community.slug}",
+          },
+        }
+
+        if include_author && topic.user
+          item[:author] = {
+            id: topic.user.id,
+            username: topic.user.username,
+            name: topic.user.name,
+            path: "/u/#{topic.user.username}",
+          }
+        end
+
+        item
+      end
+
+      def remove_duplicates(items, existing_items)
+        existing_ids = existing_items.to_h { |topic| [topic[:id], true] }
+        items.reject { |topic| existing_ids[topic[:id]] }
+      end
+
+      def popular_fallback(existing_items)
+        remaining = @limit - existing_items.length
         return [] unless remaining.positive?
 
-        joined_ids = joined_items.to_h { |topic| [topic[:id], true] }
+        existing_ids = existing_items.to_h { |topic| [topic[:id], true] }
 
         PopularTopics
           .call(guardian: @guardian, limit: @limit)
           .filter_map do |topic|
-            next if joined_ids[topic[:id]]
+            next if existing_ids[topic[:id]]
 
             topic.merge(feed_source: "popular")
           end
