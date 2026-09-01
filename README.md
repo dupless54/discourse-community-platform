@@ -33,6 +33,7 @@ A community-platform plugin for Discourse that adds Reddit-inspired communities,
 - people discovery sourced from visible cached public activity while preserving Discourse Follow opt-out rules
 - community-scoped AutoModerator phrase rules with `any` / `all` matching
 - bounded AutoModerator targets for all posts, topic starters only, or replies only
+- optional bounded author conditions for account age (1–365 days) and maximum Discourse trust level
 - review-first AutoModerator actions for priority review queue or a standard Discourse flag
 - manager-only AutoModerator CRUD UI and API
 - matching new and meaningfully edited community posts are evaluated in background jobs through Discourse `PostActionCreator` review primitives instead of being automatically deleted
@@ -59,14 +60,18 @@ DELETE /community-platform/communities/:slug/automod-rules/:id.json
 GET    /community-platform/communities/:slug/automod-executions.json
 ```
 
-AutoModerator rule and execution-history management surfaces are limited to users who can manage that Community. Rules are evaluated only for posts inside the Community's mapped Discourse Category. A rule can target all posts, topic starters only, or replies only. New posts and meaningful content edits are processed asynchronously; per-post evaluation is serialized with Discourse `DistributedMutex`, and repeated evaluation of the same rule/post/content SHA-256 is deduplicated.
+AutoModerator rule and execution-history management surfaces are limited to users who can manage that Community. Rules are evaluated only for posts inside the Community's mapped Discourse Category. A rule can target all posts, topic starters only, or replies only. It can also optionally narrow evaluation to authors whose account is no older than 1–365 days and/or whose current trust level is at or below a selected Discourse trust level. With both author conditions configured, both must match. Leaving both unset preserves the original all-author behavior.
+
+Author conditions are deliberately small, explicit allowlisted signals. They use only the Discourse user's `created_at` and current `trust_level`; they do not inspect email addresses, IP addresses, devices, profile fields, or other sensitive/account-identifying metadata. They only decide whether the existing phrase rule is eligible to match and never create a moderation action on their own.
+
+New posts and meaningful content edits are processed asynchronously; per-post evaluation is serialized with Discourse `DistributedMutex`, and repeated evaluation of the same rule/post/content SHA-256 is deduplicated.
 
 A successful match always stays inside Discourse's normal review system. `queue_for_review` creates the existing priority review behavior, while `flag_only` creates a standard `inappropriate` flag without forcing the priority-queue hiding path. Existing system flags are not duplicated. The manager UI exposes the latest 50 audit entries, while a daily cleanup removes entries older than 90 days. The automation remains review-first: it does not directly delete posts, ban/silence users, execute arbitrary user regex, or grant global moderation privileges.
 
 ## Roadmap
 
-1. Add carefully bounded AutoModerator conditions such as safe author/account signals without arbitrary regex or destructive bypasses.
-2. Add community analytics and moderation insights.
+1. Add community analytics and moderation insights without bypassing Guardian or exposing private community data.
+2. Expand AutoModerator only through additional explicit, bounded, review-first conditions/actions with dedicated tests and security review.
 3. Finish responsive polish, accessibility, SEO/crawler validation, and release hardening.
 
 ## License
