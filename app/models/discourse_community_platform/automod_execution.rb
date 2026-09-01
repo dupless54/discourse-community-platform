@@ -6,6 +6,7 @@ module ::DiscourseCommunityPlatform
 
     TRIGGERS = %w[create edit].freeze
     OUTCOMES = %w[queued_for_review already_queued].freeze
+    RETENTION_DAYS = 90
 
     belongs_to :community, class_name: "DiscourseCommunityPlatform::Community"
     belongs_to :automod_rule, class_name: "DiscourseCommunityPlatform::AutomodRule", optional: true
