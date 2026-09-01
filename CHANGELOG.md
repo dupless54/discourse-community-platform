@@ -20,6 +20,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Feed preview extraction runs only after the topic passes the current Guardian visibility check, and the preview contract never returns raw post content or cooked HTML.
 - Topic image previews are returned only when the current Guardian can see the underlying Discourse upload.
 - Community branding assignment is manager-only, image-only, and rejects arbitrary unrelated-user upload IDs; internal branding upload IDs are serialized only to authorized community managers.
+- Community logo and cover URLs also pass through the current Discourse Guardian upload-visibility check, preventing a visible Community response from bypassing secure-upload access rules.
 
 ### Accessibility and responsive UI
 
