@@ -78,6 +78,13 @@ acceptance("Community Platform | Following page", function (needs) {
   test("renders only joined and followed personal sources", async function (assert) {
     await visit("/following");
 
+    assert.dom(".dcp-feed-navigation").exists();
+    assert.dom('[data-feed="home"]').hasAttribute("href", "/home");
+    assert
+      .dom('[data-feed="following"]')
+      .hasClass("active")
+      .hasAttribute("href", "/following");
+    assert.dom('[data-feed="popular"]').hasAttribute("href", "/popular");
     assert.dom(".dcp-home-hero h1").hasText("Following");
     assert.dom(".dcp-home-popular-link").doesNotExist();
     assert.dom(".dcp-home-card").exists({ count: 2 });
@@ -111,6 +118,8 @@ acceptance("Community Platform | guest Following page", function (needs) {
   test("renders a login state without leaking personalized content", async function (assert) {
     await visit("/following");
 
+    assert.dom(".dcp-feed-navigation").exists();
+    assert.dom('[data-feed="following"]').hasClass("active");
     assert.dom(".dcp-home-hero h1").hasText("Following");
     assert.dom(".dcp-home-card").doesNotExist();
     assert.dom(".dcp-home-empty h2").hasText("Log in to view Following");

@@ -35,6 +35,13 @@ acceptance("Community Platform | popular page", function (needs) {
   test("renders cached global popular topics with community context", async function (assert) {
     await visit("/popular");
 
+    assert.dom(".dcp-feed-navigation").exists();
+    assert.dom('[data-feed="home"]').hasAttribute("href", "/home");
+    assert.dom('[data-feed="following"]').hasAttribute("href", "/following");
+    assert
+      .dom('[data-feed="popular"]')
+      .hasClass("active")
+      .hasAttribute("href", "/popular");
     assert.dom(".dcp-popular-hero h1").hasText("Popular");
     assert.dom(".dcp-popular-card").exists({ count: 1 });
     assert
