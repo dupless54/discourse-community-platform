@@ -14,7 +14,13 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
     Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
   end
 
-  after { Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY) }
+  after do
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
+
+    if @created_user_follower_stub && Object.const_defined?(:UserFollower, false)
+      Object.send(:remove_const, :UserFollower)
+    end
+  end
 
   def create_community(name:, slug:, visibility: "public")
     DiscourseCommunityPlatform::Communities::Create.call(
@@ -24,7 +30,11 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
   end
 
   def enable_follow_integration_with(*topics)
-    stub_const("UserFollower", Class.new)
+    unless Object.const_defined?(:UserFollower, false)
+      Object.const_set(:UserFollower, Class.new)
+      @created_user_follower_stub = true
+    end
+
     UserFollower.stubs(:topics_for).returns(topics)
     SiteSetting.stubs(:discourse_follow_enabled).returns(true)
   end
