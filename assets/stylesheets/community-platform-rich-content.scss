@@ -53,6 +53,16 @@
   object-fit: cover;
 }
 
+.dcp-explore-community-card__icon {
+  overflow: hidden;
+}
+
+.dcp-explore-community-card__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .dcp-branding-field {
   display: grid;
   min-width: 0;
