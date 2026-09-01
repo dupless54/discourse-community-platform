@@ -144,6 +144,7 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
     get "/community-platform/communities/#{community.slug}/automod-rules.json"
 
     expect(response.status).to eq(403)
+    expect_management_headers
   end
 
   it "rejects invalid or empty term sets" do
