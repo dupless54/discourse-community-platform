@@ -17,6 +17,7 @@ acceptance("Community Platform | explore page", function (needs) {
             description: "A community for active research discussions.",
             members_count: 84,
             icon_emoji: "🔬",
+            icon_url: "/uploads/default/original/1X/research-logo.png",
             banner_color: "334455",
             recent_topics_count: 6,
           },
@@ -44,6 +45,9 @@ acceptance("Community Platform | explore page", function (needs) {
             upvotes: 8,
             downvotes: 1,
             user_vote: 0,
+            excerpt:
+              "Explore cards also show a bounded first-post preview when the topic has no image.",
+            image_url: null,
             community: {
               id: 11,
               name: "Science",
@@ -56,7 +60,7 @@ acceptance("Community Platform | explore page", function (needs) {
     });
   });
 
-  test("renders community, people, and topic discovery surfaces", async function (assert) {
+  test("renders community branding, people, and rich topic discovery surfaces", async function (assert) {
     await visit("/explore");
 
     assert.dom(".dcp-feed-navigation").exists();
@@ -74,6 +78,9 @@ acceptance("Community Platform | explore page", function (needs) {
       .hasAttribute("href", "/s/research");
     assert.dom(".dcp-explore-community-card__top strong").hasText("s/research");
     assert
+      .dom(".dcp-explore-community-card__icon img")
+      .hasAttribute("src", "/uploads/default/original/1X/research-logo.png");
+    assert
       .dom(".dcp-explore-community-card__meta")
       .includesText("6 active topics");
     assert.dom(".dcp-explore-person-card").exists({ count: 1 });
@@ -89,5 +96,8 @@ acceptance("Community Platform | explore page", function (needs) {
       .dom(".dcp-explore-card .dcp-popular-card__title")
       .hasText("Discover a new community discussion")
       .hasAttribute("href", "/t/discover-new-community/301");
+    assert
+      .dom(".dcp-explore-card .dcp-topic-preview--excerpt")
+      .includesText("Explore cards also show a bounded first-post preview");
   });
 });
