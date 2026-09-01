@@ -11,6 +11,7 @@
 .dcp-automod-description,
 .dcp-automod-empty,
 .dcp-automod-rule__mode,
+.dcp-automod-rule__condition,
 .dcp-automod-history__heading p,
 .dcp-automod-execution__main span,
 .dcp-automod-execution__meta {
@@ -65,10 +66,16 @@
   font-size: var(--font-down-1);
 }
 
+.dcp-automod-rule__condition {
+  margin: 0.2rem 0;
+  font-size: var(--font-down-2);
+}
+
 .dcp-automod-terms {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+  margin-top: 0.55rem;
 }
 
 .dcp-automod-terms span {
@@ -94,6 +101,30 @@
   gap: 0.75rem;
   padding-top: 1rem;
   border-top: 1px solid var(--primary-low);
+}
+
+.dcp-automod-conditions {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 12px;
+}
+
+.dcp-automod-conditions legend {
+  padding: 0 0.25rem;
+  font-weight: 600;
+}
+
+.dcp-automod-conditions > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
 }
 
 .dcp-automod-form .dcp-field:last-of-type {
@@ -170,11 +201,13 @@
 
 @media (max-width: 700px) {
   .dcp-automod-rules,
-  .dcp-automod-form {
+  .dcp-automod-form,
+  .dcp-automod-conditions {
     grid-template-columns: 1fr;
   }
 
-  .dcp-automod-form .dcp-field:last-of-type {
+  .dcp-automod-form .dcp-field:last-of-type,
+  .dcp-automod-conditions > p {
     grid-column: auto;
   }
 
