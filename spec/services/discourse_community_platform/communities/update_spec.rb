@@ -45,6 +45,82 @@ RSpec.describe DiscourseCommunityPlatform::Communities::Update do
     expect(updated.category.reload.description).to eq("A better description")
   end
 
+  it "assigns manager-owned image uploads and keeps explicit upload references" do
+    community = create_community
+    logo =
+      Fabricate(
+        :upload,
+        user_id: owner.id,
+        original_filename: "community-logo.png",
+        extension: "png",
+      )
+    banner =
+      Fabricate(
+        :upload,
+        user_id: owner.id,
+        original_filename: "community-banner.jpg",
+        extension: "jpg",
+      )
+
+    updated =
+      described_class.call(
+        user: owner,
+        community:,
+        params: { icon_upload_id: logo.id, banner_upload_id: banner.id },
+      )
+
+    expect(updated.icon_upload_id).to eq(logo.id)
+    expect(updated.banner_upload_id).to eq(banner.id)
+    expect(UploadReference.exists?(target: updated, upload: logo)).to eq(true)
+    expect(UploadReference.exists?(target: updated, upload: banner)).to eq(true)
+  end
+
+  it "clears removed branding references" do
+    community = create_community
+    logo =
+      Fabricate(
+        :upload,
+        user_id: owner.id,
+        original_filename: "community-logo.png",
+        extension: "png",
+      )
+
+    described_class.call(user: owner, community:, params: { icon_upload_id: logo.id })
+    described_class.call(user: owner, community:, params: { icon_upload_id: nil })
+
+    expect(community.reload.icon_upload_id).to be_nil
+    expect(UploadReference.exists?(target: community, upload: logo)).to eq(false)
+  end
+
+  it "rejects another user's upload and non-image uploads" do
+    community = create_community
+    foreign_image =
+      Fabricate(
+        :upload,
+        user_id: outsider.id,
+        original_filename: "foreign.png",
+        extension: "png",
+      )
+    document =
+      Fabricate(
+        :upload,
+        user_id: owner.id,
+        original_filename: "notes.txt",
+        extension: "txt",
+      )
+
+    expect {
+      described_class.call(user: owner, community:, params: { icon_upload_id: foreign_image.id })
+    }.to raise_error(Discourse::InvalidParameters)
+
+    expect {
+      described_class.call(user: owner, community:, params: { banner_upload_id: document.id })
+    }.to raise_error(Discourse::InvalidParameters)
+
+    expect(community.reload.icon_upload_id).to be_nil
+    expect(community.banner_upload_id).to be_nil
+  end
+
   it "lets a community moderator manage the community without global staff privileges" do
     community = create_community
     GroupManager.new(community.moderator_group).add([moderator.id])
