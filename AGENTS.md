@@ -16,9 +16,11 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 8. Community owners and moderators must never receive global Discourse admin/moderator privileges merely to manage a community.
 9. Migrations must be additive and reversible where practical. Preserve existing Discourse data.
 10. New features require automated tests for permission boundaries and core invariants.
-11. Do not create a competing user-follow graph. When Discourse Follow is installed and enabled, integrate with its `UserFollower` API for followed-user personalization.
+11. Do not create a competing user-follow graph. When Discourse Follow is installed and enabled, integrate with its `UserFollower` API for followed-user personalization and discovery.
+12. Community automation must be scoped through the Community's mapped Discourse Category and must reuse Discourse review/moderation primitives. Do not implement direct destructive moderation when a review-first primitive can satisfy the feature safely.
+13. User-configured AutoModerator text matching must remain bounded. Do not introduce arbitrary user regex execution without a dedicated ReDoS/security design.
 
-## Current phase — Feeds & Discovery
+## Current phase — Community Moderation Automation
 
 Implemented foundations:
 
@@ -35,13 +37,19 @@ Implemented foundations:
 - Explore excludes joined communities, applies a per-community diversity cap, and keeps every candidate behind Guardian visibility checks.
 - Explore community activity signals are computed by a scheduled job and stored in cache; requests never rebuild the aggregate ranking synchronously.
 - Cached Explore signals promote recommended public communities and influence topic ordering while preserving the existing Popular candidate fallback.
+- Explore people discovery derives candidates from the cached public Popular pool, applies Guardian and current Community visibility checks, and respects Discourse Follow profile/follow opt-out behavior.
+- AutoModerator rules are plugin-owned community configuration, not global Discourse moderation configuration.
+- AutoModerator rule management is limited to users authorized by `CommunityAuthorization.can_manage?` / `ensure_can_manage!`.
+- AutoModerator evaluates only new posts whose `topic.category_id` maps to the configured Community.
+- AutoModerator phrase matching uses normalized bounded term arrays with `any` and `all` modes; arbitrary user regex is intentionally not supported.
+- A matching post is sent to the normal Discourse review flow via `PostActionCreator`, `Discourse.system_user`, `inappropriate`, and `queue_for_review: true`.
+- The current AutoModerator slice does not auto-delete content, ban users, or elevate community managers to global staff.
 
 Next slices:
 
-1. Add profile/social discovery surfaces by extending Discourse and Discourse Follow rather than duplicating their models.
-2. Add AutoModerator rules and community-scoped automation.
-3. Add community analytics/moderation insights.
-4. Perform responsive, accessibility, SEO/crawler, and release hardening.
+1. Harden AutoModerator with auditable execution history, safe edit handling, and carefully bounded additional actions/triggers.
+2. Add community analytics/moderation insights.
+3. Perform responsive, accessibility, SEO/crawler, and release hardening.
 
 ## SEO contract
 
@@ -49,6 +57,7 @@ Next slices:
 - Public community landing pages may become indexable after dedicated server-side/crawler rendering is implemented.
 - Private/restricted communities must not expose metadata, counts, titles, or topic content to unauthorized users or crawlers.
 - Never make both an alias URL and a Discourse topic URL independently canonical for the same content.
+- AutoModerator configuration endpoints are authenticated management surfaces and must not become indexable public content.
 
 ## Code style
 
