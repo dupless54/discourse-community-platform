@@ -23,7 +23,9 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
     match_mode: "any",
     enabled: true,
     target: "all_posts",
-    action: "queue_for_review"
+    action: "queue_for_review",
+    max_account_age_days: nil,
+    max_trust_level: nil
   )
     DiscourseCommunityPlatform::AutomodRule.create!(
       community:,
@@ -32,6 +34,8 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
       match_mode:,
       target:,
       action:,
+      max_account_age_days:,
+      max_trust_level:,
       terms:,
       created_by: owner,
       updated_by: owner,
@@ -101,6 +105,55 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
       queue_for_review: false,
     )
     expect(DiscourseCommunityPlatform::AutomodExecution.last.outcome).to eq("flagged_for_review")
+  end
+
+  it "applies a matching rule when the author satisfies both bounded conditions" do
+    community = create_community(name: "New users", slug: "new-users")
+    young_author = Fabricate(:user, trust_level: TrustLevel[0])
+    young_author.update_column(:created_at, 3.days.ago)
+    create_rule(
+      community:,
+      terms: ["blocked phrase"],
+      max_account_age_days: 7,
+      max_trust_level: TrustLevel[0],
+    )
+    topic = Fabricate(:topic, category: community.category, user: young_author)
+    post = Fabricate(:post, topic:, user: young_author, raw: "blocked phrase")
+    creator = successful_creator
+    allow(PostActionCreator).to receive(:new).and_return(creator)
+
+    described_class.call(post:)
+
+    expect(PostActionCreator).to have_received(:new).once
+    expect(DiscourseCommunityPlatform::AutomodExecution.where(post_id: post.id).count).to eq(1)
+  end
+
+  it "does not apply an author-conditioned rule to an older or higher-trust author" do
+    community = create_community(name: "Author bounds", slug: "author-bounds")
+    create_rule(
+      community:,
+      terms: ["blocked phrase"],
+      max_account_age_days: 7,
+      max_trust_level: TrustLevel[1],
+    )
+    old_author = Fabricate(:user, trust_level: TrustLevel[1])
+    old_author.update_column(:created_at, 30.days.ago)
+    high_trust_author = Fabricate(:user, trust_level: TrustLevel[2])
+    high_trust_author.update_column(:created_at, 2.days.ago)
+    old_topic = Fabricate(:topic, category: community.category, user: old_author)
+    high_trust_topic = Fabricate(:topic, category: community.category, user: high_trust_author)
+    old_post = Fabricate(:post, topic: old_topic, user: old_author, raw: "blocked phrase")
+    high_trust_post =
+      Fabricate(:post, topic: high_trust_topic, user: high_trust_author, raw: "blocked phrase")
+    allow(PostActionCreator).to receive(:new)
+
+    described_class.call(post: old_post)
+    described_class.call(post: high_trust_post)
+
+    expect(PostActionCreator).not_to have_received(:new)
+    expect(
+      DiscourseCommunityPlatform::AutomodExecution.where(post_id: [old_post.id, high_trust_post.id]),
+    ).to be_empty
   end
 
   it "does not apply a reply-only rule to the topic starter" do
