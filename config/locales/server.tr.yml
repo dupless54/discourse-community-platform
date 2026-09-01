@@ -9,3 +9,4 @@ tr:
       title: "Topluluk Ana Sayfası"
     automod:
       flag_reason: "%{community} topluluğundaki '%{rule}' AutoModerator kuralı eşleşti."
+      too_many_rules: "Bir toplulukta en fazla %{count} AutoModerator kuralı olabilir."
