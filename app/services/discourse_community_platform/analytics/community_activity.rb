@@ -112,7 +112,7 @@ module ::DiscourseCommunityPlatform
             .where(deleted_at: nil, visible: true, archetype: Archetype.default)
             .where("topics.created_at >= ?", cutoff)
             .where.not(user_id: Discourse.system_user.id)
-            .where.not(id: category_topic_ids)
+            .where.not(id: Category.topic_ids)
             .joins(
               <<~SQL.squish,
                 INNER JOIN discourse_community_platform_communities dcp_activity_communities
@@ -124,21 +124,17 @@ module ::DiscourseCommunityPlatform
         def post_scope(cutoff)
           Post
             .joins(:topic)
-            .where(posts: { deleted_at: nil, post_type: Post.types[:regular] })
+            .where(posts: { deleted_at: nil, hidden: false, post_type: Post.types[:regular] })
             .where("posts.created_at >= ?", cutoff)
             .where(topics: { deleted_at: nil, visible: true, archetype: Archetype.default })
             .where.not(posts: { user_id: Discourse.system_user.id })
-            .where.not(posts: { topic_id: category_topic_ids })
+            .where.not(posts: { topic_id: Category.topic_ids })
             .joins(
               <<~SQL.squish,
                 INNER JOIN discourse_community_platform_communities dcp_activity_communities
                   ON dcp_activity_communities.category_id = topics.category_id
               SQL
             )
-        end
-
-        def category_topic_ids
-          Category.where.not(topic_id: nil).select(:topic_id)
         end
 
         def ready_snapshot(now)
