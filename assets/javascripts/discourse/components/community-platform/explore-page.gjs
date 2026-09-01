@@ -33,7 +33,11 @@ export default class CommunityPlatformExplorePage extends Component {
             {{#each @recommendedCommunities as |community|}}
               <a class="dcp-explore-community-card" href={{community.path}}>
                 <div class="dcp-explore-community-card__top">
-                  {{#if community.icon_emoji}}
+                  {{#if community.icon_url}}
+                    <span class="dcp-explore-community-card__icon" aria-hidden="true">
+                      <img src={{community.icon_url}} alt="" loading="lazy" />
+                    </span>
+                  {{else if community.icon_emoji}}
                     <span class="dcp-explore-community-card__icon" aria-hidden="true">
                       {{community.icon_emoji}}
                     </span>
