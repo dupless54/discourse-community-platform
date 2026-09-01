@@ -127,7 +127,8 @@ module ::DiscourseCommunityPlatform
             .where(posts: { deleted_at: nil, post_type: Post.types[:regular] })
             .where("posts.created_at >= ?", cutoff)
             .where(topics: { deleted_at: nil, visible: true, archetype: Archetype.default })
-            .where.not(posts: { user_id: Discourse.system_user.id, topic_id: category_topic_ids })
+            .where.not(posts: { user_id: Discourse.system_user.id })
+            .where.not(posts: { topic_id: category_topic_ids })
             .joins(
               <<~SQL.squish,
                 INNER JOIN discourse_community_platform_communities dcp_activity_communities
