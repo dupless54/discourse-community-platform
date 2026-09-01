@@ -133,11 +133,22 @@ export default class CommunityPlatformHomePage extends Component {
             <div class="dcp-home-card__content">
               <div class="dcp-home-card__context">
                 <a href={{topic.community.path}}>s/{{topic.community.slug}}</a>
+
+                {{#if topic.author}}
+                  <a class="dcp-home-card__author" href={{topic.author.path}}>
+                    @{{topic.author.username}}
+                  </a>
+                {{/if}}
+
                 <span class="dcp-home-card__source dcp-home-card__source--{{topic.feed_source}}">
                   {{#if (eq topic.feed_source "joined")}}
                     {{i18n "community_platform.home.source_joined"}}
                   {{else}}
-                    {{i18n "community_platform.home.source_popular"}}
+                    {{#if (eq topic.feed_source "followed")}}
+                      {{i18n "community_platform.home.source_followed"}}
+                    {{else}}
+                      {{i18n "community_platform.home.source_popular"}}
+                    {{/if}}
                   {{/if}}
                 </span>
               </div>
