@@ -36,6 +36,24 @@ RSpec.describe "Community feed identity" do
     expect(item.dig(:community, :icon_url)).to eq(logo.url)
   end
 
+  it "does not serialize a branding upload the current Guardian cannot see" do
+    community = create_community(name: "Security", slug: "security")
+    logo = Fabricate(:secure_upload, user: owner)
+    community.update!(icon_upload: logo, icon_emoji: "🔒")
+    topic = Fabricate(:topic, category: community.category, user: owner)
+
+    guardian = Guardian.new(nil)
+    expect(guardian.can_see_topic?(topic)).to eq(true)
+    expect(guardian.can_see_upload?(logo)).to eq(false)
+
+    DiscourseCommunityPlatform::Feeds::PopularTopics.rebuild_cache
+    result = DiscourseCommunityPlatform::Feeds::PopularTopics.call(guardian:, limit: 10)
+    item = result.find { |candidate| candidate[:id] == topic.id }
+
+    expect(item.dig(:community, :icon_emoji)).to eq("🔒")
+    expect(item.dig(:community, :icon_url)).to be_nil
+  end
+
   it "serializes visible branding for joined communities and their Home topics" do
     community = create_community(name: "Hardware", slug: "hardware")
     logo = Fabricate(:upload, user: owner)
