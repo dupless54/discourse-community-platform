@@ -32,14 +32,15 @@ en:
       home:
         eyebrow: "Your community feed"
         title: "Home"
-        personalized_description: "Topics from communities you joined come first, with relevant public discussions filling the rest of your feed."
-        fallback_description: "Popular public discussions across communities are shown until you join communities."
+        personalized_description: "Topics from communities you joined come first, with discussions from people you follow and relevant public topics filling the rest of your feed."
+        fallback_description: "Popular public discussions across communities are shown until you join communities or follow people."
         joined_title: "Your communities"
         open_popular: "Open Popular"
         source_joined: "Joined"
+        source_followed: "Following"
         source_popular: "Popular"
         empty_title: "Your feed is quiet"
-        empty_description: "Join communities or explore Popular to find active discussions."
+        empty_description: "Join communities, follow people, or explore Popular to find active discussions."
       popular:
         eyebrow: "Across communities"
         title: "Popular"
