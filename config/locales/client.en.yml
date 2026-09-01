@@ -14,6 +14,8 @@ en:
       score: "score"
       about: "About community"
       owner: "Owner"
+      navigation:
+        aria_label: "Community feeds"
       visibility_label: "Visibility"
       visibility:
         public: "Public"
