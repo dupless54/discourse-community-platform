@@ -77,7 +77,7 @@ acceptance("Community Platform | Popular community identity", function (needs) {
     server.get("/community-platform/feeds/popular.json", () => {
       return helper.response({
         order: "popular",
-        topics: [{ ...topic(community), feed_source: undefined }],
+        topics: [topic(community)],
       });
     });
   });
