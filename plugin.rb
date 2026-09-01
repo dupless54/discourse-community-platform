@@ -12,6 +12,15 @@ register_asset "stylesheets/community-platform.scss"
 register_asset "stylesheets/community-platform-voting.scss"
 register_asset "stylesheets/community-platform-home.scss"
 
+register_homepage(
+  "community-home",
+  name: "community_platform.homepage.title",
+  path: "/home",
+  route: "discourse_community_platform/home#index",
+  anonymous: true,
+  server_side: false,
+)
+
 module ::DiscourseCommunityPlatform
   PLUGIN_NAME = "discourse-community-platform"
 end
