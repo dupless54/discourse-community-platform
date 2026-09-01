@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 module ::DiscourseCommunityPlatform
-  class CommunityAnalyticsController < ::ApplicationController
-    requires_plugin PLUGIN_NAME
-
-    before_action :ensure_logged_in
-
+  class CommunityAnalyticsController < ManagementController
     def show
       community = find_manageable_community
 
