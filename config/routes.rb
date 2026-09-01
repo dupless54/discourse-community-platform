@@ -16,6 +16,7 @@ DiscourseCommunityPlatform::Engine.routes.draw do
     delete "communities/:slug/automod-rules/:id" => "automod_rules#destroy"
     get "communities/:slug/automod-executions" => "automod_executions#index"
     get "communities/:slug/moderation-insights" => "automod_executions#insights"
+    get "communities/:slug/activity-analytics" => "community_analytics#show"
     get "feeds/home" => "feeds#home"
     get "feeds/following" => "feeds#following"
     get "feeds/explore" => "feeds#explore"
