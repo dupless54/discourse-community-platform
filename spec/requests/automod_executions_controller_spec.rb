@@ -63,6 +63,21 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
     expect(item.fetch("post_url")).to be_present
   end
 
+  it "hides post metadata when the audited post is no longer visible to the manager" do
+    community = create_community
+    execution = create_execution(community:)
+    private_category = Fabricate(:private_category, group: Fabricate(:group))
+    execution.post.topic.update!(category: private_category)
+    sign_in(owner)
+
+    get "/community-platform/communities/#{community.slug}/automod-executions.json"
+
+    expect(response.status).to eq(200)
+    item = response.parsed_body.fetch("automod_executions").first
+    expect(item.fetch("post_url")).to be_nil
+    expect(item.fetch("username")).to be_nil
+  end
+
   it "keeps a rule-name snapshot after the original rule is removed" do
     community = create_community
     execution = create_execution(community:)
