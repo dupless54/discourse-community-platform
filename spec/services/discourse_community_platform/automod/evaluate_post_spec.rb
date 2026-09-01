@@ -108,7 +108,7 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
   end
 
   it "applies a matching rule when the author satisfies both bounded conditions" do
-    community = create_community(name: "New users", slug: "new-users")
+    community = create_community(name: "New users", slug: "newusers")
     young_author = Fabricate(:user, trust_level: TrustLevel[0])
     young_author.update_column(:created_at, 3.days.ago)
     create_rule(
