@@ -5,20 +5,24 @@ import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import { ajax } from "discourse/lib/ajax";
 import { eq } from "discourse/truth-helpers";
+import dFormatDate from "discourse/ui-kit/helpers/d-format-date";
 import { i18n } from "discourse-i18n";
 
 export default class CommunityPlatformAutomodPanel extends Component {
   @tracked rules = [];
+  @tracked executions = [];
   @tracked name = "";
   @tracked termsText = "";
   @tracked matchMode = "any";
   @tracked saving = false;
   @tracked busyRuleId = null;
+  @tracked refreshingHistory = false;
   @tracked errorMessage = null;
 
   constructor(owner, args) {
     super(owner, args);
     this.rules = args.rules || [];
+    this.executions = args.executions || [];
   }
 
   @action
@@ -118,8 +122,31 @@ export default class CommunityPlatformAutomodPanel extends Component {
     }
   }
 
+  @action
+  async refreshHistory() {
+    if (this.refreshingHistory) {
+      return;
+    }
+
+    this.refreshingHistory = true;
+    this.errorMessage = null;
+
+    try {
+      const response = await ajax(`${this.executionsUrl}.json`);
+      this.executions = response.automod_executions || [];
+    } catch {
+      this.errorMessage = i18n("community_platform.automod.error");
+    } finally {
+      this.refreshingHistory = false;
+    }
+  }
+
   get rulesUrl() {
     return `/community-platform/communities/${encodeURIComponent(this.args.community.slug)}/automod-rules`;
+  }
+
+  get executionsUrl() {
+    return `/community-platform/communities/${encodeURIComponent(this.args.community.slug)}/automod-executions`;
   }
 
   <template>
@@ -240,6 +267,66 @@ export default class CommunityPlatformAutomodPanel extends Component {
           {{/if}}
         </button>
       </form>
+
+      <div class="dcp-automod-history">
+        <div class="dcp-automod-history__heading">
+          <div>
+            <h3>{{i18n "community_platform.automod.history_title"}}</h3>
+            <p>{{i18n "community_platform.automod.history_description"}}</p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-small btn-default"
+            disabled={{this.refreshingHistory}}
+            {{on "click" this.refreshHistory}}
+          >
+            {{#if this.refreshingHistory}}
+              {{i18n "community_platform.automod.refreshing"}}
+            {{else}}
+              {{i18n "community_platform.automod.refresh"}}
+            {{/if}}
+          </button>
+        </div>
+
+        <div class="dcp-automod-history__list">
+          {{#each this.executions as |execution|}}
+            <article class="dcp-automod-execution" data-test-automod-execution={{execution.id}}>
+              <div class="dcp-automod-execution__main">
+                <strong>{{execution.rule_name}}</strong>
+                <span>
+                  {{#if (eq execution.trigger "edit")}}
+                    {{i18n "community_platform.automod.trigger_edit"}}
+                  {{else}}
+                    {{i18n "community_platform.automod.trigger_create"}}
+                  {{/if}}
+                  ·
+                  {{#if (eq execution.outcome "already_queued")}}
+                    {{i18n "community_platform.automod.outcome_already_queued"}}
+                  {{else}}
+                    {{i18n "community_platform.automod.outcome_queued"}}
+                  {{/if}}
+                </span>
+              </div>
+
+              <div class="dcp-automod-execution__meta">
+                {{#if execution.username}}
+                  <span>@{{execution.username}}</span>
+                {{/if}}
+                <span>{{dFormatDate execution.created_at}}</span>
+                {{#if execution.post_url}}
+                  <a href={{execution.post_url}}>
+                    {{i18n "community_platform.automod.open_post"}}
+                  </a>
+                {{/if}}
+              </div>
+            </article>
+          {{else}}
+            <p class="dcp-automod-empty">
+              {{i18n "community_platform.automod.history_empty"}}
+            </p>
+          {{/each}}
+        </div>
+      </div>
     </section>
   </template>
 }
