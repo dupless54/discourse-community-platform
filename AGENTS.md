@@ -31,8 +31,10 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 23. Community activity analytics must remain community/category scoped and cache-cold behavior must fail soft with a bounded warming/empty response rather than performing an emergency synchronous aggregate rebuild.
 24. Manager-only JSON surfaces must inherit the shared management-controller hardening and return `X-Robots-Tag: noindex, nofollow` plus `Cache-Control: private, no-store`. Those headers must be applied before authentication so unauthenticated and unauthorized responses are hardened too.
 25. Dynamic community and management UI must preserve accessible names, state, and structure. Keep feed loading regions labelled, use live/status semantics for asynchronous state where appropriate, and expose data grids/tables with meaningful row/header roles rather than visual-only layout semantics.
+26. Release tags and GitHub prereleases must be created only from an exact candidate revision that has passed Official Discourse Plugin CI and the staging smoke-test checklist. Do not publish an RC merely because a preparation PR is green.
+27. During release-candidate stabilization, prefer compatibility, regression, permission, performance, accessibility, and deployment fixes over expanding the product surface. New automation/analytics features wait until the candidate is stable unless they address a release blocker.
 
-## Current phase — Community Moderation Automation
+## Current phase — First Release Candidate Preparation
 
 Implemented foundations:
 
@@ -68,12 +70,14 @@ Implemented foundations:
 - AutoModerator rules, audit history, moderation insights, and community activity analytics share management response hardening so successful, unauthenticated, and unauthorized JSON responses remain non-indexable and non-cacheable by shared/public caches.
 - Dynamic community feed and manager insight surfaces expose explicit accessible region/table/status semantics while retaining keyboard-accessible native controls.
 - The current AutoModerator slice does not auto-delete content, ban/silence users, run arbitrary regex, inspect email/IP/device data, or elevate community managers to global staff.
+- Release preparation includes a changelog, exact-head CI gates, staging smoke-test checklist, rollback readiness, compatibility notes, and documented known limitations.
 
 Next slices:
 
-1. Expand AutoModerator only with explicit bounded conditions/actions backed by dedicated security and regression tests.
-2. Complete remaining release-hardening validation and prepare the first release candidate.
-3. Add broader analytics or automation only after the release candidate is stable.
+1. Finish the release-candidate preparation PR and require exact-head Official Discourse Plugin CI success.
+2. Run the staging install/upgrade, permission, AutoModerator, analytics, crawler/cache, responsive, and accessibility checklist on the exact candidate revision.
+3. Publish `0.1.0-rc.1` only if staging passes; otherwise fix blockers and repeat the exact-head/staging gates.
+4. Resume broader AutoModerator or analytics expansion only after the release candidate is stable.
 
 ## SEO contract
 
@@ -83,6 +87,14 @@ Next slices:
 - Never make both an alias URL and a Discourse topic URL independently canonical for the same content.
 - AutoModerator configuration, execution-history, moderation-insights, and community activity analytics endpoints are authenticated management surfaces and must not become indexable public content.
 - Manager-only JSON surfaces must send `X-Robots-Tag: noindex, nofollow` and `Cache-Control: private, no-store` even when authentication or authorization fails.
+
+## Release contract
+
+- `CHANGELOG.md` describes the planned release candidate and must match the code actually tagged.
+- `RELEASE_CHECKLIST.md` is a required release gate, not optional documentation.
+- Plugin version metadata must be changed intentionally when the exact release revision is known; do not bump it early merely to signal progress.
+- A green PR is not equivalent to a tested release. Staging smoke tests must run after the candidate revision is determined and before a prerelease is published.
+- Keep a database backup and previous known-good plugin revision available before production rollout.
 
 ## Code style
 
