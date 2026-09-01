@@ -50,14 +50,14 @@ RSpec.describe DiscourseCommunityPlatform::Communities::Update do
     logo =
       Fabricate(
         :upload,
-        user_id: owner.id,
+        user: owner,
         original_filename: "community-logo.png",
         extension: "png",
       )
     banner =
       Fabricate(
         :upload,
-        user_id: owner.id,
+        user: owner,
         original_filename: "community-banner.jpg",
         extension: "jpg",
       )
@@ -80,7 +80,7 @@ RSpec.describe DiscourseCommunityPlatform::Communities::Update do
     logo =
       Fabricate(
         :upload,
-        user_id: owner.id,
+        user: owner,
         original_filename: "community-logo.png",
         extension: "png",
       )
@@ -97,17 +97,12 @@ RSpec.describe DiscourseCommunityPlatform::Communities::Update do
     foreign_image =
       Fabricate(
         :upload,
-        user_id: outsider.id,
+        user: outsider,
         original_filename: "foreign.png",
         extension: "png",
       )
-    document =
-      Fabricate(
-        :upload,
-        user_id: owner.id,
-        original_filename: "notes.txt",
-        extension: "txt",
-      )
+    document = Fabricate(:upload, user: owner)
+    document.update_columns(original_filename: "notes.txt", extension: "txt")
 
     expect {
       described_class.call(user: owner, community:, params: { icon_upload_id: foreign_image.id })
