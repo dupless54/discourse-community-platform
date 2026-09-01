@@ -81,7 +81,7 @@ module ::DiscourseCommunityPlatform
         value = @params[field]
         return nil if value.blank?
 
-        upload_id = Integer(value, 10)
+        upload_id = value.is_a?(Integer) ? value : Integer(value.to_s, 10)
         upload = Upload.find_by(id: upload_id)
         raise Discourse::InvalidParameters.new(field) if upload.blank?
         raise Discourse::InvalidParameters.new(field) unless FileHelper.is_supported_image?(upload.original_filename)
