@@ -33,11 +33,14 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 25. Dynamic community and management UI must preserve accessible names, state, and structure. Keep feed loading regions labelled, use live/status semantics for asynchronous state where appropriate, and expose data grids/tables with meaningful row/header roles rather than visual-only layout semantics.
 26. Release tags and GitHub prereleases must be created only from an exact candidate revision that has passed Official Discourse Plugin CI and the staging smoke-test checklist. Do not publish an RC merely because a preparation PR is green.
 27. During release-candidate stabilization, prefer compatibility, regression, permission, performance, accessibility, and deployment fixes over expanding the product surface. New automation/analytics features wait until the candidate is stable unless they address a release blocker.
+28. Rich feed previews must be derived only after the topic has passed the current Guardian visibility check. Preview extraction is bounded to the visible first regular post and may serialize only a short plain-text excerpt plus a Guardian-visible Discourse topic image URL; never serialize raw post content or introduce unbounded per-request content scans for feed cards.
+29. Community logo/cover branding must reuse Discourse `Upload` records and supported upload UI. Assignment is manager-only, image-only, and must not allow a manager to attach an arbitrary unrelated user's upload by guessing its ID. Keep explicit `UploadReference` records for attached branding, keep internal upload IDs manager-only, and preserve Guardian/category visibility as the boundary for community metadata.
 
-## Current phase — First Release Candidate Preparation
+## Current phase — Post-RC1 stabilization and RC2 iteration
 
 Implemented foundations:
 
+- `0.1.0-rc.1` was published from the exact tested release commit after Official Discourse Plugin CI and staging smoke validation.
 - Community creation links a real Category plus member/moderator Groups.
 - Join/leave membership uses the mapped Discourse Group.
 - Owner/community-moderator management remains community-scoped.
@@ -52,6 +55,9 @@ Implemented foundations:
 - Explore community activity signals are computed by a scheduled job and stored in cache; requests never rebuild the aggregate ranking synchronously.
 - Cached Explore signals promote recommended public communities and influence topic ordering while preserving the existing Popular candidate fallback.
 - Explore people discovery derives candidates from the cached public Popular pool, applies Guardian and current Community visibility checks, and respects Discourse Follow profile/follow opt-out behavior.
+- Feed cards can enrich already-visible topics with a bounded plain-text first-post excerpt or a Guardian-visible Discourse topic image, preferring the image when present.
+- Community managers can attach a Discourse-uploaded logo and cover image; emoji and banner color remain fallbacks.
+- Branding upload assignment validates image type and manager ownership/current attachment, and attached uploads are retained through explicit `UploadReference` rows.
 - AutoModerator rules are plugin-owned community configuration, not global Discourse moderation configuration.
 - AutoModerator rule management is limited to users authorized by `CommunityAuthorization.can_manage?` / `ensure_can_manage!`.
 - AutoModerator evaluates only posts whose `topic.category_id` maps to the configured Community.
@@ -70,29 +76,29 @@ Implemented foundations:
 - AutoModerator rules, audit history, moderation insights, and community activity analytics share management response hardening so successful, unauthenticated, and unauthorized JSON responses remain non-indexable and non-cacheable by shared/public caches.
 - Dynamic community feed and manager insight surfaces expose explicit accessible region/table/status semantics while retaining keyboard-accessible native controls.
 - The current AutoModerator slice does not auto-delete content, ban/silence users, run arbitrary regex, inspect email/IP/device data, or elevate community managers to global staff.
-- Release preparation includes a changelog, exact-head CI gates, staging smoke-test checklist, rollback readiness, compatibility notes, and documented known limitations.
 
 Next slices:
 
-1. Finish the release-candidate preparation PR and require exact-head Official Discourse Plugin CI success.
-2. Run the staging install/upgrade, permission, AutoModerator, analytics, crawler/cache, responsive, and accessibility checklist on the exact candidate revision.
-3. Publish `0.1.0-rc.1` only if staging passes; otherwise fix blockers and repeat the exact-head/staging gates.
-4. Resume broader AutoModerator or analytics expansion only after the release candidate is stable.
+1. Finish rich feed-card and community-branding validation on an exact-head PR and require Official Discourse Plugin CI success.
+2. Run staging smoke tests for text/image previews, public/restricted/private visibility, logo/cover persistence, mobile/tablet layouts, and upload permission boundaries.
+3. Collect RC1 production/staging feedback and fix regressions before selecting an exact `0.1.0-rc.2` candidate.
+4. Resume broader AutoModerator or analytics expansion only after the release candidate remains stable.
 
 ## SEO contract
 
 - Keep Discourse topic/post SEO and crawler behavior as the base.
 - Public community landing pages may become indexable after dedicated server-side/crawler rendering is implemented.
-- Private/restricted communities must not expose metadata, counts, titles, or topic content to unauthorized users or crawlers.
+- Private/restricted communities must not expose metadata, counts, titles, previews, images, or topic content to unauthorized users or crawlers.
 - Never make both an alias URL and a Discourse topic URL independently canonical for the same content.
+- Rich feed cards are navigation/UI summaries only; canonical topic content remains on Discourse `/t/...` URLs.
 - AutoModerator configuration, execution-history, moderation-insights, and community activity analytics endpoints are authenticated management surfaces and must not become indexable public content.
 - Manager-only JSON surfaces must send `X-Robots-Tag: noindex, nofollow` and `Cache-Control: private, no-store` even when authentication or authorization fails.
 
 ## Release contract
 
-- `CHANGELOG.md` describes the planned release candidate and must match the code actually tagged.
+- `CHANGELOG.md` describes published releases and the current unreleased iteration; tagged content must match the code actually published.
 - `RELEASE_CHECKLIST.md` is a required release gate, not optional documentation.
-- Plugin version metadata must be changed intentionally when the exact release revision is known; do not bump it early merely to signal progress.
+- Plugin version metadata must be changed intentionally when the exact next release revision is known; do not bump it early merely to signal progress.
 - A green PR is not equivalent to a tested release. Staging smoke tests must run after the candidate revision is determined and before a prerelease is published.
 - Keep a database backup and previous known-good plugin revision available before production rollout.
 
