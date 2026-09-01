@@ -42,8 +42,9 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecution do
     )
   end
 
-  it "accepts bounded create/edit triggers and audit outcomes" do
+  it "accepts bounded create/edit triggers and review outcomes" do
     expect(build_execution).to be_valid
+    expect(build_execution(outcome: "flagged_for_review")).to be_valid
     expect(build_execution(trigger: "edit", outcome: "already_queued")).to be_valid
   end
 

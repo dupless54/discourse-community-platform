@@ -160,6 +160,8 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
               name: "Spam phrases",
               enabled: true,
               match_mode: "any",
+              target: "replies",
+              action: "flag_only",
               terms: ["buy now", "telegram"],
             },
           ],
@@ -178,7 +180,7 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
               username: "spammer",
               rule_name: "Spam phrases",
               trigger: "edit",
-              outcome: "queued_for_review",
+              outcome: "flagged_for_review",
               created_at: "2026-09-01T14:30:00.000Z",
             },
           ],
@@ -194,21 +196,25 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
             name: "Scam links",
             enabled: true,
             match_mode: "any",
+            target: "all_posts",
+            action: "queue_for_review",
             terms: ["guaranteed profit"],
           },
         })
     );
   });
 
-  test("renders manager-only rules, audit history, and adds a rule", async function (assert) {
+  test("renders bounded scopes, review actions, audit history, and adds a rule", async function (assert) {
     await visit("/s/technology");
 
     assert.dom(".dcp-automod-card").exists();
     assert.dom(".dcp-automod-rule").exists({ count: 1 });
     assert.dom(".dcp-automod-rule").includesText("Spam phrases");
+    assert.dom(".dcp-automod-rule").includesText("Replies only");
+    assert.dom(".dcp-automod-rule").includesText("Standard Discourse flag");
     assert.dom(".dcp-automod-terms").includesText("telegram");
     assert.dom("[data-test-automod-execution]").exists({ count: 1 });
-    assert.dom(".dcp-automod-history").includesText("Spam phrases");
+    assert.dom(".dcp-automod-history").includesText("Standard flag created");
     assert.dom(".dcp-automod-history").includesText("@spammer");
     assert
       .dom(".dcp-automod-execution__meta a")

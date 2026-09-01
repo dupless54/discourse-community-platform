@@ -14,6 +14,8 @@ export default class CommunityPlatformAutomodPanel extends Component {
   @tracked name = "";
   @tracked termsText = "";
   @tracked matchMode = "any";
+  @tracked target = "all_posts";
+  @tracked reviewAction = "queue_for_review";
   @tracked saving = false;
   @tracked busyRuleId = null;
   @tracked refreshingHistory = false;
@@ -41,6 +43,16 @@ export default class CommunityPlatformAutomodPanel extends Component {
   }
 
   @action
+  updateTarget(event) {
+    this.target = event.target.value;
+  }
+
+  @action
+  updateReviewAction(event) {
+    this.reviewAction = event.target.value;
+  }
+
+  @action
   async createRule(event) {
     event.preventDefault();
     const terms = this.termsText
@@ -62,6 +74,8 @@ export default class CommunityPlatformAutomodPanel extends Component {
           automod_rule: {
             name: this.name.trim(),
             match_mode: this.matchMode,
+            target: this.target,
+            action: this.reviewAction,
             terms,
           },
         },
@@ -71,6 +85,8 @@ export default class CommunityPlatformAutomodPanel extends Component {
       this.name = "";
       this.termsText = "";
       this.matchMode = "any";
+      this.target = "all_posts";
+      this.reviewAction = "queue_for_review";
     } catch {
       this.errorMessage = i18n("community_platform.automod.error");
     } finally {
@@ -188,6 +204,20 @@ export default class CommunityPlatformAutomodPanel extends Component {
               {{else}}
                 {{i18n "community_platform.automod.match_any"}}
               {{/if}}
+              ·
+              {{#if (eq rule.target "topic_starters")}}
+                {{i18n "community_platform.automod.target_topic_starters"}}
+              {{else if (eq rule.target "replies")}}
+                {{i18n "community_platform.automod.target_replies"}}
+              {{else}}
+                {{i18n "community_platform.automod.target_all_posts"}}
+              {{/if}}
+              ·
+              {{#if (eq rule.action "flag_only")}}
+                {{i18n "community_platform.automod.action_flag_only"}}
+              {{else}}
+                {{i18n "community_platform.automod.action_queue_for_review"}}
+              {{/if}}
             </p>
 
             <div class="dcp-automod-terms">
@@ -242,6 +272,23 @@ export default class CommunityPlatformAutomodPanel extends Component {
           <select value={{this.matchMode}} {{on "change" this.updateMatchMode}}>
             <option value="any">{{i18n "community_platform.automod.match_any"}}</option>
             <option value="all">{{i18n "community_platform.automod.match_all"}}</option>
+          </select>
+        </label>
+
+        <label class="dcp-field">
+          <span>{{i18n "community_platform.automod.target"}}</span>
+          <select value={{this.target}} {{on "change" this.updateTarget}}>
+            <option value="all_posts">{{i18n "community_platform.automod.target_all_posts"}}</option>
+            <option value="topic_starters">{{i18n "community_platform.automod.target_topic_starters"}}</option>
+            <option value="replies">{{i18n "community_platform.automod.target_replies"}}</option>
+          </select>
+        </label>
+
+        <label class="dcp-field">
+          <span>{{i18n "community_platform.automod.action"}}</span>
+          <select value={{this.reviewAction}} {{on "change" this.updateReviewAction}}>
+            <option value="queue_for_review">{{i18n "community_platform.automod.action_queue_for_review"}}</option>
+            <option value="flag_only">{{i18n "community_platform.automod.action_flag_only"}}</option>
           </select>
         </label>
 
@@ -302,6 +349,8 @@ export default class CommunityPlatformAutomodPanel extends Component {
                   ·
                   {{#if (eq execution.outcome "already_queued")}}
                     {{i18n "community_platform.automod.outcome_already_queued"}}
+                  {{else if (eq execution.outcome "flagged_for_review")}}
+                    {{i18n "community_platform.automod.outcome_flagged"}}
                   {{else}}
                     {{i18n "community_platform.automod.outcome_queued"}}
                   {{/if}}

@@ -49,7 +49,11 @@ module ::DiscourseCommunityPlatform
     private
 
     def rule_params
-      params.require(:automod_rule).permit(:name, :enabled, :match_mode, terms: []).to_h.symbolize_keys
+      params
+        .require(:automod_rule)
+        .permit(:name, :enabled, :match_mode, :target, :action, terms: [])
+        .to_h
+        .symbolize_keys
     end
 
     def find_manageable_community
@@ -66,6 +70,8 @@ module ::DiscourseCommunityPlatform
         name: rule.name,
         enabled: rule.enabled,
         match_mode: rule.match_mode,
+        target: rule.target,
+        action: rule.action,
         terms: rule.terms,
         created_by_id: rule.created_by_id,
         updated_by_id: rule.updated_by_id,

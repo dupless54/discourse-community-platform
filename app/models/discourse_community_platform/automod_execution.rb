@@ -5,7 +5,7 @@ module ::DiscourseCommunityPlatform
     self.table_name = "discourse_community_platform_automod_executions"
 
     TRIGGERS = %w[create edit].freeze
-    OUTCOMES = %w[queued_for_review already_queued].freeze
+    OUTCOMES = %w[queued_for_review flagged_for_review already_queued].freeze
     RETENTION_DAYS = 90
 
     belongs_to :community, class_name: "DiscourseCommunityPlatform::Community"

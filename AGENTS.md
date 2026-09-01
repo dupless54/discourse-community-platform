@@ -21,6 +21,8 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 13. User-configured AutoModerator text matching must remain bounded. Do not introduce arbitrary user regex execution without a dedicated ReDoS/security design.
 14. AutoModerator create/edit evaluation must remain asynchronous and idempotent. Serialize per-post work when concurrent jobs could duplicate moderation actions, and retain manager-visible audit evidence for actions taken or already queued.
 15. AutoModerator audit history is management data. Preserve rule-name snapshots when rules are later deleted, do not expose the history endpoint to ordinary community members or crawlers, and keep retention bounded rather than allowing unbounded audit-table growth.
+16. AutoModerator trigger/target options must come from explicit allowlists. Current post targets are `all_posts`, `topic_starters`, and `replies`; do not add arbitrary executable conditions through user input.
+17. AutoModerator actions must remain review-first. Current actions are `queue_for_review` and `flag_only`, both implemented through Discourse `PostActionCreator`; do not silently turn a community rule into delete, ban, silence, or global moderation authority.
 
 ## Current phase — Community Moderation Automation
 
@@ -44,16 +46,18 @@ Implemented foundations:
 - AutoModerator rule management is limited to users authorized by `CommunityAuthorization.can_manage?` / `ensure_can_manage!`.
 - AutoModerator evaluates only posts whose `topic.category_id` maps to the configured Community.
 - AutoModerator phrase matching uses normalized bounded term arrays with `any` and `all` modes; arbitrary user regex is intentionally not supported.
+- Rules may target all posts, topic starters only, or replies only.
 - New posts and meaningful `post_edited` content changes enqueue background AutoModerator evaluation jobs.
 - Per-post AutoModerator evaluation is serialized with `DistributedMutex` and identical rule/post/content SHA-256 combinations are deduplicated.
-- A matching post is sent to the normal Discourse review flow via `PostActionCreator`, `Discourse.system_user`, `inappropriate`, and `queue_for_review: true`.
-- Manager-only execution history records rule-name snapshots, post references, create/edit triggers, and `queued_for_review` / `already_queued` outcomes.
+- A matching post is sent to the normal Discourse review flow via `PostActionCreator`, `Discourse.system_user`, and the `inappropriate` flag type.
+- `queue_for_review` keeps the existing priority review behavior; `flag_only` creates a standard Discourse flag with `queue_for_review: false` and therefore does not force the priority hiding path.
+- Manager-only execution history records rule-name snapshots, post references, create/edit triggers, and `queued_for_review` / `flagged_for_review` / `already_queued` outcomes.
 - Audit UI returns the latest 50 executions and a daily scheduled job removes records older than 90 days.
-- The current AutoModerator slice does not auto-delete content, ban users, or elevate community managers to global staff.
+- The current AutoModerator slice does not auto-delete content, ban/silence users, run arbitrary regex, or elevate community managers to global staff.
 
 Next slices:
 
-1. Add carefully bounded AutoModerator triggers/actions while keeping review-first defaults and avoiding arbitrary regex execution.
+1. Add carefully bounded author/account conditions while keeping review-first defaults and avoiding arbitrary regex execution.
 2. Add community analytics/moderation insights.
 3. Perform responsive, accessibility, SEO/crawler, and release hardening.
 

@@ -5,6 +5,8 @@ module ::DiscourseCommunityPlatform
     self.table_name = "discourse_community_platform_automod_rules"
 
     MATCH_MODES = %w[any all].freeze
+    TARGETS = %w[all_posts topic_starters replies].freeze
+    ACTIONS = %w[queue_for_review flag_only].freeze
     MAX_NAME_LENGTH = 80
     MAX_RULES_PER_COMMUNITY = 25
     MAX_TERMS = 20
@@ -18,6 +20,8 @@ module ::DiscourseCommunityPlatform
 
     validates :name, presence: true, length: { maximum: MAX_NAME_LENGTH }
     validates :match_mode, inclusion: { in: MATCH_MODES }
+    validates :target, inclusion: { in: TARGETS }
+    validates :action, inclusion: { in: ACTIONS }
     validates :terms, presence: true
     validate :validate_terms
     validate :validate_community_rule_limit, on: :create
@@ -31,6 +35,23 @@ module ::DiscourseCommunityPlatform
       else
         normalized_terms.any? { |term| haystack.include?(term) }
       end
+    end
+
+    def applies_to_post?(post)
+      return false if post.blank?
+
+      case target
+      when "topic_starters"
+        post.post_number == 1
+      when "replies"
+        post.post_number.to_i > 1
+      else
+        true
+      end
+    end
+
+    def queue_for_review?
+      action == "queue_for_review"
     end
 
     private
@@ -66,9 +87,11 @@ end
 # Table name: discourse_community_platform_automod_rules
 #
 #  id            :bigint           not null, primary key
+#  action        :string           default("queue_for_review"), not null
 #  enabled       :boolean          default(TRUE), not null
 #  match_mode    :string           default("any"), not null
 #  name          :string           not null
+#  target        :string           default("all_posts"), not null
 #  terms         :jsonb            not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null

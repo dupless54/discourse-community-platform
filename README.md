@@ -32,9 +32,11 @@ A community-platform plugin for Discourse that adds Reddit-inspired communities,
 - recommended community cards and cached community-signal promotion inside `/explore`
 - people discovery sourced from visible cached public activity while preserving Discourse Follow opt-out rules
 - community-scoped AutoModerator phrase rules with `any` / `all` matching
+- bounded AutoModerator targets for all posts, topic starters only, or replies only
+- review-first AutoModerator actions for priority review queue or a standard Discourse flag
 - manager-only AutoModerator CRUD UI and API
-- matching new and meaningfully edited community posts are evaluated in background jobs and queued through Discourse `PostActionCreator` review primitives instead of being automatically deleted
-- manager-only AutoModerator audit history with rule snapshots, post references, create/edit triggers, outcomes, SHA-256 content deduplication, and 90-day retention
+- matching new and meaningfully edited community posts are evaluated in background jobs through Discourse `PostActionCreator` review primitives instead of being automatically deleted
+- manager-only AutoModerator audit history with rule snapshots, post references, create/edit triggers, review outcomes, SHA-256 content deduplication, and 90-day retention
 
 ### Feed backend contracts
 
@@ -57,11 +59,13 @@ DELETE /community-platform/communities/:slug/automod-rules/:id.json
 GET    /community-platform/communities/:slug/automod-executions.json
 ```
 
-AutoModerator rule and execution-history management surfaces are limited to users who can manage that Community. Rules are evaluated only for posts inside the Community's mapped Discourse Category. New posts and meaningful content edits are processed asynchronously; per-post evaluation is serialized with Discourse `DistributedMutex`, and repeated evaluation of the same rule/post/content SHA-256 is deduplicated. A successful match creates an `inappropriate` flag through the Discourse system user with `queue_for_review: true`; existing system flags are not duplicated. The manager UI exposes the latest 50 audit entries, while a daily cleanup removes entries older than 90 days. The automation remains review-first: it does not directly delete posts, ban users, or grant global moderation privileges.
+AutoModerator rule and execution-history management surfaces are limited to users who can manage that Community. Rules are evaluated only for posts inside the Community's mapped Discourse Category. A rule can target all posts, topic starters only, or replies only. New posts and meaningful content edits are processed asynchronously; per-post evaluation is serialized with Discourse `DistributedMutex`, and repeated evaluation of the same rule/post/content SHA-256 is deduplicated.
+
+A successful match always stays inside Discourse's normal review system. `queue_for_review` creates the existing priority review behavior, while `flag_only` creates a standard `inappropriate` flag without forcing the priority-queue hiding path. Existing system flags are not duplicated. The manager UI exposes the latest 50 audit entries, while a daily cleanup removes entries older than 90 days. The automation remains review-first: it does not directly delete posts, ban/silence users, execute arbitrary user regex, or grant global moderation privileges.
 
 ## Roadmap
 
-1. Add carefully bounded AutoModerator triggers/actions without arbitrary regex or destructive bypasses.
+1. Add carefully bounded AutoModerator conditions such as safe author/account signals without arbitrary regex or destructive bypasses.
 2. Add community analytics and moderation insights.
 3. Finish responsive polish, accessibility, SEO/crawler validation, and release hardening.
 

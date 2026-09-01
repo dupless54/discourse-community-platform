@@ -26,6 +26,8 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
            automod_rule: {
              name: "Spam phrases",
              match_mode: "any",
+             target: "replies",
+             action: "flag_only",
              terms: ["  BUY NOW ", "telegram", "telegram"],
            },
          }
@@ -34,13 +36,25 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
     rule = response.parsed_body.fetch("automod_rule")
     expect(rule["terms"]).to eq(["buy now", "telegram"])
     expect(rule["enabled"]).to eq(true)
+    expect(rule["target"]).to eq("replies")
+    expect(rule["action"]).to eq("flag_only")
 
     patch "/community-platform/communities/#{community.slug}/automod-rules/#{rule.fetch("id")}.json",
-          params: { automod_rule: { enabled: false, match_mode: "all" } }
+          params: {
+            automod_rule: {
+              enabled: false,
+              match_mode: "all",
+              target: "topic_starters",
+              action: "queue_for_review",
+            },
+          }
 
     expect(response.status).to eq(200)
-    expect(response.parsed_body.dig("automod_rule", "enabled")).to eq(false)
-    expect(response.parsed_body.dig("automod_rule", "match_mode")).to eq("all")
+    updated = response.parsed_body.fetch("automod_rule")
+    expect(updated["enabled"]).to eq(false)
+    expect(updated["match_mode"]).to eq("all")
+    expect(updated["target"]).to eq("topic_starters")
+    expect(updated["action"]).to eq("queue_for_review")
 
     get "/community-platform/communities/#{community.slug}/automod-rules.json"
 
@@ -51,6 +65,24 @@ RSpec.describe DiscourseCommunityPlatform::AutomodRulesController do
 
     expect(response.status).to eq(204)
     expect(DiscourseCommunityPlatform::AutomodRule.where(community_id: community.id)).to be_empty
+  end
+
+  it "rejects unknown target and action values" do
+    community = create_community
+    sign_in(owner)
+
+    post "/community-platform/communities/#{community.slug}/automod-rules.json",
+         params: {
+           automod_rule: {
+             name: "Unsafe",
+             target: "everything_forever",
+             action: "delete",
+             terms: ["blocked phrase"],
+           },
+         }
+
+    expect(response.status).to eq(422)
+    expect(DiscourseCommunityPlatform::AutomodRule.count).to eq(0)
   end
 
   it "rejects rule management by an unrelated authenticated user" do
