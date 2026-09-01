@@ -75,9 +75,7 @@ export default class CommunityPlatformExplorePage extends Component {
             {{#each @recommendedPeople as |person|}}
               <a class="dcp-explore-person-card" href={{person.path}}>
                 <div class="dcp-explore-person-card__identity">
-                  <span class="dcp-explore-person-card__avatar" aria-hidden="true">
-                    {{person.username.[0]}}
-                  </span>
+                  <span class="dcp-explore-person-card__avatar" aria-hidden="true">@</span>
                   <div>
                     <strong>@{{person.username}}</strong>
                     {{#if person.name}}
