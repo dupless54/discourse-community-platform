@@ -19,11 +19,17 @@ export default class CommunityPlatformModerationInsights extends Component {
   }
 
   <template>
-    <section class="dcp-sidebar-card dcp-moderation-insights" data-test-moderation-insights>
+    <section
+      class="dcp-sidebar-card dcp-moderation-insights"
+      aria-labelledby="dcp-moderation-insights-title"
+      data-test-moderation-insights
+    >
       <div class="dcp-section-heading dcp-section-heading--compact">
         <div>
           <p class="dcp-eyebrow">{{i18n "community_platform.moderation_insights.eyebrow"}}</p>
-          <h2>{{i18n "community_platform.moderation_insights.title"}}</h2>
+          <h2 id="dcp-moderation-insights-title">
+            {{i18n "community_platform.moderation_insights.title"}}
+          </h2>
         </div>
       </div>
 
