@@ -90,7 +90,7 @@ acceptance("Community Platform | explore page", function (needs) {
     assert.dom(".dcp-explore-card").exists({ count: 1 });
     assert
       .dom(".dcp-explore-card .dcp-popular-card__community")
-      .hasText("s/science")
+      .includesText("s/science")
       .hasAttribute("href", "/s/science");
     assert
       .dom(".dcp-explore-card .dcp-popular-card__title")

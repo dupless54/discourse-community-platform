@@ -12,6 +12,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Rich previews are shared across Community, Home, Following, Explore, and Popular topic cards without creating a second content store or alternate canonical topic URL.
 - Community managers can upload a logo and cover image through Discourse's supported image uploader UI; emoji and banner color remain fallbacks.
 - Explore community cards can display uploaded community logos.
+- Uploaded community logos now appear consistently in Home/Following joined-community chips and Home/Following/Popular/Explore topic context links, with emoji or initial fallbacks when no logo is available.
 - Community branding uploads are retained with explicit `UploadReference` records so normal Discourse cleanup does not treat active branding as orphaned files.
 - English and Turkish management copy for logo and cover-image controls.
 
@@ -21,6 +22,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Topic image previews are returned only when the current Guardian can see the underlying Discourse upload.
 - Community branding assignment is manager-only, image-only, and rejects arbitrary unrelated-user upload IDs; internal branding upload IDs are serialized only to authorized community managers.
 - Community logo and cover URLs also pass through the current Discourse Guardian upload-visibility check, preventing a visible Community response from bypassing secure-upload access rules.
+- Feed community identity returns a branding image URL only when the current Guardian can see that Discourse upload.
 
 ### Accessibility and responsive UI
 
