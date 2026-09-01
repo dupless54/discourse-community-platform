@@ -3,9 +3,14 @@
   margin-bottom: 2rem;
 }
 
-.dcp-automod-card {
+.dcp-automod-card,
+.dcp-moderation-insights {
   max-width: 980px;
   margin: 0 auto;
+}
+
+.dcp-moderation-insights {
+  margin-bottom: 1rem;
 }
 
 .dcp-automod-description,
@@ -14,8 +19,94 @@
 .dcp-automod-rule__condition,
 .dcp-automod-history__heading p,
 .dcp-automod-execution__main span,
-.dcp-automod-execution__meta {
+.dcp-automod-execution__meta,
+.dcp-moderation-insights__description,
+.dcp-moderation-insights__rules > p {
   color: var(--primary-medium);
+}
+
+.dcp-moderation-insights__description {
+  margin: 0 0 1rem;
+}
+
+.dcp-moderation-insights__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.dcp-moderation-insights__metrics article {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 12px;
+  background: var(--primary-very-low);
+}
+
+.dcp-moderation-insights__metrics strong {
+  font-size: var(--font-up-2);
+}
+
+.dcp-moderation-insights__metrics span {
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+}
+
+.dcp-moderation-insights__breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.dcp-moderation-insights__breakdown > div,
+.dcp-moderation-insights__rules {
+  padding: 0.85rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 12px;
+}
+
+.dcp-moderation-insights h3 {
+  margin: 0 0 0.55rem;
+  font-size: var(--font-0);
+}
+
+.dcp-moderation-insights dl {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.dcp-moderation-insights dl > div,
+.dcp-moderation-insights__rule {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.dcp-moderation-insights dt {
+  color: var(--primary-medium);
+}
+
+.dcp-moderation-insights dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.dcp-moderation-insights__rules {
+  margin-top: 0.75rem;
+}
+
+.dcp-moderation-insights__rule + .dcp-moderation-insights__rule {
+  margin-top: 0.4rem;
+}
+
+.dcp-moderation-insights__rule span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .dcp-automod-description {
@@ -199,10 +290,18 @@
   gap: 0.65rem;
 }
 
+@media (max-width: 800px) {
+  .dcp-moderation-insights__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 700px) {
   .dcp-automod-rules,
   .dcp-automod-form,
-  .dcp-automod-conditions {
+  .dcp-automod-conditions,
+  .dcp-moderation-insights__metrics,
+  .dcp-moderation-insights__breakdown {
     grid-template-columns: 1fr;
   }
 
