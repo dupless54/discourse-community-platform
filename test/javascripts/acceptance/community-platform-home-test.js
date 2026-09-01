@@ -110,6 +110,10 @@ acceptance("Community Platform | personalized home page", function (needs) {
   test("renders joined, followed, and popular sources and allows voting", async function (assert) {
     await visit("/home");
 
+    assert.dom(".dcp-feed-navigation").exists();
+    assert.dom('[data-feed="home"]').hasClass("active").hasAttribute("href", "/home");
+    assert.dom('[data-feed="following"]').hasAttribute("href", "/following");
+    assert.dom('[data-feed="popular"]').hasAttribute("href", "/popular");
     assert.dom(".dcp-home-hero h1").hasText("Home");
     assert
       .dom(".dcp-home-community-chip")
@@ -158,6 +162,8 @@ acceptance("Community Platform | guest home page", function (needs) {
   test("renders the public fallback without authenticated vote controls", async function (assert) {
     await visit("/home");
 
+    assert.dom(".dcp-feed-navigation").exists();
+    assert.dom('[data-feed="home"]').hasClass("active");
     assert.dom(".dcp-home-card").exists({ count: 1 });
     assert.dom(".dcp-home-community-chip").doesNotExist();
     assert.dom(".dcp-vote-button").doesNotExist();
