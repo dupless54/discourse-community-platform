@@ -99,5 +99,6 @@ RSpec.describe DiscourseCommunityPlatform::CommunityAnalyticsController do
     get "/community-platform/communities/#{community.slug}/activity-analytics.json"
 
     expect(response.status).to eq(403)
+    expect_management_headers
   end
 end
