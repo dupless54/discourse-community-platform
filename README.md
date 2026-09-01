@@ -1,8 +1,8 @@
 # Discourse Community Platform
 
-A community-platform plugin for Discourse that adds Reddit-inspired communities, membership, moderation, voting, ranking, discovery, personalized feeds, and community-scoped safety automation while preserving Discourse core models, permissions, search, review, and SEO behavior.
+A community-platform plugin for Discourse that adds Reddit-inspired communities, membership, moderation, voting, ranking, discovery, personalized feeds, rich feed cards, community branding, and community-scoped safety automation while preserving Discourse core models, permissions, search, review, and SEO behavior.
 
-> Status: first release-candidate preparation. `0.1.0-rc.1` is planned but has not been published. Production rollout is gated on the staging checks in [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
+> Status: `0.1.0-rc.1` is published as a GitHub prerelease. Current development is post-RC1 stabilization toward a later release candidate; deploy the exact tag you intend to run rather than the moving `main` branch.
 
 ## Compatibility
 
@@ -35,7 +35,7 @@ cd /var/discourse
 
 After the rebuild completes, sign in as an administrator and verify that **Community Platform** is enabled in plugin/site settings before performing the staging smoke tests.
 
-For a release candidate, deploy the exact tested tag or commit rather than an unreviewed moving branch.
+For a release candidate, deploy the exact tested tag or commit rather than an unreviewed moving branch. The first published candidate is `v0.1.0-rc.1`.
 
 ## Upgrade
 
@@ -67,6 +67,8 @@ Do not treat migration rollback as the primary rollback strategy. Keep a databas
 - New public aliases such as `/s/:slug` must not create duplicate indexable copies of the same topic content.
 - User-follow personalization integrates with Discourse Follow when its `UserFollower` API is available instead of creating a competing follow graph.
 - Community automation must remain scoped to the mapped Category and reuse Discourse moderation primitives rather than granting community managers global moderator powers.
+- Feed previews are summaries of already-visible Discourse topics, not a second content store. Raw post content is never returned through the preview contract.
+- Community logo and cover branding reuse Discourse Upload records and supported upload UI rather than introducing a parallel file-storage system.
 
 ## Implemented foundations
 
@@ -74,15 +76,17 @@ Do not treat migration rollback as the primary rollback strategy. Keep a databas
 - join/leave membership and community-scoped owner/moderator management
 - rules and appearance metadata
 - responsive `/s/:slug` community experience
+- community logo and cover-image branding through Discourse uploads, with emoji/banner-color fallbacks
 - community topic ordering for hot/new/top/rising
 - upvote/downvote persistence and ranking scores
+- bounded rich topic cards that prefer a visible topic image and otherwise show a short plain-text first-post excerpt
 - cached public `/popular` feed
 - personalized `/home` feed
 - focused `/following` feed using joined communities and Discourse Follow
 - shared responsive feed navigation
 - diversified `/explore` discovery feed that prioritizes communities the signed-in user has not joined
 - scheduled Explore community activity scoring stored in cache instead of recalculated during requests
-- recommended community cards and cached community-signal promotion inside `/explore`
+- recommended community cards, including uploaded community logos, and cached community-signal promotion inside `/explore`
 - people discovery sourced from visible cached public activity while preserving Discourse Follow opt-out rules
 - community-scoped AutoModerator phrase rules with `any` / `all` matching
 - bounded AutoModerator targets for all posts, topic starters only, or replies only
@@ -103,9 +107,18 @@ GET /community-platform/feeds/home.json
 GET /community-platform/feeds/following.json
 GET /community-platform/feeds/explore.json
 GET /community-platform/feeds/popular.json
+GET /community-platform/communities/:slug/topics.json
 ```
 
-All plugin feeds continue to filter candidate content through Discourse visibility/Guardian rules before serialization. Explore recommendation signals are calculated asynchronously; when that cache is cold, topic discovery safely falls back to the existing cached Popular candidate order instead of running an aggregate recommendation query during the request.
+All plugin feeds continue to filter candidate content through Discourse visibility/Guardian rules before serialization. After a topic passes that visibility boundary, the feed may include a bounded plain-text excerpt from its visible first regular post and a Guardian-visible Discourse topic image URL. Image previews take visual precedence in the UI; when no image is available, the text excerpt is shown. Raw post content and cooked HTML are not part of this feed contract.
+
+Explore recommendation signals are calculated asynchronously; when that cache is cold, topic discovery safely falls back to the existing cached Popular candidate order instead of running an aggregate recommendation query during the request.
+
+### Community branding contract
+
+Community records already own optional `icon_upload_id` and `banner_upload_id` references. Managers edit these through Discourse's standard image uploader UI. Branding assignment is image-only and validates that the manager is attaching an upload they own or an image that is already attached to the community; staff retain normal administrative authority. Attached branding uploads are retained with explicit `UploadReference` rows so Discourse cleanup does not treat them as orphaned files. Internal upload IDs are serialized only to authorized community managers.
+
+Emoji and banner color remain fallbacks, so communities without uploaded branding continue to render correctly.
 
 ### Manager analytics contracts
 
@@ -138,12 +151,14 @@ Moderation insights query only the plugin-owned audit table, which is already bo
 
 Management-only AutoModerator and analytics endpoints are additionally marked `noindex, nofollow` and `private, no-store`, so authenticated management payloads are neither crawler targets nor reusable shared-cache responses. These headers are additive hardening and do not replace Guardian or community-manager authorization.
 
-## Known limitations before the first release candidate
+## Known limitations
 
 - The project is pre-stable; compatibility and data-safety fixes can still require changes before a stable release.
-- `0.1.0-rc.1` is not published yet. A tag/prerelease must not be created until the staging checklist passes on the exact candidate revision.
+- `v0.1.0-rc.1` is the first published prerelease. Development on `main` after that tag can contain changes intended for a later RC and should not be treated as the same release.
 - `/s/:slug` is an application UX route, not an independently canonical copy of topic content. Topic links and canonical topic SEO remain on normal Discourse `/t/...` URLs.
-- Public community landing pages are not being promoted as separately indexable server-rendered SEO surfaces in this release candidate.
+- Public community landing pages are not being promoted as separately indexable server-rendered SEO surfaces yet.
+- Feed image previews depend on the Discourse topic image/thumbnail pipeline; a post with an embedded image may briefly fall back to text until Discourse has populated the topic image metadata.
+- Community branding uses Discourse's normal category-style upload pipeline. A future stricter secure-asset design would be required if raw branding files themselves must be cryptographically inaccessible outside a private community, rather than merely keeping the community metadata/UI Guardian-gated.
 - AutoModerator intentionally has no arbitrary user regex, direct post deletion, ban, silence, or community-to-global moderator escalation.
 - Community activity analytics are cache-backed and can briefly report a `warming` state after cache loss/restart.
 - Scheduled recommendation/analytics data can lag real-time activity by its configured rebuild interval.
@@ -163,10 +178,10 @@ Release decisions are based on the exact candidate commit rather than a partiall
 
 ## Roadmap
 
-1. Finish the first release-candidate documentation and automated release-prep gates.
-2. Run the full staging install/upgrade, permission, AutoModerator, analytics, crawler/cache, responsive, and accessibility smoke-test checklist.
-3. If staging passes, publish `0.1.0-rc.1` as a prerelease from the exact tested commit.
-4. Stabilize the release candidate before adding broader AutoModerator conditions, actions, or analytics surfaces.
+1. Validate the richer feed-card and community-branding slice through exact-head Official Discourse Plugin CI.
+2. Smoke-test text/image previews and branding persistence across desktop, mobile, iPad-class layouts, and public/restricted/private permission scenarios.
+3. Collect RC1 feedback and stabilize regressions before selecting the exact `0.1.0-rc.2` candidate revision.
+4. Resume broader automation/analytics expansion only after the current release-candidate line remains stable.
 
 ## License
 
