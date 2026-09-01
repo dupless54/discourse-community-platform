@@ -27,6 +27,9 @@ function homePayload() {
         upvotes: 8,
         downvotes: 1,
         user_vote: 0,
+        excerpt:
+          "A bounded preview from the first post makes the feed useful before opening the full topic.",
+        image_url: null,
         feed_source: "joined",
         community: {
           id: 4,
@@ -47,6 +50,8 @@ function homePayload() {
         upvotes: 12,
         downvotes: 1,
         user_vote: 0,
+        excerpt: "This excerpt is hidden because the topic has an image.",
+        image_url: "/uploads/default/original/1X/followed-preview.png",
         feed_source: "followed",
         author: {
           id: 44,
@@ -73,6 +78,8 @@ function homePayload() {
         upvotes: 21,
         downvotes: 2,
         user_vote: 0,
+        excerpt: null,
+        image_url: null,
         feed_source: "popular",
         community: {
           id: 8,
@@ -107,7 +114,7 @@ acceptance("Community Platform | personalized home page", function (needs) {
     });
   });
 
-  test("renders joined, followed, and popular sources and allows voting", async function (assert) {
+  test("renders joined, followed, popular, and rich preview sources and allows voting", async function (assert) {
     await visit("/home");
 
     assert.dom(".dcp-feed-navigation").exists();
@@ -128,6 +135,10 @@ acceptance("Community Platform | personalized home page", function (needs) {
       .dom(".dcp-home-card:first-child .dcp-home-card__source")
       .hasText("Joined");
     assert
+      .dom(".dcp-home-card:first-child .dcp-topic-preview--excerpt")
+      .includesText("A bounded preview from the first post")
+      .hasAttribute("href", "/t/joined-discussion/301");
+    assert
       .dom(".dcp-home-card:nth-child(2) .dcp-home-card__source")
       .hasText("Following");
     assert
@@ -135,8 +146,17 @@ acceptance("Community Platform | personalized home page", function (needs) {
       .hasText("@followed-user")
       .hasAttribute("href", "/u/followed-user");
     assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview--image img")
+      .hasAttribute("src", "/uploads/default/original/1X/followed-preview.png");
+    assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview--excerpt")
+      .doesNotExist();
+    assert
       .dom(".dcp-home-card:nth-child(3) .dcp-home-card__source")
       .hasText("Popular");
+    assert
+      .dom(".dcp-home-card:nth-child(3) .dcp-topic-preview")
+      .doesNotExist();
 
     await click(".dcp-home-card:first-child .dcp-vote-button--up");
 

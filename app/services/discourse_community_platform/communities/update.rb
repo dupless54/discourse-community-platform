@@ -4,6 +4,7 @@ module ::DiscourseCommunityPlatform
   module Communities
     class Update
       MAX_DESCRIPTION_LENGTH = 1000
+      BRANDING_UPLOAD_FIELDS = %i[icon_upload_id banner_upload_id].freeze
 
       def self.call(user:, community:, params:)
         new(user:, community:, params:).call
@@ -20,6 +21,7 @@ module ::DiscourseCommunityPlatform
 
         attributes = normalized_attributes
         next_visibility = attributes[:visibility] || @community.visibility
+        previous_branding_upload_ids = branding_upload_ids
 
         Community.transaction do
           if next_visibility != @community.visibility
@@ -36,6 +38,7 @@ module ::DiscourseCommunityPlatform
           end
 
           @community.update!(attributes)
+          sync_branding_upload_references(previous_branding_upload_ids)
         end
 
         @community.reload
@@ -66,7 +69,48 @@ module ::DiscourseCommunityPlatform
 
         attributes[:icon_emoji] = @params[:icon_emoji].to_s.strip.presence if @params.key?(:icon_emoji)
         attributes[:banner_color] = @params[:banner_color].to_s.strip.presence if @params.key?(:banner_color)
+
+        BRANDING_UPLOAD_FIELDS.each do |field|
+          attributes[field] = normalized_branding_upload_id(field) if @params.key?(field)
+        end
+
         attributes
+      end
+
+      def normalized_branding_upload_id(field)
+        value = @params[field]
+        return nil if value.blank?
+
+        upload_id = value.is_a?(Integer) ? value : Integer(value.to_s, 10)
+        upload = Upload.find_by(id: upload_id)
+        raise Discourse::InvalidParameters.new(field) if upload.blank?
+        raise Discourse::InvalidParameters.new(field) unless FileHelper.is_supported_image?(upload.original_filename)
+
+        existing_ids = branding_upload_ids
+        unless @user.staff? || upload.user_id == @user.id || existing_ids.include?(upload.id)
+          raise Discourse::InvalidParameters.new(field)
+        end
+
+        upload.id
+      rescue ArgumentError, TypeError
+        raise Discourse::InvalidParameters.new(field)
+      end
+
+      def branding_upload_ids
+        [@community.icon_upload_id, @community.banner_upload_id].compact.uniq
+      end
+
+      def sync_branding_upload_references(previous_upload_ids)
+        current_upload_ids = branding_upload_ids
+        removed_upload_ids = previous_upload_ids - current_upload_ids
+
+        if removed_upload_ids.any?
+          UploadReference.where(target: @community, upload_id: removed_upload_ids).delete_all
+        end
+
+        current_upload_ids.each do |upload_id|
+          UploadReference.find_or_create_by!(target: @community, upload_id: upload_id)
+        end
       end
     end
   end

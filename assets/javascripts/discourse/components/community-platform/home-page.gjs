@@ -6,6 +6,7 @@ import { on } from "@ember/modifier";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
+import TopicPreview from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-preview";
 import { eq } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
 
@@ -203,6 +204,8 @@ export default class CommunityPlatformHomePage extends Component {
               <a class="dcp-home-card__title" href={{topic.path}}>
                 {{topic.title}}
               </a>
+
+              <TopicPreview @topic={{topic}} />
 
               <div class="dcp-topic-card__meta">
                 <span>{{topic.posts_count}} {{i18n "community_platform.posts"}}</span>

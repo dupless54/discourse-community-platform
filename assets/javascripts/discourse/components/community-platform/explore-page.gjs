@@ -1,5 +1,6 @@
 import Component from "@glimmer/component";
 import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
+import TopicPreview from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-preview";
 import { i18n } from "discourse-i18n";
 
 export default class CommunityPlatformExplorePage extends Component {
@@ -32,7 +33,11 @@ export default class CommunityPlatformExplorePage extends Component {
             {{#each @recommendedCommunities as |community|}}
               <a class="dcp-explore-community-card" href={{community.path}}>
                 <div class="dcp-explore-community-card__top">
-                  {{#if community.icon_emoji}}
+                  {{#if community.icon_url}}
+                    <span class="dcp-explore-community-card__icon" aria-hidden="true">
+                      <img src={{community.icon_url}} alt="" loading="lazy" />
+                    </span>
+                  {{else if community.icon_emoji}}
                     <span class="dcp-explore-community-card__icon" aria-hidden="true">
                       {{community.icon_emoji}}
                     </span>
@@ -111,6 +116,7 @@ export default class CommunityPlatformExplorePage extends Component {
               <a class="dcp-popular-card__title" href={{topic.path}}>
                 {{topic.title}}
               </a>
+              <TopicPreview @topic={{topic}} />
               <div class="dcp-topic-card__meta">
                 <span>{{topic.posts_count}} {{i18n "community_platform.posts"}}</span>
                 <span>{{topic.views}} {{i18n "community_platform.views"}}</span>

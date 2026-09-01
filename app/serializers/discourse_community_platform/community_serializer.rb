@@ -15,6 +15,8 @@ module ::DiscourseCommunityPlatform
                :rules,
                :icon_emoji,
                :banner_color,
+               :icon_upload_id,
+               :banner_upload_id,
                :created_at
 
     attribute :path
@@ -84,6 +86,14 @@ module ::DiscourseCommunityPlatform
 
     def can_manage
       CommunityAuthorization.can_manage?(scope&.user, object)
+    end
+
+    def include_icon_upload_id?
+      can_manage
+    end
+
+    def include_banner_upload_id?
+      can_manage
     end
   end
 end

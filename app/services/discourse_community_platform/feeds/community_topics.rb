@@ -27,9 +27,11 @@ module ::DiscourseCommunityPlatform
 
         scores = TopicScore.where(topic_id: topics.map(&:id)).index_by(&:topic_id)
         votes = user_votes(topics)
+        previews = TopicPreviews.call(topics:, guardian: @guardian)
 
         topics.map do |topic|
           score = scores[topic.id]
+          preview = previews.fetch(topic.id, {})
 
           {
             id: topic.id,
@@ -45,6 +47,8 @@ module ::DiscourseCommunityPlatform
             upvotes: score&.upvotes || 0,
             downvotes: score&.downvotes || 0,
             user_vote: votes.fetch(topic.id, 0),
+            excerpt: preview[:excerpt],
+            image_url: preview[:image_url],
           }
         end
       end

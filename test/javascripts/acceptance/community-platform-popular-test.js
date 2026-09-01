@@ -20,6 +20,8 @@ acceptance("Community Platform | popular page", function (needs) {
             upvotes: 20,
             downvotes: 2,
             user_vote: 0,
+            excerpt: "This text is hidden when an image preview is available.",
+            image_url: "/uploads/default/original/1X/popular-preview.png",
             community: {
               id: 7,
               name: "Technology",
@@ -32,7 +34,7 @@ acceptance("Community Platform | popular page", function (needs) {
     });
   });
 
-  test("renders cached global popular topics with community context", async function (assert) {
+  test("renders cached global popular topics with community context and image previews", async function (assert) {
     await visit("/popular");
 
     assert.dom(".dcp-feed-navigation").exists();
@@ -53,5 +55,13 @@ acceptance("Community Platform | popular page", function (needs) {
       .hasText("A fast-moving technology discussion")
       .hasAttribute("href", "/t/fast-moving-technology/201");
     assert.dom(".dcp-popular-card__score strong").hasText("18");
+    assert
+      .dom(".dcp-topic-preview--image")
+      .hasAttribute("href", "/t/fast-moving-technology/201")
+      .hasAttribute("aria-label", "A fast-moving technology discussion");
+    assert
+      .dom(".dcp-topic-preview--image img")
+      .hasAttribute("src", "/uploads/default/original/1X/popular-preview.png");
+    assert.dom(".dcp-topic-preview--excerpt").doesNotExist();
   });
 });

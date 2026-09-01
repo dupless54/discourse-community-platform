@@ -42,16 +42,38 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       expect(body["is_member"]).to eq(false)
       expect(body["can_join"]).to eq(false)
       expect(body["can_manage"]).to eq(false)
+      expect(body).not_to have_key("icon_upload_id")
+      expect(body).not_to have_key("banner_upload_id")
     end
 
-    it "exposes management capability only to an authorized manager" do
+    it "exposes management capability and branding upload ids only to an authorized manager" do
+      logo =
+        Fabricate(
+          :upload,
+          user: owner,
+          original_filename: "community-logo.png",
+          extension: "png",
+        )
+      banner =
+        Fabricate(
+          :upload,
+          user: owner,
+          original_filename: "community-banner.jpg",
+          extension: "jpg",
+        )
+      community.update!(icon_upload: logo, banner_upload: banner)
       sign_in(owner)
 
       get "/community-platform/communities/#{community.slug}.json"
 
       expect(response.status).to eq(200)
-      expect(response.parsed_body.dig("community", "can_manage")).to eq(true)
-      expect(response.parsed_body.dig("community", "owner_username")).to eq(owner.username)
+      body = response.parsed_body.fetch("community")
+      expect(body["can_manage"]).to eq(true)
+      expect(body["owner_username"]).to eq(owner.username)
+      expect(body["icon_upload_id"]).to eq(logo.id)
+      expect(body["banner_upload_id"]).to eq(banner.id)
+      expect(body["icon_url"]).to eq(logo.url)
+      expect(body["banner_url"]).to eq(banner.url)
     end
 
     it "does not leak community metadata when Discourse category permissions deny access" do
@@ -126,8 +148,22 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       )
     end
 
-    it "updates metadata and category visibility for the owner" do
+    it "updates metadata, branding, and category visibility for the owner" do
       managed = create_managed_community
+      logo =
+        Fabricate(
+          :upload,
+          user: owner,
+          original_filename: "managed-logo.png",
+          extension: "png",
+        )
+      banner =
+        Fabricate(
+          :upload,
+          user: owner,
+          original_filename: "managed-banner.jpg",
+          extension: "jpg",
+        )
       sign_in(owner)
 
       patch "/community-platform/communities/#{managed.slug}.json",
@@ -137,6 +173,8 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
                 visibility: "private",
                 icon_emoji: "🧭",
                 banner_color: "#112233",
+                icon_upload_id: logo.id,
+                banner_upload_id: banner.id,
                 rules: ["Be respectful", "No spam"],
               },
             }
@@ -151,10 +189,16 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       expect(managed.rules).to eq(["Be respectful", "No spam"])
       expect(managed.icon_emoji).to eq("🧭")
       expect(managed.banner_color).to eq("112233")
+      expect(managed.icon_upload_id).to eq(logo.id)
+      expect(managed.banner_upload_id).to eq(banner.id)
       expect(managed.category.reload.description).to eq("Updated community")
       expect(managed.category.read_restricted).to eq(true)
       expect(body["can_manage"]).to eq(true)
       expect(body["banner_color"]).to eq("112233")
+      expect(body["icon_upload_id"]).to eq(logo.id)
+      expect(body["banner_upload_id"]).to eq(banner.id)
+      expect(body["icon_url"]).to eq(logo.url)
+      expect(body["banner_url"]).to eq(banner.url)
     end
 
     it "rejects an unrelated authenticated user" do

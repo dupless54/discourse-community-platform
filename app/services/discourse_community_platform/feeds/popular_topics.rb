@@ -74,12 +74,14 @@ module ::DiscourseCommunityPlatform
         scores = TopicScore.where(topic_id: topics.map(&:id)).index_by(&:topic_id)
         communities = Community.where(category_id: topics.map(&:category_id)).index_by(&:category_id)
         votes = user_votes(topics)
+        previews = TopicPreviews.call(topics:, guardian: @guardian)
 
         topics.filter_map do |topic|
           community = communities[topic.category_id]
           next if community.blank? || !community.public?
 
           score = scores[topic.id]
+          preview = previews.fetch(topic.id, {})
 
           {
             id: topic.id,
@@ -95,6 +97,8 @@ module ::DiscourseCommunityPlatform
             upvotes: score&.upvotes || 0,
             downvotes: score&.downvotes || 0,
             user_vote: votes.fetch(topic.id, 0),
+            excerpt: preview[:excerpt],
+            image_url: preview[:image_url],
             community: {
               id: community.id,
               name: community.name,
