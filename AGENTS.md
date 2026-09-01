@@ -20,7 +20,7 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 12. Community automation must be scoped through the Community's mapped Discourse Category and must reuse Discourse review/moderation primitives. Do not implement direct destructive moderation when a review-first primitive can satisfy the feature safely.
 13. User-configured AutoModerator text matching must remain bounded. Do not introduce arbitrary user regex execution without a dedicated ReDoS/security design.
 14. AutoModerator create/edit evaluation must remain asynchronous and idempotent. Serialize per-post work when concurrent jobs could duplicate moderation actions, and retain manager-visible audit evidence for actions taken or already queued.
-15. AutoModerator audit history is management data. Preserve rule-name snapshots when rules are later deleted, and do not expose the history endpoint to ordinary community members or crawlers.
+15. AutoModerator audit history is management data. Preserve rule-name snapshots when rules are later deleted, do not expose the history endpoint to ordinary community members or crawlers, and keep retention bounded rather than allowing unbounded audit-table growth.
 
 ## Current phase — Community Moderation Automation
 
@@ -48,6 +48,7 @@ Implemented foundations:
 - Per-post AutoModerator evaluation is serialized with `DistributedMutex` and identical rule/post/content SHA-256 combinations are deduplicated.
 - A matching post is sent to the normal Discourse review flow via `PostActionCreator`, `Discourse.system_user`, `inappropriate`, and `queue_for_review: true`.
 - Manager-only execution history records rule-name snapshots, post references, create/edit triggers, and `queued_for_review` / `already_queued` outcomes.
+- Audit UI returns the latest 50 executions and a daily scheduled job removes records older than 90 days.
 - The current AutoModerator slice does not auto-delete content, ban users, or elevate community managers to global staff.
 
 Next slices:
