@@ -137,8 +137,10 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
 
     get "/community-platform/communities/#{community.slug}/automod-executions.json"
     expect(response.status).to eq(403)
+    expect_management_headers
 
     get "/community-platform/communities/#{community.slug}/moderation-insights.json"
     expect(response.status).to eq(403)
+    expect_management_headers
   end
 end
