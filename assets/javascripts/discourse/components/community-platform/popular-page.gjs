@@ -1,9 +1,12 @@
 import Component from "@glimmer/component";
+import FeedNavigation from "discourse/components/community-platform/feed-navigation";
 import { i18n } from "discourse-i18n";
 
 export default class CommunityPlatformPopularPage extends Component {
   <template>
     <div class="dcp-popular-page container">
+      <FeedNavigation />
+
       <header class="dcp-popular-hero">
         <p class="dcp-eyebrow">{{i18n "community_platform.popular.eyebrow"}}</p>
         <h1>{{i18n "community_platform.popular.title"}}</h1>
