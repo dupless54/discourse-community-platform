@@ -33,6 +33,11 @@ require_relative "lib/discourse_community_platform/community_authorization"
 
 after_initialize do
   Discourse::Application.routes.append do
+    get "/home" => "discourse_community_platform/home#index"
+    get "/following" => "discourse_community_platform/home#index"
+    get "/explore" => "discourse_community_platform/home#index"
+    get "/popular" => "discourse_community_platform/home#index"
+
     mount ::DiscourseCommunityPlatform::Engine, at: "/community-platform"
   end
 end
