@@ -8,7 +8,21 @@ RSpec.describe Jobs::DiscourseCommunityPlatform::EvaluateAutomodPost do
 
     described_class.new.execute(post_id: post.id)
 
-    expect(DiscourseCommunityPlatform::Automod::EvaluatePost).to have_received(:call).with(post:)
+    expect(DiscourseCommunityPlatform::Automod::EvaluatePost).to have_received(:call).with(
+      post:,
+      trigger: "create",
+    )
+  end
+
+  it "forwards edit triggers to the community AutoModerator evaluator" do
+    allow(DiscourseCommunityPlatform::Automod::EvaluatePost).to receive(:call)
+
+    described_class.new.execute(post_id: post.id, trigger: "edit")
+
+    expect(DiscourseCommunityPlatform::Automod::EvaluatePost).to have_received(:call).with(
+      post:,
+      trigger: "edit",
+    )
   end
 
   it "ignores a post that no longer exists" do

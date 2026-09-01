@@ -9,6 +9,7 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
       `/community-platform/communities/${slug}/topics.json?order=hot`
     );
     let automodRules = [];
+    let automodExecutions = [];
 
     if (payload.community?.can_manage) {
       try {
@@ -19,6 +20,15 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
       } catch {
         automodRules = [];
       }
+
+      try {
+        const executionsPayload = await ajax(
+          `/community-platform/communities/${slug}/automod-executions.json`
+        );
+        automodExecutions = executionsPayload.automod_executions || [];
+      } catch {
+        automodExecutions = [];
+      }
     }
 
     return {
@@ -26,6 +36,7 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
       topics: feedPayload.topics || [],
       order: feedPayload.order || "hot",
       automodRules,
+      automodExecutions,
     };
   }
 

@@ -12,6 +12,7 @@ export default <template>
       <AutomodPanel
         @community={{@controller.model.community}}
         @rules={{@controller.model.automodRules}}
+        @executions={{@controller.model.automodExecutions}}
       />
     </div>
   {{/if}}

@@ -7,7 +7,10 @@ module Jobs
         post = Post.find_by(id: args[:post_id])
         return if post.blank?
 
-        ::DiscourseCommunityPlatform::Automod::EvaluatePost.call(post:)
+        ::DiscourseCommunityPlatform::Automod::EvaluatePost.call(
+          post:,
+          trigger: args[:trigger] || "create",
+        )
       end
     end
   end

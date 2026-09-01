@@ -40,5 +40,21 @@ on(:post_created) do |post|
   next unless SiteSetting.community_platform_enabled
   next if post.topic&.category_id.blank?
 
-  Jobs.enqueue(Jobs::DiscourseCommunityPlatform::EvaluateAutomodPost, post_id: post.id)
+  Jobs.enqueue(
+    Jobs::DiscourseCommunityPlatform::EvaluateAutomodPost,
+    post_id: post.id,
+    trigger: "create",
+  )
+end
+
+on(:post_edited) do |post, _, revisor|
+  next unless SiteSetting.community_platform_enabled
+  next if post.topic&.category_id.blank?
+  next unless revisor&.reviewable_content_changed?
+
+  Jobs.enqueue(
+    Jobs::DiscourseCommunityPlatform::EvaluateAutomodPost,
+    post_id: post.id,
+    trigger: "edit",
+  )
 end
