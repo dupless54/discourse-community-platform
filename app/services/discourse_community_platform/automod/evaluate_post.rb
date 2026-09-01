@@ -42,7 +42,7 @@ module ::DiscourseCommunityPlatform
             .where(community_id: community.id, enabled: true)
             .order(:id)
             .limit(AutomodRule::MAX_RULES_PER_COMMUNITY)
-            .detect { |rule| rule.applies_to_post?(@post) && rule.matches?(@post.raw) }
+            .detect { |rule| rule.applies_to?(@post) && rule.matches?(@post.raw) }
         return if matched_rule.blank?
 
         content_sha256 = Digest::SHA256.hexdigest(@post.raw.to_s)
