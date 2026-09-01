@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
 module ::DiscourseCommunityPlatform
-  class AutomodExecutionsController < ::ApplicationController
-    requires_plugin PLUGIN_NAME
-
+  class AutomodExecutionsController < ManagementController
     HISTORY_LIMIT = 50
-
-    before_action :ensure_logged_in
 
     def index
       community = find_manageable_community
