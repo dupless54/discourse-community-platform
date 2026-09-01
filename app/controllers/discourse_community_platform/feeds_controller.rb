@@ -18,10 +18,14 @@ module ::DiscourseCommunityPlatform
 
     def explore
       limit = params[:limit].presence || Feeds::ExploreTopics::DEFAULT_LIMIT
+      community_limit =
+        params[:community_limit].presence || Feeds::ExploreCommunities::DEFAULT_LIMIT
 
       render json: {
                order: "explore",
                personalized: current_user.present?,
+               recommended_communities:
+                 Feeds::ExploreCommunities.call(guardian:, limit: community_limit),
                topics: Feeds::ExploreTopics.call(guardian:, limit:),
              }
     end
