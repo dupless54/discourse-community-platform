@@ -34,6 +34,15 @@ RSpec.describe "Community platform homepage" do
     expect(response.media_type).to eq("text/html")
   end
 
+  it "serves direct community feed routes through the Discourse Ember shell" do
+    %w[/home /following /explore /popular].each do |path|
+      get path
+
+      expect(response.status).to eq(200), "expected #{path} to serve the Ember shell"
+      expect(response.media_type).to eq("text/html")
+    end
+  end
+
   it "does not replace explicit Discourse discovery routes" do
     get "/latest"
 
