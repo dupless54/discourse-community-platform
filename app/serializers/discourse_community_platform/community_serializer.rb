@@ -44,11 +44,11 @@ module ::DiscourseCommunityPlatform
     end
 
     def icon_url
-      object.icon_upload&.url
+      visible_upload_url(object.icon_upload)
     end
 
     def banner_url
-      object.banner_upload&.url
+      visible_upload_url(object.banner_upload)
     end
 
     def is_member
@@ -94,6 +94,14 @@ module ::DiscourseCommunityPlatform
 
     def include_banner_upload_id?
       can_manage
+    end
+
+    private
+
+    def visible_upload_url(upload)
+      return if upload.blank? || scope.blank? || !scope.can_see_upload?(upload)
+
+      upload.url
     end
   end
 end
