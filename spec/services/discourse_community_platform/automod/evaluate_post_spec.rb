@@ -189,6 +189,45 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
     )
   end
 
+  it "recognizes a retained system review score when the post action is no longer active" do
+    community = create_community(name: "Retained review", slug: "retained-review")
+    rule = create_rule(community:, terms: ["blocked phrase"])
+    topic = Fabricate(:topic, category: community.category, user: author)
+    post = Fabricate(:post, topic:, user: author, raw: "blocked phrase after edit")
+    inappropriate_type_id = PostActionType.types[:inappropriate]
+    system_user = Discourse.system_user
+    reviewable =
+      ReviewableFlaggedPost.needs_review!(
+        created_by: system_user,
+        target: post,
+        topic:,
+        reviewable_by_moderator: true,
+      )
+    reviewable.add_score(
+      system_user,
+      inappropriate_type_id,
+      reason: "queued_by_staff",
+    )
+    allow(PostActionCreator).to receive(:new)
+
+    described_class.call(post:, trigger: "edit")
+
+    expect(PostActionCreator).not_to have_received(:new)
+    expect(
+      reviewable.reviewable_scores.where(
+        user_id: system_user.id,
+        reviewable_score_type: inappropriate_type_id,
+      ).count,
+    ).to eq(1)
+    expect(DiscourseCommunityPlatform::AutomodExecution.last).to have_attributes(
+      community_id: community.id,
+      automod_rule_id: rule.id,
+      post_id: post.id,
+      trigger: "edit",
+      outcome: "already_queued",
+    )
+  end
+
   it "does not process the same rule, post, and content twice" do
     community = create_community(name: "Dedup", slug: "dedup")
     create_rule(community:, terms: ["blocked phrase"])
