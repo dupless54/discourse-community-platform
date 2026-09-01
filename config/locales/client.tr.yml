@@ -32,14 +32,15 @@ tr:
       home:
         eyebrow: "Topluluk akışın"
         title: "Ana Sayfa"
-        personalized_description: "Katıldığın topluluklardaki konular önce gelir; kalan alanlar görünür ve popüler tartışmalarla tamamlanır."
-        fallback_description: "Topluluklara katılana kadar herkese açık popüler tartışmalar burada gösterilir."
+        personalized_description: "Katıldığın topluluklardaki konular önce gelir; kalan alanlar takip ettiğin kişilerin tartışmaları ve ilgili herkese açık konularla tamamlanır."
+        fallback_description: "Topluluklara katılana veya kişileri takip etmeye başlayana kadar herkese açık popüler tartışmalar burada gösterilir."
         joined_title: "Toplulukların"
         open_popular: "Popüler'i aç"
         source_joined: "Katıldığın"
+        source_followed: "Takip ettiğin"
         source_popular: "Popüler"
         empty_title: "Akışın şu anda sakin"
-        empty_description: "Aktif tartışmaları bulmak için topluluklara katılabilir veya Popüler sayfasını keşfedebilirsin."
+        empty_description: "Aktif tartışmaları bulmak için topluluklara katılabilir, kişileri takip edebilir veya Popüler sayfasını keşfedebilirsin."
       popular:
         eyebrow: "Topluluklar genelinde"
         title: "Popüler"
