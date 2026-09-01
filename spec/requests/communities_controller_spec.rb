@@ -50,14 +50,14 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       logo =
         Fabricate(
           :upload,
-          user_id: owner.id,
+          user: owner,
           original_filename: "community-logo.png",
           extension: "png",
         )
       banner =
         Fabricate(
           :upload,
-          user_id: owner.id,
+          user: owner,
           original_filename: "community-banner.jpg",
           extension: "jpg",
         )
@@ -153,14 +153,14 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       logo =
         Fabricate(
           :upload,
-          user_id: owner.id,
+          user: owner,
           original_filename: "managed-logo.png",
           extension: "png",
         )
       banner =
         Fabricate(
           :upload,
-          user_id: owner.id,
+          user: owner,
           original_filename: "managed-banner.jpg",
           extension: "jpg",
         )
