@@ -3,6 +3,7 @@ import ExplorePage from "discourse/plugins/discourse-community-platform/discours
 export default <template>
   <ExplorePage
     @topics={{@controller.model.topics}}
+    @recommendedCommunities={{@controller.model.recommendedCommunities}}
     @personalized={{@controller.model.personalized}}
   />
 </template>;
