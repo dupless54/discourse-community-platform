@@ -92,7 +92,13 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
       Discourse.system_user,
       post,
       PostActionType.types[:inappropriate],
-      hash_including(queue_for_review: false),
+      message:
+        I18n.t(
+          "community_platform.automod.flag_reason",
+          community: community.name,
+          rule: "Keyword guard",
+        ),
+      queue_for_review: false,
     )
     expect(DiscourseCommunityPlatform::AutomodExecution.last.outcome).to eq("flagged_for_review")
   end
