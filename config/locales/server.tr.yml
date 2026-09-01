@@ -7,3 +7,5 @@ tr:
   community_platform:
     homepage:
       title: "Topluluk Ana Sayfası"
+    automod:
+      flag_reason: "%{community} topluluğundaki '%{rule}' AutoModerator kuralı eşleşti."
