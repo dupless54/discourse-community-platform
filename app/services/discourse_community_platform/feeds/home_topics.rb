@@ -52,7 +52,7 @@ module ::DiscourseCommunityPlatform
 
         Community
           .where(member_group_id: group_ids)
-          .includes(:category)
+          .includes(:category, :icon_upload)
           .order(:id)
           .select { |community| @guardian.can_see_category?(community.category) }
       end
@@ -150,7 +150,11 @@ module ::DiscourseCommunityPlatform
 
       def serialize_followed(topics)
         scores = TopicScore.where(topic_id: topics.map(&:id)).index_by(&:topic_id)
-        communities = Community.where(category_id: topics.map(&:category_id)).index_by(&:category_id)
+        communities =
+          Community
+            .where(category_id: topics.map(&:category_id))
+            .includes(:icon_upload)
+            .index_by(&:category_id)
         votes = user_votes(topics)
         previews = TopicPreviews.call(topics:, guardian: @guardian)
 
@@ -189,12 +193,7 @@ module ::DiscourseCommunityPlatform
           excerpt: preview[:excerpt],
           image_url: preview[:image_url],
           feed_source:,
-          community: {
-            id: community.id,
-            name: community.name,
-            slug: community.slug,
-            path: "/s/#{community.slug}",
-          },
+          community: community_identity(community),
         }
 
         if include_author && topic.user
@@ -207,6 +206,20 @@ module ::DiscourseCommunityPlatform
         end
 
         item
+      end
+
+      def community_identity(community)
+        icon_upload = community.icon_upload
+        icon_url = icon_upload&.url if icon_upload.blank? || @guardian.can_see_upload?(icon_upload)
+
+        {
+          id: community.id,
+          name: community.name,
+          slug: community.slug,
+          path: "/s/#{community.slug}",
+          icon_emoji: community.icon_emoji,
+          icon_url:,
+        }
       end
 
       def remove_duplicates(items, existing_items)
@@ -250,15 +263,7 @@ module ::DiscourseCommunityPlatform
         {
           order: "home",
           personalized:,
-          joined_communities:
-            communities.map do |community|
-              {
-                id: community.id,
-                name: community.name,
-                slug: community.slug,
-                path: "/s/#{community.slug}",
-              }
-            end,
+          joined_communities: communities.map { |community| community_identity(community) },
           topics:,
         }
       end
