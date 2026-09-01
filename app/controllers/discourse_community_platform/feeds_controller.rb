@@ -10,6 +10,12 @@ module ::DiscourseCommunityPlatform
       render json: Feeds::HomeTopics.call(guardian:, limit:)
     end
 
+    def following
+      limit = params[:limit].presence || Feeds::FollowingTopics::DEFAULT_LIMIT
+
+      render json: Feeds::FollowingTopics.call(guardian:, limit:)
+    end
+
     def popular
       limit = params[:limit].presence || Feeds::PopularTopics::DEFAULT_LIMIT
 
