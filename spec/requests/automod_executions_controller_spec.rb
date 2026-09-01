@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "digest"
+
 RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
   fab!(:owner) { Fabricate(:user, trust_level: 1) }
   fab!(:outsider, :user)
