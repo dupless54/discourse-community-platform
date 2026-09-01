@@ -166,6 +166,25 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
         })
     );
 
+    server.get(
+      "/community-platform/communities/technology/automod-executions.json",
+      () =>
+        helper.response({
+          automod_executions: [
+            {
+              id: 10,
+              post_id: 101,
+              post_url: "/t/future-of-computing/101/1",
+              username: "spammer",
+              rule_name: "Spam phrases",
+              trigger: "edit",
+              outcome: "queued_for_review",
+              created_at: "2026-09-01T14:30:00.000Z",
+            },
+          ],
+        })
+    );
+
     server.post(
       "/community-platform/communities/technology/automod-rules.json",
       () =>
@@ -181,13 +200,19 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
     );
   });
 
-  test("renders manager-only rules and adds a rule", async function (assert) {
+  test("renders manager-only rules, audit history, and adds a rule", async function (assert) {
     await visit("/s/technology");
 
     assert.dom(".dcp-automod-card").exists();
     assert.dom(".dcp-automod-rule").exists({ count: 1 });
     assert.dom(".dcp-automod-rule").includesText("Spam phrases");
     assert.dom(".dcp-automod-terms").includesText("telegram");
+    assert.dom("[data-test-automod-execution]").exists({ count: 1 });
+    assert.dom(".dcp-automod-history").includesText("Spam phrases");
+    assert.dom(".dcp-automod-history").includesText("@spammer");
+    assert
+      .dom(".dcp-automod-execution__meta a")
+      .hasAttribute("href", "/t/future-of-computing/101/1");
 
     await fillIn(".dcp-automod-form input", "Scam links");
     await fillIn(".dcp-automod-form textarea", "guaranteed profit");
