@@ -5,7 +5,9 @@ import { service } from "@ember/service";
 import { on } from "@ember/modifier";
 import { htmlSafe } from "@ember/template";
 import { tracked } from "@glimmer/tracking";
+import UppyImageUploader from "discourse/components/uppy-image-uploader";
 import { ajax } from "discourse/lib/ajax";
+import TopicPreview from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-preview";
 import { eq } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
 
@@ -25,6 +27,10 @@ export default class CommunityPlatformCommunityPage extends Component {
   @tracked visibility = "public";
   @tracked iconEmoji = "";
   @tracked bannerColor = "";
+  @tracked iconUploadId = null;
+  @tracked iconUrl = null;
+  @tracked bannerUploadId = null;
+  @tracked bannerUrl = null;
   @tracked rulesText = "";
 
   constructor(owner, args) {
@@ -141,6 +147,30 @@ export default class CommunityPlatformCommunityPage extends Component {
   }
 
   @action
+  iconUploadDone(upload) {
+    this.iconUploadId = upload.id;
+    this.iconUrl = upload.url;
+  }
+
+  @action
+  iconUploadDeleted() {
+    this.iconUploadId = null;
+    this.iconUrl = null;
+  }
+
+  @action
+  bannerUploadDone(upload) {
+    this.bannerUploadId = upload.id;
+    this.bannerUrl = upload.url;
+  }
+
+  @action
+  bannerUploadDeleted() {
+    this.bannerUploadId = null;
+    this.bannerUrl = null;
+  }
+
+  @action
   async saveManagement() {
     this.saving = true;
     this.errorMessage = null;
@@ -157,6 +187,8 @@ export default class CommunityPlatformCommunityPage extends Component {
               visibility: this.visibility,
               icon_emoji: this.iconEmoji,
               banner_color: this.bannerColor,
+              icon_upload_id: this.iconUploadId,
+              banner_upload_id: this.bannerUploadId,
               rules: this.rulesText
                 .split(/\r?\n/)
                 .map((rule) => rule.trim())
@@ -203,6 +235,7 @@ export default class CommunityPlatformCommunityPage extends Component {
         { type }
       );
       this.community = response.community;
+      this.syncManagementForm();
     } catch {
       this.errorMessage = i18n("community_platform.membership_error");
     } finally {
@@ -215,18 +248,26 @@ export default class CommunityPlatformCommunityPage extends Component {
     this.visibility = this.community.visibility || "public";
     this.iconEmoji = this.community.icon_emoji || "";
     this.bannerColor = this.community.banner_color || "";
+    this.iconUploadId = this.community.icon_upload_id || null;
+    this.iconUrl = this.community.icon_url || null;
+    this.bannerUploadId = this.community.banner_upload_id || null;
+    this.bannerUrl = this.community.banner_url || null;
     this.rulesText = (this.community.rules || []).join("\n");
   }
 
   <template>
     <div class="dcp-community-page container">
       <section class="dcp-community-hero" style={{this.bannerStyle}}>
-        <div class="dcp-community-hero__banner"></div>
+        <div class="dcp-community-hero__banner">
+          {{#if this.bannerUrl}}
+            <img class="dcp-community-hero__banner-image" src={{this.bannerUrl}} alt="" />
+          {{/if}}
+        </div>
         <div class="dcp-community-hero__content">
           <div class="dcp-community-identity">
             <div class="dcp-community-icon" aria-hidden="true">
-              {{#if this.community.icon_url}}
-                <img src={{this.community.icon_url}} alt="" />
+              {{#if this.iconUrl}}
+                <img src={{this.iconUrl}} alt="" />
               {{else if this.community.icon_emoji}}
                 <span>{{this.community.icon_emoji}}</span>
               {{else}}
@@ -362,6 +403,7 @@ export default class CommunityPlatformCommunityPage extends Component {
                   <a class="dcp-topic-card__title" href={{topic.path}}>
                     {{topic.title}}
                   </a>
+                  <TopicPreview @topic={{topic}} />
                   <div class="dcp-topic-card__meta">
                     <span>{{topic.posts_count}} {{i18n "community_platform.posts"}}</span>
                     <span>{{topic.views}} {{i18n "community_platform.views"}}</span>
@@ -447,6 +489,32 @@ export default class CommunityPlatformCommunityPage extends Component {
                   <option value="private">{{i18n "community_platform.visibility.private"}}</option>
                 </select>
               </label>
+
+              <div class="dcp-branding-field">
+                <strong>{{i18n "community_platform.management.logo"}}</strong>
+                <UppyImageUploader
+                  @imageUrl={{this.iconUrl}}
+                  @onUploadDone={{this.iconUploadDone}}
+                  @onUploadDeleted={{this.iconUploadDeleted}}
+                  @type="category_logo"
+                  @id="dcp-community-logo-uploader"
+                  class="dcp-branding-uploader dcp-branding-uploader--logo"
+                />
+                <small>{{i18n "community_platform.management.logo_hint"}}</small>
+              </div>
+
+              <div class="dcp-branding-field">
+                <strong>{{i18n "community_platform.management.banner_image"}}</strong>
+                <UppyImageUploader
+                  @imageUrl={{this.bannerUrl}}
+                  @onUploadDone={{this.bannerUploadDone}}
+                  @onUploadDeleted={{this.bannerUploadDeleted}}
+                  @type="category_background"
+                  @id="dcp-community-banner-uploader"
+                  class="dcp-branding-uploader dcp-branding-uploader--banner"
+                />
+                <small>{{i18n "community_platform.management.banner_image_hint"}}</small>
+              </div>
 
               <div class="dcp-field-row">
                 <label class="dcp-field">
