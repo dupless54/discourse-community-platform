@@ -32,12 +32,13 @@ module ::DiscourseCommunityPlatform
 
     def serialize_execution(execution)
       post = execution.post
+      visible_post = post if guardian.can_see_post?(post)
 
       {
         id: execution.id,
         post_id: execution.post_id,
-        post_url: post&.url,
-        username: post&.user&.username,
+        post_url: visible_post&.url,
+        username: visible_post&.user&.username,
         rule_name: execution.rule_name,
         trigger: execution.trigger,
         outcome: execution.outcome,
