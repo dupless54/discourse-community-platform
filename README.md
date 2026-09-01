@@ -38,6 +38,7 @@ A community-platform plugin for Discourse that adds Reddit-inspired communities,
 - manager-only AutoModerator CRUD UI and API
 - matching new and meaningfully edited community posts are evaluated in background jobs through Discourse `PostActionCreator` review primitives instead of being automatically deleted
 - manager-only AutoModerator audit history with rule snapshots, post references, create/edit triggers, review outcomes, SHA-256 content deduplication, and 90-day retention
+- manager-only moderation insights derived from bounded 7/30-day AutoModerator audit aggregates without returning post content or user metadata
 
 ### Feed backend contracts
 
@@ -58,9 +59,10 @@ POST   /community-platform/communities/:slug/automod-rules.json
 PATCH  /community-platform/communities/:slug/automod-rules/:id.json
 DELETE /community-platform/communities/:slug/automod-rules/:id.json
 GET    /community-platform/communities/:slug/automod-executions.json
+GET    /community-platform/communities/:slug/moderation-insights.json
 ```
 
-AutoModerator rule and execution-history management surfaces are limited to users who can manage that Community. Rules are evaluated only for posts inside the Community's mapped Discourse Category. A rule can target all posts, topic starters only, or replies only. It can also optionally narrow evaluation to authors whose account is no older than 1–365 days and/or whose current trust level is at or below a selected Discourse trust level. With both author conditions configured, both must match. Leaving both unset preserves the original all-author behavior.
+AutoModerator rule, execution-history, and moderation-insight management surfaces are limited to users who can manage that Community. Rules are evaluated only for posts inside the Community's mapped Discourse Category. A rule can target all posts, topic starters only, or replies only. It can also optionally narrow evaluation to authors whose account is no older than 1–365 days and/or whose current trust level is at or below a selected Discourse trust level. With both author conditions configured, both must match. Leaving both unset preserves the original all-author behavior.
 
 Author conditions are deliberately small, explicit allowlisted signals. They use only the Discourse user's `created_at` and current `trust_level`; they do not inspect email addresses, IP addresses, devices, profile fields, or other sensitive/account-identifying metadata. They only decide whether the existing phrase rule is eligible to match and never create a moderation action on their own.
 
@@ -68,9 +70,11 @@ New posts and meaningful content edits are processed asynchronously; per-post ev
 
 A successful match always stays inside Discourse's normal review system. `queue_for_review` creates the existing priority review behavior, while `flag_only` creates a standard `inappropriate` flag without forcing the priority-queue hiding path. Existing system flags are not duplicated. The manager UI exposes the latest 50 audit entries, while a daily cleanup removes entries older than 90 days. The automation remains review-first: it does not directly delete posts, ban/silence users, execute arbitrary user regex, or grant global moderation privileges.
 
+Moderation insights query only the plugin-owned audit table, which is already bounded by 90-day retention and indexed by community/time. The manager-only response summarizes 7- and 30-day execution counts, distinct audited posts, outcome/trigger distributions, and the five most-triggered rule-name snapshots. It does not serialize post IDs, post URLs, usernames, raw post content, email/IP/device data, or private community content.
+
 ## Roadmap
 
-1. Add community analytics and moderation insights without bypassing Guardian or exposing private community data.
+1. Expand community analytics carefully with non-sensitive, permission-safe operational signals only where they add clear manager value.
 2. Expand AutoModerator only through additional explicit, bounded, review-first conditions/actions with dedicated tests and security review.
 3. Finish responsive polish, accessibility, SEO/crawler validation, and release hardening.
 
