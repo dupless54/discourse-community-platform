@@ -13,16 +13,20 @@ export default class CommunityPlatformCommunityRoute extends DiscourseRoute {
 
     if (payload.community?.can_manage) {
       try {
-        const [rulesPayload, executionsPayload] = await Promise.all([
-          ajax(`/community-platform/communities/${slug}/automod-rules.json`),
-          ajax(
-            `/community-platform/communities/${slug}/automod-executions.json`
-          ),
-        ]);
-        automodRules = rulesPayload.automod_rules || [];
-        automodExecutions = executionsPayload.automod_executions || [];
+        const automodPayload = await ajax(
+          `/community-platform/communities/${slug}/automod-rules.json`
+        );
+        automodRules = automodPayload.automod_rules || [];
       } catch {
         automodRules = [];
+      }
+
+      try {
+        const executionsPayload = await ajax(
+          `/community-platform/communities/${slug}/automod-executions.json`
+        );
+        automodExecutions = executionsPayload.automod_executions || [];
+      } catch {
         automodExecutions = [];
       }
     }
