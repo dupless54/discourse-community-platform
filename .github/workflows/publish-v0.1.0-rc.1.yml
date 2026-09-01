@@ -1,0 +1,105 @@
+name: Publish v0.1.0-rc.1
+
+on:
+  push:
+    branches:
+      - publish-v0.1.0-rc.1
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.repository == 'dupless54/discourse-community-platform'
+    runs-on: ubuntu-latest
+    env:
+      TAG: v0.1.0-rc.1
+      RELEASE_SHA: d5f45b0e9e048c4b47bd0bce4f22120b815ba6a5
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Verify immutable release target
+        shell: bash
+        run: |
+          set -euo pipefail
+          MAIN_SHA="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          test "$MAIN_SHA" = "$RELEASE_SHA"
+          test "$(git rev-parse "${RELEASE_SHA}^{commit}")" = "$RELEASE_SHA"
+          git show "${RELEASE_SHA}:plugin.rb" | grep -Fx '# version: 0.1.0-rc.1'
+          git show "${RELEASE_SHA}:CHANGELOG.md" | grep -F '## [0.1.0-rc.1] - 2026-09-02'
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists; refusing to overwrite it."
+            exit 1
+          fi
+
+      - name: Create and push annotated release tag
+        id: tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag -a "$TAG" "$RELEASE_SHA" -m 'Discourse Community Platform 0.1.0-rc.1'
+          TAG_OBJECT_SHA="$(git rev-parse "${TAG}^{tag}")"
+          TAG_COMMIT_SHA="$(git rev-parse "${TAG}^{commit}")"
+          test "$TAG_COMMIT_SHA" = "$RELEASE_SHA"
+          git push origin "refs/tags/${TAG}"
+          echo "tag_object_sha=${TAG_OBJECT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "tag_commit_sha=${TAG_COMMIT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub prerelease
+        shell: bash
+        env:
+          TAG_OBJECT_SHA: ${{ steps.tag.outputs.tag_object_sha }}
+          TAG_COMMIT_SHA: ${{ steps.tag.outputs.tag_commit_sha }}
+        run: |
+          set -euo pipefail
+          cat > RELEASE_NOTES.md <<'EOF'
+          ## Discourse Community Platform 0.1.0-rc.1
+
+          First release candidate of the Reddit-inspired Community Platform layer for Discourse.
+
+          ### Highlights
+          - Communities map 1:1 to real Discourse categories and reuse Discourse groups/Guardian permissions.
+          - `/s/:slug` community pages with Hot, New, Top, and Rising ordering.
+          - Home, Following, Explore, and Popular feeds with visibility filtering.
+          - Plugin-owned upvote/downvote scoring while keeping Discourse topics/posts/likes authoritative.
+          - Community-scoped AutoModerator phrase rules with bounded targets, author conditions, review-first actions, edit re-evaluation, deduplication, and manager audit history.
+          - Cached Explore, Popular, moderation insights, and 7/30-day community activity analytics.
+          - Management JSON hardening with `X-Robots-Tag: noindex, nofollow` and `Cache-Control: private, no-store`.
+          - Responsive desktop/mobile/tablet UI, including the validated iPad-class community hero layout fix.
+          - English and Turkish client copy.
+
+          ### Compatibility
+          - Requires Discourse 3.5.0 or newer.
+          - No Discourse core patches.
+          - Canonical topic SEO remains on normal Discourse `/t/...` URLs.
+
+          ### Validation
+          - Exact release-prep PR head passed Official Discourse Plugin CI #125 (`33567257280`).
+          - Final merged release commit passed Official Discourse Plugin CI #126 (`33567560314`).
+          - Fresh-install, permission, feed, AutoModerator, analytics, crawler/cache, accessibility, mobile and iPad-class responsive smoke tests were completed before publication.
+
+          This is a prerelease. The project is pre-stable and may receive breaking changes in later release candidates when required for Discourse compatibility, permission boundaries, or data safety.
+          EOF
+
+          printf '\n### Release identity\n- Release commit SHA: `%s`\n- Annotated tag object SHA: `%s`\n- Tag: `%s`\n' \
+            "$TAG_COMMIT_SHA" "$TAG_OBJECT_SHA" "$TAG" >> RELEASE_NOTES.md
+
+          gh release create "$TAG" \
+            --title 'Discourse Community Platform 0.1.0-rc.1' \
+            --notes-file RELEASE_NOTES.md \
+            --prerelease \
+            --verify-tag
+
+      - name: Verify published prerelease
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          test "$(git rev-parse "${TAG}^{commit}")" = "$RELEASE_SHA"
+          gh release view "$TAG" --json tagName,isPrerelease,isDraft,url
