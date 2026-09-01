@@ -29,12 +29,17 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
     )
   end
 
-  it "queues a matching community post for review through Discourse moderation primitives" do
+  def successful_creator
+    result = instance_double(PostActionCreator::CreateResult, success?: true)
+    instance_double(PostActionCreator, perform: result)
+  end
+
+  it "queues a matching community post for review and records an audit execution" do
     community = create_community(name: "Marketplace", slug: "marketplace")
-    create_rule(community:, terms: ["buy now", "crypto"])
+    rule = create_rule(community:, terms: ["buy now", "crypto"])
     topic = Fabricate(:topic, category: community.category, user: author)
     post = Fabricate(:post, topic:, user: author, raw: "Best crypto deal — buy now")
-    creator = instance_double(PostActionCreator, perform: true)
+    creator = successful_creator
     allow(PostActionCreator).to receive(:new).and_return(creator)
 
     described_class.call(post:)
@@ -51,6 +56,66 @@ RSpec.describe DiscourseCommunityPlatform::Automod::EvaluatePost do
         ),
       queue_for_review: true,
     )
+
+    execution = DiscourseCommunityPlatform::AutomodExecution.last
+    expect(execution).to have_attributes(
+      community_id: community.id,
+      automod_rule_id: rule.id,
+      post_id: post.id,
+      rule_name: "Keyword guard",
+      trigger: "create",
+      outcome: "queued_for_review",
+    )
+    expect(execution.content_sha256).to eq(Digest::SHA256.hexdigest(post.raw))
+  end
+
+  it "records an edited matching post that was already queued without creating another flag" do
+    community = create_community(name: "Edited", slug: "edited")
+    rule = create_rule(community:, terms: ["blocked phrase"])
+    topic = Fabricate(:topic, category: community.category, user: author)
+    post = Fabricate(:post, topic:, user: author, raw: "blocked phrase after edit")
+    allow(PostAction).to receive(:exists?).and_return(true)
+    allow(PostActionCreator).to receive(:new)
+
+    described_class.call(post:, trigger: "edit")
+
+    expect(PostActionCreator).not_to have_received(:new)
+    expect(DiscourseCommunityPlatform::AutomodExecution.last).to have_attributes(
+      community_id: community.id,
+      automod_rule_id: rule.id,
+      post_id: post.id,
+      trigger: "edit",
+      outcome: "already_queued",
+    )
+  end
+
+  it "does not process the same rule, post, and content twice" do
+    community = create_community(name: "Dedup", slug: "dedup")
+    create_rule(community:, terms: ["blocked phrase"])
+    topic = Fabricate(:topic, category: community.category, user: author)
+    post = Fabricate(:post, topic:, user: author, raw: "blocked phrase")
+    creator = successful_creator
+    allow(PostActionCreator).to receive(:new).and_return(creator)
+
+    described_class.call(post:)
+    described_class.call(post:, trigger: "edit")
+
+    expect(PostActionCreator).to have_received(:new).once
+    expect(DiscourseCommunityPlatform::AutomodExecution.where(post_id: post.id).count).to eq(1)
+  end
+
+  it "does not audit a failed review action" do
+    community = create_community(name: "Failure", slug: "failure")
+    create_rule(community:, terms: ["blocked phrase"])
+    topic = Fabricate(:topic, category: community.category, user: author)
+    post = Fabricate(:post, topic:, user: author, raw: "blocked phrase")
+    result = instance_double(PostActionCreator::CreateResult, success?: false)
+    creator = instance_double(PostActionCreator, perform: result)
+    allow(PostActionCreator).to receive(:new).and_return(creator)
+
+    described_class.call(post:)
+
+    expect(DiscourseCommunityPlatform::AutomodExecution.where(post_id: post.id)).to be_empty
   end
 
   it "supports all-term rules without flagging partial matches" do
