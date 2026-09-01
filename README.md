@@ -2,7 +2,7 @@
 
 A community-platform plugin for Discourse that adds Reddit-inspired communities, membership, moderation, voting, ranking, discovery, and personalized feeds while preserving Discourse core models, permissions, search, and SEO behavior.
 
-> Status: early development / Phase 1 — Community Core
+> Status: active development / Phase 3 — Feeds & Discovery
 
 ## Architecture principles
 
@@ -12,40 +12,40 @@ A community-platform plugin for Discourse that adds Reddit-inspired communities,
 - Public content remains compatible with Discourse SEO/crawler behavior; private or restricted content must never leak through plugin endpoints.
 - Do not patch Discourse core files.
 - New public aliases such as `/s/:slug` must not create duplicate indexable copies of the same topic content.
+- User-follow personalization integrates with Discourse Follow when its `UserFollower` API is available instead of creating a competing follow graph.
 
-## Phase 1
+## Implemented foundations
 
-The first milestone establishes the Community Core:
+- atomic Community + Category + member/moderator Group creation
+- join/leave membership and community-scoped owner/moderator management
+- rules and appearance metadata
+- responsive `/s/:slug` community experience
+- community topic ordering for hot/new/top/rising
+- upvote/downvote persistence and ranking scores
+- cached public `/popular` feed
+- personalized `/home` feed
+- focused `/following` feed using joined communities and Discourse Follow
+- shared responsive feed navigation
+- diversified `/explore` discovery feed that prioritizes communities the signed-in user has not joined
 
-- plugin skeleton and isolated Rails engine
-- community persistence model
-- category/community mapping
-- owner/member/moderator group references
-- public/restricted/private visibility model
-- `/s/:slug` path contract
-- authorization and validation foundations
-- automated tests
-
-### Current backend contract
-
-A visible community can be read from:
+### Feed backend contracts
 
 ```text
-GET /community-platform/communities/:slug.json
+GET /community-platform/feeds/home.json
+GET /community-platform/feeds/following.json
+GET /community-platform/feeds/explore.json
+GET /community-platform/feeds/popular.json
 ```
 
-The response includes the future user-facing community path (`/s/:slug`) while the plugin continues to defer access decisions to Discourse Guardian/category permissions.
+All plugin feeds continue to filter candidate content through Discourse visibility/Guardian rules before serialization.
 
 ## Roadmap
 
-1. Atomic community creation: Category + member Group + moderator Group + Community.
-2. Join/leave membership APIs.
-3. Owner and community-moderator authorization.
-4. Rules, flair, banner/icon configuration.
-5. `/s/:slug` frontend experience.
-6. Upvote/downvote and ranking engine.
-7. Popular, Explore, Following, and personalized feeds.
-8. AutoModerator and community analytics.
+1. Harden Explore ranking with more recommendation signals while keeping expensive scoring in jobs/cache.
+2. Add social/profile discovery surfaces without duplicating Discourse Follow relationships.
+3. Add AutoModerator and community-scoped moderation automation.
+4. Add community analytics and moderation insights.
+5. Finish responsive polish, accessibility, and release hardening.
 
 ## License
 
