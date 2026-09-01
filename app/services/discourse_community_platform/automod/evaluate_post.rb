@@ -42,7 +42,7 @@ module ::DiscourseCommunityPlatform
             .where(community_id: community.id, enabled: true)
             .order(:id)
             .limit(AutomodRule::MAX_RULES_PER_COMMUNITY)
-            .detect { |rule| rule.matches?(@post.raw) }
+            .detect { |rule| rule.applies_to_post?(@post) && rule.matches?(@post.raw) }
         return if matched_rule.blank?
 
         content_sha256 = Digest::SHA256.hexdigest(@post.raw.to_s)
@@ -69,7 +69,7 @@ module ::DiscourseCommunityPlatform
                 community: community.name,
                 rule: matched_rule.name,
               ),
-            queue_for_review: true,
+            queue_for_review: matched_rule.queue_for_review?,
           ).perform
         return unless result.success?
 
@@ -77,7 +77,7 @@ module ::DiscourseCommunityPlatform
           community:,
           rule: matched_rule,
           content_sha256:,
-          outcome: "queued_for_review",
+          outcome: matched_rule.queue_for_review? ? "queued_for_review" : "flagged_for_review",
         )
       end
 
