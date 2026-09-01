@@ -27,6 +27,8 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 19. Author conditions only narrow phrase-rule eligibility. They must never create an action by themselves, and when multiple author conditions are present all configured conditions must match.
 20. Community moderation insights are manager-only aggregate management data. Keep them scoped to plugin-owned bounded audit records and do not serialize post content, post URLs/IDs, usernames, email/IP/device data, or other user-identifying metadata through the aggregate endpoint.
 21. Request-time moderation insight queries must remain bounded by community and a short time window over indexed data. If later analytics require broader or expensive scans, move them to scheduled/background cache computation instead of expanding synchronous full-table aggregation.
+22. Community activity analytics are manager-only cached aggregates. Rebuild them in scheduled jobs from Discourse topic/post data, never by synchronous request-time full-table scans, and never serialize contributor identities, post IDs/URLs, raw content, email/IP/device data, or other user-identifying metadata.
+23. Community activity analytics must remain community/category scoped and cache-cold behavior must fail soft with a bounded warming/empty response rather than performing an emergency synchronous aggregate rebuild.
 
 ## Current phase — Community Moderation Automation
 
@@ -60,13 +62,14 @@ Implemented foundations:
 - Manager-only execution history records rule-name snapshots, post references, create/edit triggers, and `queued_for_review` / `flagged_for_review` / `already_queued` outcomes.
 - Audit UI returns the latest 50 executions and a daily scheduled job removes records older than 90 days.
 - Manager-only moderation insights aggregate the bounded audit table into 7/30-day counts, distinct audited posts, outcome/trigger distributions, and the top five rule-name snapshots without returning raw content or user metadata.
+- Manager-only community activity analytics expose only cached 7/30-day counts for new topics, posts, replies, active topics, and unique contributors. A 15-minute scheduled job rebuilds the cache; requests never rebuild it synchronously.
 - The current AutoModerator slice does not auto-delete content, ban/silence users, run arbitrary regex, inspect email/IP/device data, or elevate community managers to global staff.
 
 Next slices:
 
-1. Expand community analytics carefully with non-sensitive operational signals only where they add clear manager value.
-2. Expand AutoModerator only with explicit bounded conditions/actions backed by dedicated security and regression tests.
-3. Perform responsive, accessibility, SEO/crawler, and release hardening.
+1. Expand AutoModerator only with explicit bounded conditions/actions backed by dedicated security and regression tests.
+2. Perform responsive, accessibility, SEO/crawler, and release hardening.
+3. Prepare the first release candidate once the remaining hardening gates are green.
 
 ## SEO contract
 
@@ -74,7 +77,7 @@ Next slices:
 - Public community landing pages may become indexable after dedicated server-side/crawler rendering is implemented.
 - Private/restricted communities must not expose metadata, counts, titles, or topic content to unauthorized users or crawlers.
 - Never make both an alias URL and a Discourse topic URL independently canonical for the same content.
-- AutoModerator configuration, execution-history, and moderation-insights endpoints are authenticated management surfaces and must not become indexable public content.
+- AutoModerator configuration, execution-history, moderation-insights, and community activity analytics endpoints are authenticated management surfaces and must not become indexable public content.
 
 ## Code style
 
