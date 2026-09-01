@@ -58,18 +58,20 @@ module ::DiscourseCommunityPlatform
           return
         end
 
-        PostActionCreator.new(
-          Discourse.system_user,
-          @post,
-          PostActionType.types[:inappropriate],
-          message:
-            I18n.t(
-              "community_platform.automod.flag_reason",
-              community: community.name,
-              rule: matched_rule.name,
-            ),
-          queue_for_review: true,
-        ).perform
+        result =
+          PostActionCreator.new(
+            Discourse.system_user,
+            @post,
+            PostActionType.types[:inappropriate],
+            message:
+              I18n.t(
+                "community_platform.automod.flag_reason",
+                community: community.name,
+                rule: matched_rule.name,
+              ),
+            queue_for_review: true,
+          ).perform
+        return unless result.success?
 
         record_execution(
           community:,
