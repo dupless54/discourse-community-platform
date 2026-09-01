@@ -4,8 +4,8 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import { on } from "@ember/modifier";
 import { tracked } from "@glimmer/tracking";
-import FeedNavigation from "discourse/components/community-platform/feed-navigation";
 import { ajax } from "discourse/lib/ajax";
+import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
 import { eq } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
 
