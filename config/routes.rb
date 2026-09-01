@@ -11,6 +11,7 @@ DiscourseCommunityPlatform::Engine.routes.draw do
     delete "communities/:slug/join" => "communities#leave"
     get "feeds/home" => "feeds#home"
     get "feeds/following" => "feeds#following"
+    get "feeds/explore" => "feeds#explore"
     get "feeds/popular" => "feeds#popular"
     put "topics/:topic_id/vote" => "votes#update"
   end
