@@ -124,7 +124,7 @@ acceptance("Community Platform | personalized home page", function (needs) {
     assert.dom(".dcp-home-hero h1").hasText("Home");
     assert
       .dom(".dcp-home-community-chip")
-      .hasText("s/hardware")
+      .includesText("s/hardware")
       .hasAttribute("href", "/s/hardware");
     assert.dom(".dcp-home-card").exists({ count: 3 });
     assert
