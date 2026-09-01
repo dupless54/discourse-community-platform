@@ -63,6 +63,18 @@ RSpec.describe DiscourseCommunityPlatform::AutomodExecutionsController do
     expect(item.fetch("post_url")).to be_present
   end
 
+  it "keeps a rule-name snapshot after the original rule is removed" do
+    community = create_community
+    execution = create_execution(community:)
+    execution.automod_rule.destroy!
+    sign_in(owner)
+
+    get "/community-platform/communities/#{community.slug}/automod-executions.json"
+
+    expect(response.status).to eq(200)
+    expect(response.parsed_body.dig("automod_executions", 0, "rule_name")).to eq("Keyword guard")
+  end
+
   it "does not expose history to unrelated authenticated users" do
     community = create_community
     create_execution(community:)
