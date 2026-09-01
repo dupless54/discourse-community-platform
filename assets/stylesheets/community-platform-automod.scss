@@ -1,0 +1,117 @@
+.dcp-automod-page-panel {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dcp-automod-card {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.dcp-automod-description,
+.dcp-automod-empty,
+.dcp-automod-rule__mode {
+  color: var(--primary-medium);
+}
+
+.dcp-automod-description {
+  margin: 0 0 1rem;
+}
+
+.dcp-automod-error {
+  margin-bottom: 1rem;
+}
+
+.dcp-automod-rules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dcp-automod-rule {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 14px;
+  background: var(--primary-very-low);
+}
+
+.dcp-automod-rule__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.dcp-automod-rule__heading strong {
+  overflow-wrap: anywhere;
+}
+
+.dcp-automod-rule__state {
+  flex: 0 0 auto;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: var(--primary-low);
+  font-size: var(--font-down-2);
+  font-weight: 600;
+}
+
+.dcp-automod-rule__mode {
+  margin: 0.45rem 0;
+  font-size: var(--font-down-1);
+}
+
+.dcp-automod-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.dcp-automod-terms span {
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0.2rem 0.45rem;
+  border-radius: 7px;
+  background: var(--secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dcp-automod-rule__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.dcp-automod-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.4fr);
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--primary-low);
+}
+
+.dcp-automod-form .dcp-field:last-of-type {
+  grid-column: 1 / -1;
+}
+
+.dcp-automod-add {
+  width: fit-content;
+}
+
+@media (max-width: 700px) {
+  .dcp-automod-rules,
+  .dcp-automod-form {
+    grid-template-columns: 1fr;
+  }
+
+  .dcp-automod-form .dcp-field:last-of-type {
+    grid-column: auto;
+  }
+
+  .dcp-automod-rule__heading {
+    flex-direction: column;
+  }
+}
