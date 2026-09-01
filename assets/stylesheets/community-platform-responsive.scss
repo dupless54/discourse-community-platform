@@ -1,0 +1,23 @@
+// RC1 responsive hardening for constrained tablet layouts.
+// Discourse can keep the desktop sidebar visible around 768px, leaving the
+// plugin content column much narrower than the viewport media query suggests.
+
+@media (min-width: 701px) and (max-width: 900px) {
+  .dcp-community-hero__content {
+    flex-wrap: wrap;
+  }
+
+  .dcp-community-identity {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .dcp-community-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .dcp-community-title-wrap h1 {
+    word-break: normal;
+  }
+}
