@@ -6,6 +6,7 @@ module ::DiscourseCommunityPlatform
 
     MATCH_MODES = %w[any all].freeze
     MAX_NAME_LENGTH = 80
+    MAX_RULES_PER_COMMUNITY = 25
     MAX_TERMS = 20
     MAX_TERM_LENGTH = 80
 
@@ -19,6 +20,7 @@ module ::DiscourseCommunityPlatform
     validates :match_mode, inclusion: { in: MATCH_MODES }
     validates :terms, presence: true
     validate :validate_terms
+    validate :validate_community_rule_limit, on: :create
 
     def matches?(text)
       haystack = text.to_s.downcase
@@ -42,6 +44,19 @@ module ::DiscourseCommunityPlatform
 
       errors.add(:terms, :too_many) if terms.length > MAX_TERMS
       errors.add(:terms, :too_long) if terms.any? { |term| term.length > MAX_TERM_LENGTH }
+    end
+
+    def validate_community_rule_limit
+      return if community_id.blank?
+      return if self.class.where(community_id:).count < MAX_RULES_PER_COMMUNITY
+
+      errors.add(
+        :base,
+        I18n.t(
+          "community_platform.automod.too_many_rules",
+          count: MAX_RULES_PER_COMMUNITY,
+        ),
+      )
     end
   end
 end
