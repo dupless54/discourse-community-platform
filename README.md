@@ -27,6 +27,8 @@ A community-platform plugin for Discourse that adds Reddit-inspired communities,
 - focused `/following` feed using joined communities and Discourse Follow
 - shared responsive feed navigation
 - diversified `/explore` discovery feed that prioritizes communities the signed-in user has not joined
+- scheduled Explore community activity scoring stored in cache instead of recalculated during requests
+- recommended community cards and cached community-signal promotion inside `/explore`
 
 ### Feed backend contracts
 
@@ -37,15 +39,14 @@ GET /community-platform/feeds/explore.json
 GET /community-platform/feeds/popular.json
 ```
 
-All plugin feeds continue to filter candidate content through Discourse visibility/Guardian rules before serialization.
+All plugin feeds continue to filter candidate content through Discourse visibility/Guardian rules before serialization. Explore recommendation signals are calculated asynchronously; when that cache is cold, topic discovery safely falls back to the existing cached Popular candidate order instead of running an aggregate recommendation query during the request.
 
 ## Roadmap
 
-1. Harden Explore ranking with more recommendation signals while keeping expensive scoring in jobs/cache.
-2. Add social/profile discovery surfaces without duplicating Discourse Follow relationships.
-3. Add AutoModerator and community-scoped moderation automation.
-4. Add community analytics and moderation insights.
-5. Finish responsive polish, accessibility, and release hardening.
+1. Add social/profile discovery surfaces without duplicating Discourse Follow relationships.
+2. Add AutoModerator and community-scoped moderation automation.
+3. Add community analytics and moderation insights.
+4. Finish responsive polish, accessibility, SEO/crawler validation, and release hardening.
 
 ## License
 
