@@ -1,4 +1,4 @@
-import { click, visit } from "@ember/test-helpers";
+import { click, fillIn, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
 
@@ -84,6 +84,7 @@ acceptance("Community Platform | community page", function (needs) {
     assert.dom(".dcp-topic-vote__score").hasText("9");
     assert.dom(".dcp-rules-list li").exists({ count: 2 });
     assert.dom(".dcp-management-card").doesNotExist();
+    assert.dom(".dcp-automod-card").doesNotExist();
     assert.dom(".dcp-vote-button").doesNotExist();
 
     await click('.dcp-feed-order__button:nth-child(2)');
@@ -130,5 +131,69 @@ acceptance("Community Platform | voting", function (needs) {
     await click(".dcp-vote-button--up");
 
     assert.dom(".dcp-topic-vote__score").hasText("9");
+  });
+});
+
+acceptance("Community Platform | AutoModerator management", function (needs) {
+  needs.user();
+
+  needs.pretender((server, helper) => {
+    server.get("/community-platform/communities/technology.json", () => {
+      const payload = communityPayload();
+      payload.community.can_manage = true;
+      payload.community.is_owner = true;
+      return helper.response(payload);
+    });
+
+    server.get(
+      "/community-platform/communities/technology/topics.json",
+      () => helper.response(topicPayload())
+    );
+
+    server.get(
+      "/community-platform/communities/technology/automod-rules.json",
+      () =>
+        helper.response({
+          automod_rules: [
+            {
+              id: 1,
+              name: "Spam phrases",
+              enabled: true,
+              match_mode: "any",
+              terms: ["buy now", "telegram"],
+            },
+          ],
+        })
+    );
+
+    server.post(
+      "/community-platform/communities/technology/automod-rules.json",
+      () =>
+        helper.response(201, {
+          automod_rule: {
+            id: 2,
+            name: "Scam links",
+            enabled: true,
+            match_mode: "any",
+            terms: ["guaranteed profit"],
+          },
+        })
+    );
+  });
+
+  test("renders manager-only rules and adds a rule", async function (assert) {
+    await visit("/s/technology");
+
+    assert.dom(".dcp-automod-card").exists();
+    assert.dom(".dcp-automod-rule").exists({ count: 1 });
+    assert.dom(".dcp-automod-rule").includesText("Spam phrases");
+    assert.dom(".dcp-automod-terms").includesText("telegram");
+
+    await fillIn(".dcp-automod-form input", "Scam links");
+    await fillIn(".dcp-automod-form textarea", "guaranteed profit");
+    await click(".dcp-automod-add");
+
+    assert.dom(".dcp-automod-rule").exists({ count: 2 });
+    assert.dom(".dcp-automod-rules").includesText("Scam links");
   });
 });
