@@ -24,13 +24,19 @@ end
 # Table name: discourse_community_platform_automod_executions
 #
 #  id              :bigint           not null, primary key
-#  community_id    :bigint           not null
-#  automod_rule_id :bigint           not null
-#  post_id         :bigint           not null
+#  content_sha256  :string(64)       not null
+#  outcome         :string           not null
 #  rule_name       :string           not null
 #  trigger         :string           not null
-#  outcome         :string           not null
-#  content_sha256  :string(64)       not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  automod_rule_id :bigint           not null
+#  community_id    :bigint           not null
+#  post_id         :bigint           not null
+#
+# Indexes
+#
+#  idx_dcp_automod_exec_community_created  (community_id,created_at)
+#  idx_dcp_automod_exec_post               (post_id)
+#  idx_dcp_automod_exec_unique_content     (automod_rule_id,post_id,content_sha256) UNIQUE
 #
