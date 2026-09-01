@@ -4,6 +4,28 @@ All notable changes to Discourse Community Platform are documented here.
 
 The project is still pre-stable. Until the first stable release, breaking changes may occur between release candidates when required to preserve Discourse compatibility, permission boundaries, or data safety.
 
+## [Unreleased]
+
+### Added
+
+- Rich feed cards can show a Guardian-visible Discourse topic image or, when no image is available, a bounded plain-text excerpt from the visible first regular post.
+- Rich previews are shared across Community, Home, Following, Explore, and Popular topic cards without creating a second content store or alternate canonical topic URL.
+- Community managers can upload a logo and cover image through Discourse's supported image uploader UI; emoji and banner color remain fallbacks.
+- Explore community cards can display uploaded community logos.
+- Community branding uploads are retained with explicit `UploadReference` records so normal Discourse cleanup does not treat active branding as orphaned files.
+- English and Turkish management copy for logo and cover-image controls.
+
+### Security and privacy
+
+- Feed preview extraction runs only after the topic passes the current Guardian visibility check, and the preview contract never returns raw post content or cooked HTML.
+- Topic image previews are returned only when the current Guardian can see the underlying Discourse upload.
+- Community branding assignment is manager-only, image-only, and rejects arbitrary unrelated-user upload IDs; internal branding upload IDs are serialized only to authorized community managers.
+
+### Accessibility and responsive UI
+
+- Rich image/text previews preserve normal topic links and remain responsive on desktop, mobile, and constrained tablet layouts.
+- Community logo/cover controls reuse Discourse's keyboard-accessible `UppyImageUploader` component.
+
 ## [0.1.0-rc.1] - 2026-09-02
 
 ### Added
