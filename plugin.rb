@@ -13,6 +13,7 @@ register_asset "stylesheets/community-platform-voting.scss"
 register_asset "stylesheets/community-platform-home.scss"
 register_asset "stylesheets/community-platform-social-discovery.scss"
 register_asset "stylesheets/community-platform-automod.scss"
+register_asset "stylesheets/community-platform-analytics.scss"
 
 register_homepage(
   "community-home",
