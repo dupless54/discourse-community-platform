@@ -9,3 +9,4 @@ en:
       title: "Community Home"
     automod:
       flag_reason: "Community AutoModerator rule '%{rule}' matched in %{community}."
+      too_many_rules: "A community can have at most %{count} AutoModerator rules."
