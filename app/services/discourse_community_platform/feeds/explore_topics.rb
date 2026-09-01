@@ -18,9 +18,10 @@ module ::DiscourseCommunityPlatform
             .index_by(&:category_id)
         joined_category_ids = joined_category_ids_for(@guardian.user)
         community_counts = Hash.new(0)
+        ranked_candidate_ids = rank_candidates(candidate_ids, topics_by_id, communities)
 
         topics =
-          candidate_ids.filter_map do |topic_id|
+          ranked_candidate_ids.filter_map do |topic_id|
             topic = topics_by_id[topic_id]
             community = communities[topic&.category_id]
             next if topic.blank? || community.blank?
@@ -36,6 +37,23 @@ module ::DiscourseCommunityPlatform
       end
 
       private
+
+      def rank_candidates(candidate_ids, topics_by_id, communities)
+        recommendation_rank =
+          ExploreCommunities.cached_signals.each_with_index.to_h do |signal, index|
+            [signal.first, index]
+          end
+        popular_rank = candidate_ids.each_with_index.to_h
+
+        candidate_ids.sort_by do |topic_id|
+          community = communities[topics_by_id[topic_id]&.category_id]
+
+          [
+            recommendation_rank.fetch(community&.id, recommendation_rank.length),
+            popular_rank.fetch(topic_id),
+          ]
+        end
+      end
 
       def joined_category_ids_for(user)
         return {} if user.blank?
