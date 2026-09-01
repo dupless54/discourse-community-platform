@@ -34,7 +34,25 @@ Run these checks on a non-production Discourse instance using the exact release-
 - [ ] Hot/new/top/rising ordering can be switched without a full-page failure.
 - [ ] Upvote/downvote works for an authenticated user and does not replace Discourse likes/posts.
 
-## 3. AutoModerator smoke test
+## 3. Rich feed preview and community branding smoke test
+
+Run these checks with public, restricted, and private test Communities on the exact candidate revision.
+
+- [ ] A visible topic with a Discourse topic image renders the image preview in Community/Home/Following/Explore/Popular where applicable.
+- [ ] A visible topic without an image renders only a bounded plain-text excerpt from the visible first regular post.
+- [ ] Preview text does not expose raw Markdown, cooked HTML, hidden/deleted first-post content, or unbounded post content.
+- [ ] Private/restricted topic previews disappear whenever the current Guardian cannot see the underlying topic/post.
+- [ ] A secure topic image or branding upload is not serialized when the current Guardian cannot see that Discourse `Upload`.
+- [ ] Topic-card navigation still points to the canonical Discourse `/t/...` URL.
+- [ ] Community manager can upload, replace, and remove a logo and cover image through the supported uploader UI.
+- [ ] Logo and cover remain attached after reload/restart and active branding uploads retain an `UploadReference`.
+- [ ] Replaced/removed branding no longer keeps a stale Community `UploadReference`.
+- [ ] Ordinary members and guests do not receive internal `icon_upload_id` / `banner_upload_id` values.
+- [ ] A manager cannot attach an unrelated user's upload by guessing its ID.
+- [ ] Non-image uploads are rejected as Community branding.
+- [ ] Emoji and banner-color fallbacks still render when no uploaded branding is attached.
+
+## 4. AutoModerator smoke test
 
 - [ ] Community manager can create, update, disable, and delete a bounded phrase rule.
 - [ ] Ordinary member cannot access rule management endpoints.
@@ -47,7 +65,7 @@ Run these checks on a non-production Discourse instance using the exact release-
 - [ ] Audit history shows rule-name snapshot, trigger, outcome, and currently visible post metadata.
 - [ ] Audit history does not reveal post/user metadata after the audited post becomes invisible to the manager.
 
-## 4. Analytics and performance smoke test
+## 5. Analytics and performance smoke test
 
 - [ ] Explore recommendation cache job runs successfully.
 - [ ] Community activity analytics cache job runs successfully.
@@ -55,8 +73,9 @@ Run these checks on a non-production Discourse instance using the exact release-
 - [ ] 7-day and 30-day activity metrics are plausible for a known test Community.
 - [ ] Community analytics do not contain usernames, user IDs, post IDs/URLs, raw content, email, IP, or device data.
 - [ ] Moderation insights remain bounded to manager-visible aggregate management data.
+- [ ] Loading rich feed cards does not introduce an unbounded per-topic/post query loop or request-time full-content scan.
 
-## 5. Security / crawler / cache checks
+## 6. Security / crawler / cache checks
 
 For AutoModerator rules, audit history, moderation insights, and community activity analytics:
 
@@ -65,11 +84,12 @@ For AutoModerator rules, audit history, moderation insights, and community activ
 - [ ] Authenticated unauthorized 403 response keeps both hardening headers.
 - [ ] Guest 403 response keeps both hardening headers.
 - [ ] Public feeds do not serialize private/restricted Community content.
+- [ ] Public Community metadata does not bypass Discourse secure-upload visibility for logo/cover URLs.
 - [ ] `/s/:slug` does not create an alternative canonical copy of topic content; topic links remain normal Discourse `/t/...` URLs.
 
-## 6. Accessibility / responsive smoke test
+## 7. Accessibility / responsive smoke test
 
-Check desktop, tablet, and mobile widths.
+Check desktop, tablet, and mobile widths, including an iPad-class width with the Discourse sidebar visible.
 
 - [ ] Community title and major manager insight sections have usable accessible names.
 - [ ] Feed order buttons expose pressed state.
@@ -78,10 +98,13 @@ Check desktop, tablet, and mobile widths.
 - [ ] Loading/warming status is exposed without trapping keyboard focus.
 - [ ] Forms remain keyboard operable.
 - [ ] Management cards do not overflow or hide primary actions on narrow screens.
+- [ ] Rich image/text previews do not overflow cards, overlap vote controls, or force horizontal page scrolling.
+- [ ] Community logo, cover image, title, and management actions remain usable at desktop, tablet, and narrow mobile widths.
+- [ ] Branding upload controls remain keyboard operable and retain visible labels/status.
 
-## 7. Release publication
+## 8. Release publication
 
-Only after sections 1–6 are complete:
+Only after sections 1–7 are complete:
 
 - [ ] Confirm `CHANGELOG.md` matches the release candidate.
 - [ ] Confirm plugin metadata version/required Discourse version are intentional.
@@ -90,7 +113,7 @@ Only after sections 1–6 are complete:
 - [ ] Record the exact tag SHA in the release notes.
 - [ ] Keep the previous known-good tag available for rollback.
 
-## 8. Rollback readiness
+## 9. Rollback readiness
 
 - [ ] Database backup exists before production rollout.
 - [ ] Previous known-good plugin tag/commit is recorded.
