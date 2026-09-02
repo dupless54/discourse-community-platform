@@ -23,7 +23,10 @@ export default class CommunityPlatformExplorePage extends Component {
       <main class="dcp-popular-feed dcp-explore-feed">
         {{#each @topics as |topic|}}
           <article class="dcp-popular-card dcp-explore-card">
-            <div class="dcp-popular-card__score" aria-label={{i18n "community_platform.score"}}>
+            <div
+              class="dcp-popular-card__score"
+              aria-label={{i18n "community_platform.score"}}
+            >
               <strong>{{topic.score}}</strong>
               <span>{{i18n "community_platform.score"}}</span>
             </div>

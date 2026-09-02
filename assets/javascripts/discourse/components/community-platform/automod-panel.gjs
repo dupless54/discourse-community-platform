@@ -191,7 +191,9 @@ export default class CommunityPlatformAutomodPanel extends Component {
     <section class="dcp-sidebar-card dcp-automod-card">
       <div class="dcp-section-heading dcp-section-heading--compact">
         <div>
-          <p class="dcp-eyebrow">{{i18n "community_platform.automod.eyebrow"}}</p>
+          <p class="dcp-eyebrow">{{i18n
+              "community_platform.automod.eyebrow"
+            }}</p>
           <h2>{{i18n "community_platform.automod.title"}}</h2>
         </div>
       </div>
@@ -311,34 +313,55 @@ export default class CommunityPlatformAutomodPanel extends Component {
         <label class="dcp-field">
           <span>{{i18n "community_platform.automod.match_mode"}}</span>
           <select value={{this.matchMode}} {{on "change" this.updateMatchMode}}>
-            <option value="any">{{i18n "community_platform.automod.match_any"}}</option>
-            <option value="all">{{i18n "community_platform.automod.match_all"}}</option>
+            <option value="any">{{i18n
+                "community_platform.automod.match_any"
+              }}</option>
+            <option value="all">{{i18n
+                "community_platform.automod.match_all"
+              }}</option>
           </select>
         </label>
 
         <label class="dcp-field">
           <span>{{i18n "community_platform.automod.target"}}</span>
           <select value={{this.target}} {{on "change" this.updateTarget}}>
-            <option value="all_posts">{{i18n "community_platform.automod.target_all_posts"}}</option>
-            <option value="topic_starters">{{i18n "community_platform.automod.target_topic_starters"}}</option>
-            <option value="replies">{{i18n "community_platform.automod.target_replies"}}</option>
+            <option value="all_posts">{{i18n
+                "community_platform.automod.target_all_posts"
+              }}</option>
+            <option value="topic_starters">{{i18n
+                "community_platform.automod.target_topic_starters"
+              }}</option>
+            <option value="replies">{{i18n
+                "community_platform.automod.target_replies"
+              }}</option>
           </select>
         </label>
 
         <label class="dcp-field">
           <span>{{i18n "community_platform.automod.action"}}</span>
-          <select value={{this.reviewAction}} {{on "change" this.updateReviewAction}}>
-            <option value="queue_for_review">{{i18n "community_platform.automod.action_queue_for_review"}}</option>
-            <option value="flag_only">{{i18n "community_platform.automod.action_flag_only"}}</option>
+          <select
+            value={{this.reviewAction}}
+            {{on "change" this.updateReviewAction}}
+          >
+            <option value="queue_for_review">{{i18n
+                "community_platform.automod.action_queue_for_review"
+              }}</option>
+            <option value="flag_only">{{i18n
+                "community_platform.automod.action_flag_only"
+              }}</option>
           </select>
         </label>
 
         <fieldset class="dcp-automod-conditions">
-          <legend>{{i18n "community_platform.automod.author_conditions"}}</legend>
+          <legend>{{i18n
+              "community_platform.automod.author_conditions"
+            }}</legend>
           <p>{{i18n "community_platform.automod.author_conditions_hint"}}</p>
 
           <label class="dcp-field">
-            <span>{{i18n "community_platform.automod.max_account_age_days"}}</span>
+            <span>{{i18n
+                "community_platform.automod.max_account_age_days"
+              }}</span>
             <input
               type="number"
               min="1"
@@ -347,7 +370,9 @@ export default class CommunityPlatformAutomodPanel extends Component {
               data-test-automod-max-account-age
               {{on "input" this.updateMaxAccountAgeDays}}
             />
-            <small>{{i18n "community_platform.automod.max_account_age_days_hint"}}</small>
+            <small>{{i18n
+                "community_platform.automod.max_account_age_days_hint"
+              }}</small>
           </label>
 
           <label class="dcp-field">
@@ -357,7 +382,9 @@ export default class CommunityPlatformAutomodPanel extends Component {
               data-test-automod-max-trust-level
               {{on "change" this.updateMaxTrustLevel}}
             >
-              <option value="">{{i18n "community_platform.automod.any_trust_level"}}</option>
+              <option value="">{{i18n
+                  "community_platform.automod.any_trust_level"
+                }}</option>
               <option value="0">TL0</option>
               <option value="1">TL1</option>
               <option value="2">TL2</option>
@@ -412,7 +439,10 @@ export default class CommunityPlatformAutomodPanel extends Component {
 
         <div class="dcp-automod-history__list">
           {{#each this.executions as |execution|}}
-            <article class="dcp-automod-execution" data-test-automod-execution={{execution.id}}>
+            <article
+              class="dcp-automod-execution"
+              data-test-automod-execution={{execution.id}}
+            >
               <div class="dcp-automod-execution__main">
                 <strong>{{execution.rule_name}}</strong>
                 <span>

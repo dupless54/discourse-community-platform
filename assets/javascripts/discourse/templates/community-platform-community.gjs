@@ -17,11 +17,15 @@ export default <template>
     {{#if @controller.model.community.can_manage}}
       <div class="container dcp-automod-page-panel">
         {{#if @controller.model.activityAnalytics}}
-          <CommunityActivityInsights @analytics={{@controller.model.activityAnalytics}} />
+          <CommunityActivityInsights
+            @analytics={{@controller.model.activityAnalytics}}
+          />
         {{/if}}
 
         {{#if @controller.model.moderationInsights}}
-          <ModerationInsights @insights={{@controller.model.moderationInsights}} />
+          <ModerationInsights
+            @insights={{@controller.model.moderationInsights}}
+          />
         {{/if}}
 
         <AutomodPanel
@@ -32,4 +36,4 @@ export default <template>
       </div>
     {{/if}}
   </PlatformShell>
-</template>;
+</template>

@@ -40,31 +40,29 @@ acceptance("Community Platform | rich community branding", function (needs) {
       });
     });
 
-    server.get(
-      "/community-platform/communities/technology/topics.json",
-      () =>
-        helper.response({
-          community: { id: 1, slug: "technology" },
-          order: "hot",
-          topics: [
-            {
-              id: 101,
-              title: "A text-first community discussion",
-              slug: "text-first-community-discussion",
-              path: "/t/text-first-community-discussion/101",
-              posts_count: 3,
-              views: 88,
-              like_count: 4,
-              score: 6,
-              upvotes: 6,
-              downvotes: 0,
-              user_vote: 0,
-              excerpt:
-                "The community feed now shows a short first-post preview when no image is available.",
-              image_url: null,
-            },
-          ],
-        })
+    server.get("/community-platform/communities/technology/topics.json", () =>
+      helper.response({
+        community: { id: 1, slug: "technology" },
+        order: "hot",
+        topics: [
+          {
+            id: 101,
+            title: "A text-first community discussion",
+            slug: "text-first-community-discussion",
+            path: "/t/text-first-community-discussion/101",
+            posts_count: 3,
+            views: 88,
+            like_count: 4,
+            score: 6,
+            upvotes: 6,
+            downvotes: 0,
+            user_vote: 0,
+            excerpt:
+              "The community feed now shows a short first-post preview when no image is available.",
+            image_url: null,
+          },
+        ],
+      })
     );
 
     server.get(

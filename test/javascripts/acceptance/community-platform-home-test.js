@@ -118,7 +118,10 @@ acceptance("Community Platform | personalized home page", function (needs) {
     await visit("/home");
 
     assert.dom(".dcp-feed-navigation").exists();
-    assert.dom('[data-feed="home"]').hasClass("active").hasAttribute("href", "/home");
+    assert
+      .dom('[data-feed="home"]')
+      .hasClass("active")
+      .hasAttribute("href", "/home");
     assert.dom('[data-feed="following"]').hasAttribute("href", "/following");
     assert.dom('[data-feed="popular"]').hasAttribute("href", "/popular");
     assert.dom(".dcp-home-hero h1").hasText("Home");
@@ -162,9 +165,7 @@ acceptance("Community Platform | personalized home page", function (needs) {
     assert
       .dom(".dcp-home-card:nth-child(3) .dcp-home-card__source")
       .hasText("Popular");
-    assert
-      .dom(".dcp-home-card:nth-child(3) .dcp-topic-preview")
-      .doesNotExist();
+    assert.dom(".dcp-home-card:nth-child(3) .dcp-topic-preview").doesNotExist();
 
     await click(".dcp-home-card:first-child .dcp-vote-button--up");
 

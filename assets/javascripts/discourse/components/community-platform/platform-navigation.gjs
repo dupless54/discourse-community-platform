@@ -42,4 +42,4 @@ export default <template>
       <span>{{i18n "community_platform.popular.title"}}</span>
     </LinkTo>
   </nav>
-</template>;
+</template>

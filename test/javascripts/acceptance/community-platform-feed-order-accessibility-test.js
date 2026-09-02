@@ -37,14 +37,12 @@ acceptance("Community Platform | feed order accessibility", function (needs) {
       });
     });
 
-    server.get(
-      "/community-platform/communities/technology/topics.json",
-      () =>
-        helper.response({
-          community: { id: 1, slug: "technology" },
-          order: "hot",
-          topics: [],
-        })
+    server.get("/community-platform/communities/technology/topics.json", () =>
+      helper.response({
+        community: { id: 1, slug: "technology" },
+        order: "hot",
+        topics: [],
+      })
     );
   });
 
@@ -57,10 +55,10 @@ acceptance("Community Platform | feed order accessibility", function (needs) {
       .hasAttribute("aria-label", i18n("community_platform.feed.eyebrow"));
     assert.dom(".dcp-feed-order__button").exists({ count: 4 });
     assert
-      .dom('.dcp-feed-order__button:nth-child(1)')
+      .dom(".dcp-feed-order__button:nth-child(1)")
       .hasAttribute("aria-pressed", "true");
     assert
-      .dom('.dcp-feed-order__button:nth-child(2)')
+      .dom(".dcp-feed-order__button:nth-child(2)")
       .hasAttribute("aria-pressed", "false");
   });
 });

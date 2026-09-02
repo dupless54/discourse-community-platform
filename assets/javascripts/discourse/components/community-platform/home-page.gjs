@@ -130,7 +130,10 @@ export default class CommunityPlatformHomePage extends Component {
       </header>
 
       {{#if @joinedCommunities.length}}
-        <section class="dcp-home-communities" aria-label={{i18n "community_platform.home.joined_title"}}>
+        <section
+          class="dcp-home-communities"
+          aria-label={{i18n "community_platform.home.joined_title"}}
+        >
           <div class="dcp-home-communities__heading">
             <h2>{{i18n "community_platform.home.joined_title"}}</h2>
             <span>{{@joinedCommunities.length}}</span>
@@ -186,7 +189,9 @@ export default class CommunityPlatformHomePage extends Component {
               <div class="dcp-home-card__context">
                 <TopicContext @topic={{topic}} @community={{topic.community}} />
 
-                <span class="dcp-home-card__source dcp-home-card__source--{{topic.feed_source}}">
+                <span
+                  class="dcp-home-card__source dcp-home-card__source--{{topic.feed_source}}"
+                >
                   {{#if (eq topic.feed_source "joined")}}
                     {{i18n "community_platform.home.source_joined"}}
                   {{else}}

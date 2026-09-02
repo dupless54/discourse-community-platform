@@ -47,16 +47,22 @@ export default class CommunityPlatformCommunityActivityInsights extends Componen
           >
             <span aria-hidden="true"></span>
             <strong role="columnheader">
-              {{i18n "community_platform.community_activity_insights.window_7d"}}
+              {{i18n
+                "community_platform.community_activity_insights.window_7d"
+              }}
             </strong>
             <strong role="columnheader">
-              {{i18n "community_platform.community_activity_insights.window_30d"}}
+              {{i18n
+                "community_platform.community_activity_insights.window_30d"
+              }}
             </strong>
           </div>
 
           <div class="dcp-community-activity-insights__row" role="row">
             <span role="rowheader">
-              {{i18n "community_platform.community_activity_insights.new_topics"}}
+              {{i18n
+                "community_platform.community_activity_insights.new_topics"
+              }}
             </span>
             <strong role="cell">{{this.sevenDays.new_topics}}</strong>
             <strong role="cell">{{this.thirtyDays.new_topics}}</strong>
@@ -80,7 +86,9 @@ export default class CommunityPlatformCommunityActivityInsights extends Componen
 
           <div class="dcp-community-activity-insights__row" role="row">
             <span role="rowheader">
-              {{i18n "community_platform.community_activity_insights.active_topics"}}
+              {{i18n
+                "community_platform.community_activity_insights.active_topics"
+              }}
             </span>
             <strong role="cell">{{this.sevenDays.active_topics}}</strong>
             <strong role="cell">{{this.thirtyDays.active_topics}}</strong>
@@ -88,7 +96,9 @@ export default class CommunityPlatformCommunityActivityInsights extends Componen
 
           <div class="dcp-community-activity-insights__row" role="row">
             <span role="rowheader">
-              {{i18n "community_platform.community_activity_insights.contributors"}}
+              {{i18n
+                "community_platform.community_activity_insights.contributors"
+              }}
             </span>
             <strong role="cell">{{this.sevenDays.contributors}}</strong>
             <strong role="cell">{{this.thirtyDays.contributors}}</strong>

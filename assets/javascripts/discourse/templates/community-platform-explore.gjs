@@ -13,4 +13,4 @@ export default <template>
       @personalized={{@controller.model.personalized}}
     />
   </PlatformShell>
-</template>;
+</template>

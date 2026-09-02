@@ -37,7 +37,9 @@
   background: var(--primary-very-low);
   color: var(--primary);
   text-decoration: none;
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .dcp-explore-person-card:hover,
@@ -95,13 +97,13 @@
   color: var(--tertiary);
 }
 
-@media (max-width: 900px) {
+@media (width <= 900px) {
   .dcp-explore-people-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 520px) {
+@media (width <= 520px) {
   .dcp-explore-people {
     padding: 0.85rem;
     border-radius: 14px;

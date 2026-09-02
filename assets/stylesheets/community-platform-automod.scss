@@ -290,13 +290,13 @@
   gap: 0.65rem;
 }
 
-@media (max-width: 800px) {
+@media (width <= 800px) {
   .dcp-moderation-insights__metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 700px) {
+@media (width <= 700px) {
   .dcp-automod-rules,
   .dcp-automod-form,
   .dcp-automod-conditions,

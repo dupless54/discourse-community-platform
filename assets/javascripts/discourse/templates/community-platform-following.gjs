@@ -16,4 +16,4 @@ export default <template>
       @feedVariant="following"
     />
   </PlatformShell>
-</template>;
+</template>

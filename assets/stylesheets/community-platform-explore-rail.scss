@@ -169,19 +169,23 @@
   font-size: var(--font-down-2);
 }
 
-.dcp-platform-shell[data-platform-section="explore"] .dcp-platform-rail-card--discover,
-.dcp-platform-shell[data-platform-section="explore"] .dcp-platform-rail-community-list {
+.dcp-platform-shell[data-platform-section="explore"]
+  .dcp-platform-rail-card--discover,
+.dcp-platform-shell[data-platform-section="explore"]
+  .dcp-platform-rail-community-list {
   display: none;
 }
 
-@media (max-width: 1040px) {
-  .dcp-platform-shell[data-platform-section="explore"] .dcp-platform-right-rail {
+@media (width <= 1040px) {
+  .dcp-platform-shell[data-platform-section="explore"]
+    .dcp-platform-right-rail {
     display: block;
     grid-column: 2;
     margin-top: 1rem;
   }
 
-  .dcp-platform-shell[data-platform-section="explore"] .dcp-platform-right-rail__sticky {
+  .dcp-platform-shell[data-platform-section="explore"]
+    .dcp-platform-right-rail__sticky {
     position: static;
   }
 
@@ -190,13 +194,14 @@
   }
 }
 
-@media (max-width: 820px) {
-  .dcp-platform-shell[data-platform-section="explore"] .dcp-platform-right-rail {
+@media (width <= 820px) {
+  .dcp-platform-shell[data-platform-section="explore"]
+    .dcp-platform-right-rail {
     margin-top: 0.85rem;
   }
 }
 
-@media (max-width: 620px) {
+@media (width <= 620px) {
   .dcp-platform-shell[data-platform-section="explore"] .dcp-explore-discovery {
     grid-template-columns: 1fr;
   }

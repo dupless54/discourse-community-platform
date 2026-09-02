@@ -79,7 +79,10 @@ export default class CommunityPlatformExploreDiscoveryRail extends Component {
           </h2>
 
           {{#if this.membershipError}}
-            <div class="alert alert-error dcp-explore-membership-error" role="alert">
+            <div
+              class="alert alert-error dcp-explore-membership-error"
+              role="alert"
+            >
               {{this.membershipError}}
             </div>
           {{/if}}
@@ -92,15 +95,24 @@ export default class CommunityPlatformExploreDiscoveryRail extends Component {
                   href={{community.path}}
                 >
                   {{#if community.icon_url}}
-                    <span class="dcp-explore-discovery-community__icon" aria-hidden="true">
+                    <span
+                      class="dcp-explore-discovery-community__icon"
+                      aria-hidden="true"
+                    >
                       <img src={{community.icon_url}} alt="" loading="lazy" />
                     </span>
                   {{else if community.icon_emoji}}
-                    <span class="dcp-explore-discovery-community__icon" aria-hidden="true">
+                    <span
+                      class="dcp-explore-discovery-community__icon"
+                      aria-hidden="true"
+                    >
                       {{community.icon_emoji}}
                     </span>
                   {{else}}
-                    <span class="dcp-explore-discovery-community__icon" aria-hidden="true">
+                    <span
+                      class="dcp-explore-discovery-community__icon"
+                      aria-hidden="true"
+                    >
                       s/
                     </span>
                   {{/if}}
@@ -111,17 +123,25 @@ export default class CommunityPlatformExploreDiscoveryRail extends Component {
                   </span>
                 </a>
 
-                <div class="dcp-explore-community-card__meta dcp-explore-discovery-community__meta">
-                  <span>{{community.members_count}} {{i18n "community_platform.members"}}</span>
+                <div
+                  class="dcp-explore-community-card__meta dcp-explore-discovery-community__meta"
+                >
+                  <span>{{community.members_count}}
+                    {{i18n "community_platform.members"}}</span>
                   <span>
                     {{community.recent_topics_count}}
                     {{i18n "community_platform.explore.active_topics"}}
                   </span>
                 </div>
 
-                <div class="dcp-explore-community-card__actions dcp-explore-discovery-community__actions">
+                <div
+                  class="dcp-explore-community-card__actions dcp-explore-discovery-community__actions"
+                >
                   {{#if community.joined}}
-                    <span class="dcp-explore-community-card__joined" role="status">
+                    <span
+                      class="dcp-explore-community-card__joined"
+                      role="status"
+                    >
                       {{i18n "community_platform.joined"}}
                     </span>
                   {{else if community.can_join}}
@@ -129,7 +149,11 @@ export default class CommunityPlatformExploreDiscoveryRail extends Component {
                       type="button"
                       class="btn btn-primary dcp-explore-community-card__join"
                       disabled={{eq this.joiningCommunityId community.id}}
-                      aria-busy={{if (eq this.joiningCommunityId community.id) "true" "false"}}
+                      aria-busy={{if
+                        (eq this.joiningCommunityId community.id)
+                        "true"
+                        "false"
+                      }}
                       {{on "click" (fn this.joinCommunity community)}}
                     >
                       {{#if (eq this.joiningCommunityId community.id)}}
@@ -166,11 +190,16 @@ export default class CommunityPlatformExploreDiscoveryRail extends Component {
                 />
 
                 <div class="dcp-explore-discovery-person__body">
-                  <a class="dcp-explore-discovery-person__username" href={{person.path}}>
+                  <a
+                    class="dcp-explore-discovery-person__username"
+                    href={{person.path}}
+                  >
                     @{{person.username}}
                   </a>
                   {{#if person.name}}
-                    <span class="dcp-explore-discovery-person__name">{{person.name}}</span>
+                    <span
+                      class="dcp-explore-discovery-person__name"
+                    >{{person.name}}</span>
                   {{/if}}
                   <span class="dcp-explore-discovery-person__meta">
                     {{person.recent_public_topics_count}}

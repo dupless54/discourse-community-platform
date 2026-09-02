@@ -47,11 +47,11 @@ acceptance("Community Platform | platform shell", function (needs) {
     assert.dom(".dcp-platform-header").exists();
     assert.dom(".dcp-platform-sidebar").exists();
     assert.dom(".dcp-platform-right-rail").includesText("s/hardware");
+    assert.dom('.dcp-platform-right-rail a[href="/s/hardware"]').exists();
     assert
-      .dom('.dcp-platform-right-rail a[href="/s/hardware"]')
-      .exists();
-    assert
-      .dom('.dcp-platform-trending-item__title[href="/t/cached-trending-discussion/91"]')
+      .dom(
+        '.dcp-platform-trending-item__title[href="/t/cached-trending-discussion/91"]'
+      )
       .hasText("A cached trending discussion");
     assert
       .dom('.dcp-platform-trending-community[href="/s/gaming"]')
