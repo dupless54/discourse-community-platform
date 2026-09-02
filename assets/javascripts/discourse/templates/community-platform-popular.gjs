@@ -8,4 +8,4 @@ export default <template>
   >
     <PopularPage @topics={{@controller.model.topics}} />
   </PlatformShell>
-</template>;
+</template>

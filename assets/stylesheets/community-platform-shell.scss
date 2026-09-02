@@ -1,7 +1,6 @@
 body.dcp-platform-shell-active {
   --dcp-shell-max-width: 1460px;
   --dcp-shell-header-height: 72px;
-
   background: var(--primary-very-low);
 }
 
@@ -42,7 +41,10 @@ body.dcp-platform-shell-active #main-outlet {
 
 .dcp-platform-header__inner {
   display: grid;
-  grid-template-columns: minmax(180px, 240px) minmax(260px, 620px) minmax(180px, 1fr);
+  grid-template-columns: minmax(180px, 240px) minmax(260px, 620px) minmax(
+      180px,
+      1fr
+    );
   align-items: center;
   gap: 1rem;
   width: min(calc(100% - 3rem), var(--dcp-shell-max-width));
@@ -165,7 +167,10 @@ body.dcp-platform-shell-active #main-outlet {
 
 .dcp-platform-layout {
   display: grid;
-  grid-template-columns: minmax(190px, 220px) minmax(0, 760px) minmax(250px, 300px);
+  grid-template-columns: minmax(190px, 220px) minmax(0, 760px) minmax(
+      250px,
+      300px
+    );
   justify-content: center;
   gap: 1.25rem;
   width: min(calc(100% - 3rem), var(--dcp-shell-max-width));
@@ -307,20 +312,26 @@ body.dcp-platform-shell-active #main-outlet {
   display: none;
 }
 
-@media (max-width: 1180px) {
+@media (width <= 1180px) {
   .dcp-platform-layout {
-    grid-template-columns: minmax(180px, 210px) minmax(0, 760px) minmax(220px, 260px);
+    grid-template-columns: minmax(180px, 210px) minmax(0, 760px) minmax(
+        220px,
+        260px
+      );
   }
 }
 
-@media (max-width: 1040px) {
+@media (width <= 1040px) {
   .dcp-platform-header__inner,
   .dcp-platform-layout {
     width: min(calc(100% - 2rem), 980px);
   }
 
   .dcp-platform-header__inner {
-    grid-template-columns: minmax(150px, 210px) minmax(220px, 1fr) minmax(150px, auto);
+    grid-template-columns: minmax(150px, 210px) minmax(220px, 1fr) minmax(
+        150px,
+        auto
+      );
   }
 
   .dcp-platform-layout {
@@ -332,7 +343,7 @@ body.dcp-platform-shell-active #main-outlet {
   }
 }
 
-@media (max-width: 820px) {
+@media (width <= 820px) {
   body.dcp-platform-shell-active {
     --dcp-shell-header-height: auto;
   }
@@ -394,7 +405,7 @@ body.dcp-platform-shell-active #main-outlet {
   }
 }
 
-@media (max-width: 520px) {
+@media (width <= 520px) {
   .dcp-platform-header__inner,
   .dcp-platform-layout,
   .dcp-platform-mobile-navigation {

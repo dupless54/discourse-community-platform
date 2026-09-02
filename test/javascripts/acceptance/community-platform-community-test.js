@@ -67,7 +67,8 @@ acceptance("Community Platform | community page", function (needs) {
 
     server.get(
       "/community-platform/communities/technology/topics.json",
-      (request) => helper.response(topicPayload(request.queryParams.order || "hot"))
+      (request) =>
+        helper.response(topicPayload(request.queryParams.order || "hot"))
     );
   });
 
@@ -89,11 +90,11 @@ acceptance("Community Platform | community page", function (needs) {
     assert.dom("[data-test-community-activity-insights]").doesNotExist();
     assert.dom(".dcp-vote-button").doesNotExist();
 
-    await click('.dcp-feed-order__button:nth-child(2)');
+    await click(".dcp-feed-order__button:nth-child(2)");
 
     assert.dom(".dcp-topic-card__title").hasText("Newest computing topic");
     assert
-      .dom('.dcp-feed-order__button:nth-child(2)')
+      .dom(".dcp-feed-order__button:nth-child(2)")
       .hasAttribute("aria-pressed", "true");
   });
 });
@@ -106,9 +107,8 @@ acceptance("Community Platform | voting", function (needs) {
       return helper.response(communityPayload());
     });
 
-    server.get(
-      "/community-platform/communities/technology/topics.json",
-      () => helper.response(topicPayload("hot", 9, 0))
+    server.get("/community-platform/communities/technology/topics.json", () =>
+      helper.response(topicPayload("hot", 9, 0))
     );
 
     server.put("/community-platform/topics/101/vote.json", () => {
@@ -147,9 +147,8 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
       return helper.response(payload);
     });
 
-    server.get(
-      "/community-platform/communities/technology/topics.json",
-      () => helper.response(topicPayload())
+    server.get("/community-platform/communities/technology/topics.json", () =>
+      helper.response(topicPayload())
     );
 
     server.get(
@@ -272,8 +271,12 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
     assert
       .dom("#dcp-community-activity-insights-title")
       .hasText("Activity insights");
-    assert.dom(".dcp-community-activity-insights__table").hasAttribute("role", "table");
-    assert.dom('.dcp-community-activity-insights__row[role="row"]').exists({ count: 6 });
+    assert
+      .dom(".dcp-community-activity-insights__table")
+      .hasAttribute("role", "table");
+    assert
+      .dom('.dcp-community-activity-insights__row[role="row"]')
+      .exists({ count: 6 });
     assert.dom('[role="rowheader"]').exists({ count: 5 });
     assert.dom("[data-test-community-activity-insights]").includesText("4");
     assert.dom("[data-test-community-activity-insights]").includesText("17");
@@ -297,7 +300,9 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
     assert.dom(".dcp-automod-rule").includesText("Spam phrases");
     assert.dom(".dcp-automod-rule").includesText("Replies only");
     assert.dom(".dcp-automod-rule").includesText("Standard Discourse flag");
-    assert.dom(".dcp-automod-rule").includesText("Maximum account age: 14 days");
+    assert
+      .dom(".dcp-automod-rule")
+      .includesText("Maximum account age: 14 days");
     assert.dom(".dcp-automod-rule").includesText("Maximum trust level: TL1");
     assert.dom(".dcp-automod-terms").includesText("telegram");
     assert.dom("[data-test-automod-execution]").exists({ count: 1 });
@@ -315,7 +320,9 @@ acceptance("Community Platform | AutoModerator management", function (needs) {
 
     assert.dom(".dcp-automod-rule").exists({ count: 2 });
     assert.dom(".dcp-automod-rules").includesText("Scam links");
-    assert.dom(".dcp-automod-rules").includesText("Maximum account age: 7 days");
+    assert
+      .dom(".dcp-automod-rules")
+      .includesText("Maximum account age: 7 days");
     assert.dom(".dcp-automod-rules").includesText("Maximum trust level: TL0");
   });
 });

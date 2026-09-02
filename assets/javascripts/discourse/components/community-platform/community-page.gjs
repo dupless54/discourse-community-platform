@@ -262,7 +262,11 @@ export default class CommunityPlatformCommunityPage extends Component {
       <section class="dcp-community-hero" style={{this.bannerStyle}}>
         <div class="dcp-community-hero__banner">
           {{#if this.bannerUrl}}
-            <img class="dcp-community-hero__banner-image" src={{this.bannerUrl}} alt="" />
+            <img
+              class="dcp-community-hero__banner-image"
+              src={{this.bannerUrl}}
+              alt=""
+            />
           {{/if}}
         </div>
         <div class="dcp-community-hero__content">
@@ -281,7 +285,9 @@ export default class CommunityPlatformCommunityPage extends Component {
               <p class="dcp-community-slug">s/{{this.community.slug}}</p>
               <h1>{{this.community.name}}</h1>
               {{#if this.community.description}}
-                <p class="dcp-community-description">{{this.community.description}}</p>
+                <p
+                  class="dcp-community-description"
+                >{{this.community.description}}</p>
               {{/if}}
             </div>
           </div>
@@ -328,7 +334,9 @@ export default class CommunityPlatformCommunityPage extends Component {
         <main class="dcp-community-main">
           <div class="dcp-section-heading dcp-feed-heading">
             <div>
-              <p class="dcp-eyebrow">{{i18n "community_platform.feed.eyebrow"}}</p>
+              <p class="dcp-eyebrow">{{i18n
+                  "community_platform.feed.eyebrow"
+                }}</p>
               <h2>{{i18n "community_platform.feed.latest"}}</h2>
             </div>
 
@@ -448,7 +456,9 @@ export default class CommunityPlatformCommunityPage extends Component {
           <section class="dcp-sidebar-card">
             <div class="dcp-section-heading dcp-section-heading--compact">
               <div>
-                <p class="dcp-eyebrow">{{i18n "community_platform.rules.eyebrow"}}</p>
+                <p class="dcp-eyebrow">{{i18n
+                    "community_platform.rules.eyebrow"
+                  }}</p>
                 <h2>{{i18n "community_platform.rules.title"}}</h2>
               </div>
             </div>
@@ -468,13 +478,17 @@ export default class CommunityPlatformCommunityPage extends Component {
             <section class="dcp-sidebar-card dcp-management-card">
               <div class="dcp-section-heading dcp-section-heading--compact">
                 <div>
-                  <p class="dcp-eyebrow">{{i18n "community_platform.management.eyebrow"}}</p>
+                  <p class="dcp-eyebrow">{{i18n
+                      "community_platform.management.eyebrow"
+                    }}</p>
                   <h2>{{i18n "community_platform.management.title"}}</h2>
                 </div>
               </div>
 
               <label class="dcp-field">
-                <span>{{i18n "community_platform.management.description"}}</span>
+                <span>{{i18n
+                    "community_platform.management.description"
+                  }}</span>
                 <textarea
                   rows="4"
                   maxlength="1000"
@@ -485,10 +499,19 @@ export default class CommunityPlatformCommunityPage extends Component {
 
               <label class="dcp-field">
                 <span>{{i18n "community_platform.management.visibility"}}</span>
-                <select value={{this.visibility}} {{on "change" this.updateVisibility}}>
-                  <option value="public">{{i18n "community_platform.visibility.public"}}</option>
-                  <option value="restricted">{{i18n "community_platform.visibility.restricted"}}</option>
-                  <option value="private">{{i18n "community_platform.visibility.private"}}</option>
+                <select
+                  value={{this.visibility}}
+                  {{on "change" this.updateVisibility}}
+                >
+                  <option value="public">{{i18n
+                      "community_platform.visibility.public"
+                    }}</option>
+                  <option value="restricted">{{i18n
+                      "community_platform.visibility.restricted"
+                    }}</option>
+                  <option value="private">{{i18n
+                      "community_platform.visibility.private"
+                    }}</option>
                 </select>
               </label>
 
@@ -502,11 +525,15 @@ export default class CommunityPlatformCommunityPage extends Component {
                   @id="dcp-community-logo-uploader"
                   class="dcp-branding-uploader dcp-branding-uploader--logo"
                 />
-                <small>{{i18n "community_platform.management.logo_hint"}}</small>
+                <small>{{i18n
+                    "community_platform.management.logo_hint"
+                  }}</small>
               </div>
 
               <div class="dcp-branding-field">
-                <strong>{{i18n "community_platform.management.banner_image"}}</strong>
+                <strong>{{i18n
+                    "community_platform.management.banner_image"
+                  }}</strong>
                 <UppyImageUploader
                   @imageUrl={{this.bannerUrl}}
                   @onUploadDone={{this.bannerUploadDone}}
@@ -515,7 +542,9 @@ export default class CommunityPlatformCommunityPage extends Component {
                   @id="dcp-community-banner-uploader"
                   class="dcp-branding-uploader dcp-branding-uploader--banner"
                 />
-                <small>{{i18n "community_platform.management.banner_image_hint"}}</small>
+                <small>{{i18n
+                    "community_platform.management.banner_image_hint"
+                  }}</small>
               </div>
 
               <div class="dcp-field-row">
@@ -530,7 +559,9 @@ export default class CommunityPlatformCommunityPage extends Component {
                 </label>
 
                 <label class="dcp-field">
-                  <span>{{i18n "community_platform.management.banner_color"}}</span>
+                  <span>{{i18n
+                      "community_platform.management.banner_color"
+                    }}</span>
                   <input
                     type="text"
                     maxlength="7"
@@ -548,11 +579,16 @@ export default class CommunityPlatformCommunityPage extends Component {
                   value={{this.rulesText}}
                   {{on "input" this.updateRules}}
                 ></textarea>
-                <small>{{i18n "community_platform.management.rules_hint"}}</small>
+                <small>{{i18n
+                    "community_platform.management.rules_hint"
+                  }}</small>
               </label>
 
               {{#if this.savedMessage}}
-                <p class="dcp-save-success" role="status">{{this.savedMessage}}</p>
+                <p
+                  class="dcp-save-success"
+                  role="status"
+                >{{this.savedMessage}}</p>
               {{/if}}
 
               <button

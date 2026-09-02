@@ -19,7 +19,10 @@ export default class CommunityPlatformPopularPage extends Component {
       <main class="dcp-popular-feed">
         {{#each @topics as |topic|}}
           <article class="dcp-popular-card">
-            <div class="dcp-popular-card__score" aria-label={{i18n "community_platform.score"}}>
+            <div
+              class="dcp-popular-card__score"
+              aria-label={{i18n "community_platform.score"}}
+            >
               <strong>{{topic.score}}</strong>
               <span>{{i18n "community_platform.score"}}</span>
             </div>

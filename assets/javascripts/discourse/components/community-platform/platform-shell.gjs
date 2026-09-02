@@ -45,10 +45,17 @@ export default class CommunityPlatformShell extends Component {
             aria-label={{this.siteSettings.title}}
           >
             <span class="dcp-platform-brand__mark" aria-hidden="true">s/</span>
-            <span class="dcp-platform-brand__name">{{this.siteSettings.title}}</span>
+            <span
+              class="dcp-platform-brand__name"
+            >{{this.siteSettings.title}}</span>
           </LinkTo>
 
-          <form class="dcp-platform-search" action="/search" method="get" role="search">
+          <form
+            class="dcp-platform-search"
+            action="/search"
+            method="get"
+            role="search"
+          >
             <span class="dcp-platform-search__icon" aria-hidden="true">⌕</span>
             <input
               type="search"
@@ -77,7 +84,10 @@ export default class CommunityPlatformShell extends Component {
                 </a>
               </div>
             {{else}}
-              <a class="btn btn-primary dcp-platform-account__login" href="/login">
+              <a
+                class="btn btn-primary dcp-platform-account__login"
+                href="/login"
+              >
                 {{i18n "log_in"}}
               </a>
             {{/if}}
@@ -123,12 +133,17 @@ export default class CommunityPlatformShell extends Component {
             {{/if}}
 
             {{#if this.hasTrendingTopics}}
-              <section class="dcp-platform-rail-card dcp-platform-rail-card--trending">
+              <section
+                class="dcp-platform-rail-card dcp-platform-rail-card--trending"
+              >
                 <h2>{{i18n "community_platform.popular.title"}}</h2>
                 <div class="dcp-platform-trending-list">
                   {{#each this.trendingTopics as |topic|}}
                     <article class="dcp-platform-trending-item">
-                      <a class="dcp-platform-trending-item__title" href={{topic.path}}>
+                      <a
+                        class="dcp-platform-trending-item__title"
+                        href={{topic.path}}
+                      >
                         {{topic.title}}
                       </a>
                       <div class="dcp-platform-trending-item__meta">
@@ -136,7 +151,8 @@ export default class CommunityPlatformShell extends Component {
                           @community={{topic.community}}
                           class="dcp-platform-trending-community"
                         />
-                        <span>{{topic.score}} {{i18n "community_platform.score"}}</span>
+                        <span>{{topic.score}}
+                          {{i18n "community_platform.score"}}</span>
                       </div>
                     </article>
                   {{/each}}
@@ -159,14 +175,22 @@ export default class CommunityPlatformShell extends Component {
                 </section>
               {{/if}}
 
-              <section class="dcp-platform-rail-card dcp-platform-rail-card--discover">
+              <section
+                class="dcp-platform-rail-card dcp-platform-rail-card--discover"
+              >
                 <h2>{{i18n "community_platform.explore.title"}}</h2>
                 <p>{{i18n "community_platform.explore.description"}}</p>
                 <div class="dcp-platform-rail-actions">
-                  <LinkTo @route="community-platform-explore" class="btn btn-default">
+                  <LinkTo
+                    @route="community-platform-explore"
+                    class="btn btn-default"
+                  >
                     {{i18n "community_platform.explore.title"}}
                   </LinkTo>
-                  <LinkTo @route="community-platform-popular" class="btn btn-default">
+                  <LinkTo
+                    @route="community-platform-popular"
+                    class="btn btn-default"
+                  >
                     {{i18n "community_platform.popular.title"}}
                   </LinkTo>
                 </div>

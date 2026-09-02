@@ -26,7 +26,9 @@ export default class CommunityPlatformModerationInsights extends Component {
     >
       <div class="dcp-section-heading dcp-section-heading--compact">
         <div>
-          <p class="dcp-eyebrow">{{i18n "community_platform.moderation_insights.eyebrow"}}</p>
+          <p class="dcp-eyebrow">{{i18n
+              "community_platform.moderation_insights.eyebrow"
+            }}</p>
           <h2 id="dcp-moderation-insights-title">
             {{i18n "community_platform.moderation_insights.title"}}
           </h2>
@@ -40,25 +42,35 @@ export default class CommunityPlatformModerationInsights extends Component {
       <div class="dcp-moderation-insights__metrics">
         <article>
           <strong>{{this.sevenDays.executions}}</strong>
-          <span>{{i18n "community_platform.moderation_insights.executions_7d"}}</span>
+          <span>{{i18n
+              "community_platform.moderation_insights.executions_7d"
+            }}</span>
         </article>
         <article>
           <strong>{{this.sevenDays.unique_posts}}</strong>
-          <span>{{i18n "community_platform.moderation_insights.unique_posts_7d"}}</span>
+          <span>{{i18n
+              "community_platform.moderation_insights.unique_posts_7d"
+            }}</span>
         </article>
         <article>
           <strong>{{this.thirtyDays.executions}}</strong>
-          <span>{{i18n "community_platform.moderation_insights.executions_30d"}}</span>
+          <span>{{i18n
+              "community_platform.moderation_insights.executions_30d"
+            }}</span>
         </article>
         <article>
           <strong>{{this.thirtyDays.flagged_for_review}}</strong>
-          <span>{{i18n "community_platform.moderation_insights.standard_flags_30d"}}</span>
+          <span>{{i18n
+              "community_platform.moderation_insights.standard_flags_30d"
+            }}</span>
         </article>
       </div>
 
       <div class="dcp-moderation-insights__breakdown">
         <div>
-          <h3>{{i18n "community_platform.moderation_insights.outcomes_title"}}</h3>
+          <h3>{{i18n
+              "community_platform.moderation_insights.outcomes_title"
+            }}</h3>
           <dl>
             <div>
               <dt>{{i18n "community_platform.automod.outcome_queued"}}</dt>
@@ -69,14 +81,18 @@ export default class CommunityPlatformModerationInsights extends Component {
               <dd>{{this.thirtyDays.flagged_for_review}}</dd>
             </div>
             <div>
-              <dt>{{i18n "community_platform.automod.outcome_already_queued"}}</dt>
+              <dt>{{i18n
+                  "community_platform.automod.outcome_already_queued"
+                }}</dt>
               <dd>{{this.thirtyDays.already_queued}}</dd>
             </div>
           </dl>
         </div>
 
         <div>
-          <h3>{{i18n "community_platform.moderation_insights.triggers_title"}}</h3>
+          <h3>{{i18n
+              "community_platform.moderation_insights.triggers_title"
+            }}</h3>
           <dl>
             <div>
               <dt>{{i18n "community_platform.automod.trigger_create"}}</dt>
@@ -91,7 +107,9 @@ export default class CommunityPlatformModerationInsights extends Component {
       </div>
 
       <div class="dcp-moderation-insights__rules">
-        <h3>{{i18n "community_platform.moderation_insights.top_rules_title"}}</h3>
+        <h3>{{i18n
+            "community_platform.moderation_insights.top_rules_title"
+          }}</h3>
         {{#each this.topRules as |rule|}}
           <div class="dcp-moderation-insights__rule">
             <span>{{rule.rule_name}}</span>

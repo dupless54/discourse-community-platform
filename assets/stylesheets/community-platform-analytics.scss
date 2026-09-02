@@ -18,7 +18,10 @@
 
 .dcp-community-activity-insights__row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(72px, 0.22fr) minmax(72px, 0.22fr);
+  grid-template-columns: minmax(0, 1fr) minmax(72px, 0.22fr) minmax(
+      72px,
+      0.22fr
+    );
   align-items: center;
   gap: 0.75rem;
   min-width: 0;
@@ -45,7 +48,7 @@
   text-align: right;
 }
 
-@media (max-width: 520px) {
+@media (width <= 520px) {
   .dcp-community-activity-insights__row {
     grid-template-columns: minmax(0, 1fr) 58px 58px;
     gap: 0.45rem;

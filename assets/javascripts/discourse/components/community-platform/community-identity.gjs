@@ -6,7 +6,11 @@ export default class CommunityPlatformCommunityIdentity extends Component {
   }
 
   <template>
-    <a class="dcp-feed-community-identity" href={{@community.path}} ...attributes>
+    <a
+      class="dcp-feed-community-identity"
+      href={{@community.path}}
+      ...attributes
+    >
       <span class="dcp-feed-community-identity__icon" aria-hidden="true">
         {{#if @community.icon_url}}
           <img src={{@community.icon_url}} alt="" />
@@ -16,7 +20,9 @@ export default class CommunityPlatformCommunityIdentity extends Component {
           <span>{{this.initial}}</span>
         {{/if}}
       </span>
-      <span class="dcp-feed-community-identity__label">s/{{@community.slug}}</span>
+      <span
+        class="dcp-feed-community-identity__label"
+      >s/{{@community.slug}}</span>
     </a>
   </template>
 }

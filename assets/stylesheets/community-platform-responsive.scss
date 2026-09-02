@@ -2,7 +2,7 @@
 // Discourse can keep the desktop sidebar visible around 768px, leaving the
 // plugin content column much narrower than the viewport media query suggests.
 
-@media (min-width: 701px) and (max-width: 900px) {
+@media (width >= 701px) and (width <= 900px) {
   .dcp-community-hero__content {
     flex-wrap: wrap;
   }

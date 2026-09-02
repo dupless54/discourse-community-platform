@@ -348,7 +348,7 @@
   margin-top: 0;
 }
 
-@media (max-width: 700px) {
+@media (width <= 700px) {
   .dcp-feed-order {
     width: 100%;
   }

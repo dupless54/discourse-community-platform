@@ -18,4 +18,4 @@ export default <template>
       <span>{{@topic.like_count}} {{i18n "community_platform.likes"}}</span>
     </span>
   </div>
-</template>;
+</template>

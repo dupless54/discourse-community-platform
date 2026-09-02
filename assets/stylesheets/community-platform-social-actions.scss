@@ -110,7 +110,7 @@
   flex-basis: 20px;
 }
 
-@media (max-width: 620px) {
+@media (width <= 620px) {
   .dcp-platform-shell .dcp-feed-actions {
     gap: 0.3rem;
     margin-top: 0.6rem;

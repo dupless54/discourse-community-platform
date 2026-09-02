@@ -11,7 +11,10 @@ export default class CommunityPlatformTopicPreview extends Component {
         <img src={{@topic.image_url}} alt="" loading="lazy" />
       </a>
     {{else if @topic.excerpt}}
-      <a class="dcp-topic-preview dcp-topic-preview--excerpt" href={{@topic.path}}>
+      <a
+        class="dcp-topic-preview dcp-topic-preview--excerpt"
+        href={{@topic.path}}
+      >
         <p>{{@topic.excerpt}}</p>
       </a>
     {{/if}}
