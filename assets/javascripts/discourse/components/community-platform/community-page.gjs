@@ -332,7 +332,11 @@ export default class CommunityPlatformCommunityPage extends Component {
               <h2>{{i18n "community_platform.feed.latest"}}</h2>
             </div>
 
-            <div class="dcp-feed-order" aria-label={{i18n "community_platform.feed.eyebrow"}}>
+            <div
+              class="dcp-feed-order"
+              role="group"
+              aria-label={{i18n "community_platform.feed.eyebrow"}}
+            >
               <button
                 type="button"
                 class="btn btn-flat dcp-feed-order__button"
