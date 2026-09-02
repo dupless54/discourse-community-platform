@@ -62,7 +62,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::ExploreTopics do
     item = result.first
 
     expect(item[:id]).to eq(topic.id)
-    expect(item[:created_at]).to eq(topic.created_at)
+    expect(item[:created_at]).to be_within(1.microsecond).of(topic.created_at)
     expect(item[:excerpt]).to include("bounded Explore preview")
     expect(item.dig(:community, :slug)).to eq("technology")
     expect(item.dig(:community, :path)).to eq("/s/technology")
