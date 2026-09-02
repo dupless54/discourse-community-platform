@@ -31,6 +31,8 @@ Run these checks on a non-production Discourse instance using the exact release-
 - [ ] A public Community loads at `/s/:slug`.
 - [ ] Restricted/private Community visibility behaves like its mapped Discourse Category.
 - [ ] Join and leave update the mapped member Group correctly.
+- [ ] An eligible signed-in user can join a recommended public Community directly from Explore and the returned member count is reflected without a page reload.
+- [ ] Guests and suspended/staged users are not offered Explore quick join; server-side membership checks remain authoritative.
 - [ ] Hot/new/top/rising ordering can be switched without a full-page failure.
 - [ ] Upvote/downvote works for an authenticated user and does not replace Discourse likes/posts.
 
@@ -101,6 +103,7 @@ Check desktop, tablet, and mobile widths, including an iPad-class width with the
 - [ ] Rich image/text previews do not overflow cards, overlap vote controls, or force horizontal page scrolling.
 - [ ] Community logo, cover image, title, and management actions remain usable at desktop, tablet, and narrow mobile widths.
 - [ ] Branding upload controls remain keyboard operable and retain visible labels/status.
+- [ ] Explore recommendation navigation and quick-join controls remain separate keyboard targets, and successful/error membership states are announced appropriately.
 
 ## 8. Release publication
 
