@@ -16,6 +16,14 @@ function topic(community) {
     downvotes: 0,
     user_vote: 0,
     feed_source: "joined",
+    created_at: "2026-09-01T12:00:00.000Z",
+    author: {
+      id: 42,
+      username: "mert",
+      name: "Mert Kaya",
+      avatar_template: "/user_avatar/localhost/mert/{size}/42_2.png",
+      path: "/u/mert",
+    },
     community,
   };
 }
@@ -43,7 +51,7 @@ acceptance("Community Platform | Home community identity", function (needs) {
     });
   });
 
-  test("renders uploaded community logos in joined chips and topic context", async function (assert) {
+  test("renders community, author, and time context in Home cards", async function (assert) {
     await visit("/home");
 
     assert
@@ -60,6 +68,12 @@ acceptance("Community Platform | Home community identity", function (needs) {
     assert
       .dom(".dcp-home-card .dcp-feed-community-identity__icon img")
       .hasAttribute("src", "/uploads/default/original/1X/hardware-logo.png");
+    assert
+      .dom(".dcp-home-card .dcp-topic-context__author")
+      .hasAttribute("href", "/u/mert")
+      .includesText("@mert");
+    assert.dom(".dcp-home-card .dcp-topic-context__author .avatar").exists();
+    assert.dom(".dcp-home-card .dcp-topic-context__time").exists();
   });
 });
 
@@ -82,7 +96,7 @@ acceptance("Community Platform | Popular community identity", function (needs) {
     });
   });
 
-  test("renders uploaded community logos in public topic context", async function (assert) {
+  test("renders community, author, and time context in Popular cards", async function (assert) {
     await visit("/popular");
 
     assert
@@ -92,5 +106,11 @@ acceptance("Community Platform | Popular community identity", function (needs) {
     assert
       .dom(".dcp-popular-card .dcp-feed-community-identity__icon img")
       .hasAttribute("src", "/uploads/default/original/1X/technology-logo.png");
+    assert
+      .dom(".dcp-popular-card .dcp-topic-context__author")
+      .hasAttribute("href", "/u/mert")
+      .includesText("@mert");
+    assert.dom(".dcp-popular-card .dcp-topic-context__author .avatar").exists();
+    assert.dom(".dcp-popular-card .dcp-topic-context__time").exists();
   });
 });
