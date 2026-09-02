@@ -61,10 +61,21 @@ export default class CommunityPlatformShell extends Component {
 
           <div class="dcp-platform-account">
             {{#if this.currentUser}}
-              <a class="dcp-platform-account__profile" href={{this.profilePath}}>
-                <DUserAvatar @user={{this.currentUser}} @size="small" />
-                <span>@{{this.currentUser.username}}</span>
-              </a>
+              <div class="dcp-platform-account__profile">
+                <DUserAvatar
+                  @user={{this.currentUser}}
+                  @size="small"
+                  @href={{this.profilePath}}
+                  @ariaLabel={{this.currentUser.username}}
+                  class="dcp-platform-account__avatar"
+                />
+                <a
+                  class="dcp-platform-account__profile-name"
+                  href={{this.profilePath}}
+                >
+                  @{{this.currentUser.username}}
+                </a>
+              </div>
             {{else}}
               <a class="btn btn-primary dcp-platform-account__login" href="/login">
                 {{i18n "log_in"}}

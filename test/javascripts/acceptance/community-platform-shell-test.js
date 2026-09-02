@@ -64,6 +64,22 @@ acceptance("Community Platform | platform shell", function (needs) {
       .hasAttribute("type", "search")
       .hasAttribute("aria-label", i18n("search.title"))
       .hasAttribute("placeholder", i18n("search.title"));
-    assert.dom(".dcp-platform-account__profile").exists();
+
+    assert.dom(".dcp-platform-account__profile").hasTagName("div");
+    assert.dom(".dcp-platform-account__profile > a").exists({ count: 2 });
+    assert.dom(".dcp-platform-account__profile a a").doesNotExist();
+    assert.dom(".dcp-platform-account__avatar").hasAttribute("aria-label");
+    assert.dom(".dcp-platform-account__profile-name").hasAttribute("href");
+
+    const avatarLink = document.querySelector(".dcp-platform-account__avatar");
+    const profileNameLink = document.querySelector(
+      ".dcp-platform-account__profile-name"
+    );
+
+    assert.strictEqual(
+      avatarLink?.getAttribute("href"),
+      profileNameLink?.getAttribute("href"),
+      "avatar and username target the same canonical Discourse profile"
+    );
   });
 });
