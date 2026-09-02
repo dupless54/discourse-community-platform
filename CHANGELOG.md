@@ -6,6 +6,8 @@ The project is still pre-stable. Until the first stable release, breaking change
 
 ## [Unreleased]
 
+## [0.1.0-rc.2] - 2026-09-02
+
 ### Added
 
 - Rich feed cards can show a Guardian-visible Discourse topic image or, when no image is available, a bounded plain-text excerpt from the visible first regular post.
@@ -49,10 +51,19 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Feed discussion links and right-rail trend titles retain visible keyboard focus treatment and native link semantics.
 - Inside the platform shell, Community About, Rules, and manager controls become a responsive details grid below the topic feed instead of consuming a second nested right sidebar; all controls remain present on tablet and mobile.
 - Explore keeps one recommendation component across breakpoints: the desktop rail moves below the feed on tablet/mobile instead of rendering a second stale copy of join state.
+- Community feed order controls are exposed as a named semantic group while each order button keeps its pressed state.
+- A route-level regression gate now rejects nested interactive controls across the signed-in platform shell, including profile links, vote controls, previews, and rail navigation.
 
 ### Performance
 
 - Right-rail Popular summaries reuse the existing cached Popular topic IDs and hydrate at most a small bounded set instead of running the ranking aggregate during a page request.
+
+### Development and release quality
+
+- The repository now uses the official Discourse-style pnpm frontend toolchain with a committed lockfile and current Discourse type declarations.
+- Official Discourse Plugin CI now executes ESLint, Stylelint, Prettier, and Glint/TypeScript checks instead of silently skipping those frontend gates.
+- Existing JavaScript/GJS and SCSS sources were normalized through the official Prettier and Stylelint fixers without changing runtime behavior.
+- The release-candidate checklist now requires frontend dependency detection and successful non-skipped ESLint, Stylelint, Prettier, and Types gates; skipped workflow steps must be recorded as skipped rather than counted as passed.
 
 ## [0.1.0-rc.1] - 2026-09-02
 
