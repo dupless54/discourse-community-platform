@@ -91,7 +91,7 @@ acceptance("Community Platform | explore page", function (needs) {
     assert.dom(".dcp-explore-person-card").includesText("3 recent public topics");
     assert.dom(".dcp-explore-card").exists({ count: 1 });
     assert
-      .dom(".dcp-explore-card .dcp-popular-card__community")
+      .dom(".dcp-explore-card .dcp-feed-community-identity")
       .includesText("s/science")
       .hasAttribute("href", "/s/science");
     assert
