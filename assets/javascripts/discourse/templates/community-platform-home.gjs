@@ -5,6 +5,7 @@ export default <template>
   <PlatformShell
     @section="home"
     @communities={{@controller.model.joinedCommunities}}
+    @trendingTopics={{@controller.model.trendingTopics}}
     @sidebarHeadingKey="community_platform.home.joined_title"
   >
     <HomePage

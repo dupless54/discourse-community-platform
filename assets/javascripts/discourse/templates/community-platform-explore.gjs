@@ -5,6 +5,7 @@ export default <template>
   <PlatformShell
     @section="explore"
     @communities={{@controller.model.recommendedCommunities}}
+    @trendingTopics={{@controller.model.trendingTopics}}
     @sidebarHeadingKey="community_platform.explore.recommended_title"
   >
     <ExplorePage

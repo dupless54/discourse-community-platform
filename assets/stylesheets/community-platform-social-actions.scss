@@ -1,0 +1,123 @@
+.dcp-platform-shell .dcp-feed-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+}
+
+.dcp-platform-shell .dcp-feed-action {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.25rem 0.58rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 999px;
+  background: var(--primary-very-low);
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+  font-weight: 650;
+  line-height: 1;
+}
+
+.dcp-platform-shell .dcp-feed-action .d-icon {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.dcp-platform-shell .dcp-feed-action--discussion {
+  color: var(--primary-high);
+  text-decoration: none;
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    color 120ms ease;
+}
+
+.dcp-platform-shell .dcp-feed-action--discussion:hover,
+.dcp-platform-shell .dcp-feed-action--discussion:focus-visible {
+  border-color: var(--tertiary-low-mid, var(--tertiary));
+  background: var(--tertiary-low);
+  color: var(--tertiary-high-or-tertiary);
+}
+
+.dcp-platform-shell .dcp-feed-action--discussion:focus-visible {
+  outline: 2px solid var(--tertiary);
+  outline-offset: 2px;
+}
+
+.dcp-platform-trending-list {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.dcp-platform-trending-item {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--primary-low);
+}
+
+.dcp-platform-trending-item:first-child {
+  padding-top: 0.15rem;
+}
+
+.dcp-platform-trending-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.dcp-platform-trending-item__title {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--primary);
+  font-size: var(--font-down-1);
+  font-weight: 750;
+  line-height: 1.35;
+  text-decoration: none;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.dcp-platform-trending-item__title:hover,
+.dcp-platform-trending-item__title:focus-visible {
+  color: var(--tertiary-high-or-tertiary);
+}
+
+.dcp-platform-trending-item__title:focus-visible {
+  outline: 2px solid var(--tertiary);
+  outline-offset: 2px;
+}
+
+.dcp-platform-trending-item__meta {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.55rem;
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+}
+
+.dcp-platform-trending-community.dcp-feed-community-identity {
+  max-width: 11rem;
+  font-size: var(--font-down-2);
+}
+
+.dcp-platform-trending-community .dcp-feed-community-identity__icon {
+  width: 20px;
+  height: 20px;
+  flex-basis: 20px;
+}
+
+@media (max-width: 620px) {
+  .dcp-platform-shell .dcp-feed-actions {
+    gap: 0.3rem;
+    margin-top: 0.6rem;
+  }
+
+  .dcp-platform-shell .dcp-feed-action {
+    min-height: 28px;
+    padding: 0.22rem 0.5rem;
+  }
+}

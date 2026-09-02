@@ -9,6 +9,7 @@ export default class CommunityPlatformHomeRoute extends DiscourseRoute {
     return {
       topics: payload.topics || [],
       joinedCommunities: payload.joined_communities || [],
+      trendingTopics: payload.trending_topics || [],
       personalized: payload.personalized || false,
       order: payload.order || "home",
     };

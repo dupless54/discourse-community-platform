@@ -139,6 +139,14 @@ acceptance("Community Platform | personalized home page", function (needs) {
       .includesText("A bounded preview from the first post")
       .hasAttribute("href", "/t/joined-discussion/301");
     assert
+      .dom(".dcp-home-card:first-child .dcp-feed-action--discussion")
+      .includesText("9 posts")
+      .hasAttribute("href", "/t/joined-discussion/301");
+    assert
+      .dom(".dcp-home-card:first-child .dcp-feed-actions")
+      .includesText("180 views")
+      .includesText("12 likes");
+    assert
       .dom(".dcp-home-card:nth-child(2) .dcp-home-card__source")
       .hasText("Following");
     assert
