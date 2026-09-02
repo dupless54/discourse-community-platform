@@ -41,7 +41,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::PopularTopics do
     expect(result.first.dig(:author, :username)).to eq(owner.username)
     expect(result.first.dig(:author, :avatar_template)).to eq(owner.avatar_template)
     expect(result.first.dig(:author, :path)).to eq("/u/#{owner.username}")
-    expect(result.first[:created_at]).to be_within(1.microsecond).of(technology_topic.created_at)
+    expect(result.first[:created_at]).to be_within(0.000001).of(technology_topic.created_at)
   end
 
   it "keeps restricted and private communities out of the shared popular cache" do
