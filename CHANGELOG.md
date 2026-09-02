@@ -35,6 +35,8 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Feed author/time context uses Discourse's native avatar and relative-date UI primitives and keeps community, author, and timestamp as separate accessible links/text.
 - Explore recommendation cards keep navigation and membership actions as separate interactive controls, announce successful joins with status semantics, and expose membership failures through an alert.
 - The platform shell keeps native links, search semantics, current-user profile navigation, active-route state, and separate desktop/mobile navigation while using Discourse-supported `apiInitializer` and `onPageChange` APIs instead of core patches.
+- Platform feed cards use a denser feed-first hierarchy with compact route headings, edge-to-edge media crops, interaction-stat pills, stronger keyboard focus treatment, and mobile vote controls that move above the post body instead of squeezing the content column.
+- Home and Following avoid duplicating joined Communities in the center column when the desktop right rail is visible; the horizontal list remains available automatically when the rail collapses on tablet and mobile.
 
 ## [0.1.0-rc.1] - 2026-09-02
 
