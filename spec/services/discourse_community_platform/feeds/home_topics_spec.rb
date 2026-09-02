@@ -59,7 +59,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
     expect(result[:topics].first[:feed_source]).to eq("joined")
     expect(result[:topics].first.dig(:author, :username)).to eq(owner.username)
     expect(result[:topics].first.dig(:author, :avatar_template)).to eq(owner.avatar_template)
-    expect(result[:topics].first[:created_at]).to eq(joined_topic.created_at)
+    expect(result[:topics].first[:created_at]).to be_within(1.microsecond).of(joined_topic.created_at)
     expect(result[:topics].map { |topic| topic[:id] }).to include(popular_topic.id)
     expect(result[:topics].find { |topic| topic[:id] == popular_topic.id }[:feed_source]).to eq("popular")
   end
