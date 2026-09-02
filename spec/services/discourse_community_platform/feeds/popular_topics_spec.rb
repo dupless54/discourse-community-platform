@@ -21,7 +21,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::PopularTopics do
     )
   end
 
-  it "ranks recent topics across public communities and returns community references" do
+  it "ranks recent topics across public communities and returns social topic context" do
     technology = create_community(name: "Technology", slug: "technology")
     gaming = create_community(name: "Gaming", slug: "gaming")
     technology_topic = Fabricate(:topic, category: technology.category, user: owner, created_at: 2.days.ago)
@@ -38,6 +38,10 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::PopularTopics do
     expect(result.first[:id]).to eq(technology_topic.id)
     expect(result.first.dig(:community, :slug)).to eq("technology")
     expect(result.first.dig(:community, :path)).to eq("/s/technology")
+    expect(result.first.dig(:author, :username)).to eq(owner.username)
+    expect(result.first.dig(:author, :avatar_template)).to eq(owner.avatar_template)
+    expect(result.first.dig(:author, :path)).to eq("/u/#{owner.username}")
+    expect(result.first[:created_at]).to eq(technology_topic.created_at)
   end
 
   it "keeps restricted and private communities out of the shared popular cache" do
