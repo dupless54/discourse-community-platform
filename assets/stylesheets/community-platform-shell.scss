@@ -130,21 +130,37 @@ body.dcp-platform-shell-active #main-outlet {
   gap: 0.55rem;
   padding: 0.35rem 0.5rem;
   border-radius: 999px;
-  color: var(--primary);
   font-size: var(--font-down-1);
   font-weight: 700;
+}
+
+.dcp-platform-account__profile:hover,
+.dcp-platform-account__profile:focus-within {
+  background: var(--primary-very-low);
+}
+
+.dcp-platform-account__avatar,
+.dcp-platform-account__profile-name {
+  color: var(--primary);
   text-decoration: none;
 }
 
-.dcp-platform-account__profile:hover {
-  background: var(--primary-very-low);
-  color: var(--primary);
+.dcp-platform-account__avatar:focus-visible,
+.dcp-platform-account__profile-name:focus-visible {
+  outline: 2px solid var(--tertiary);
+  outline-offset: 2px;
+  border-radius: 999px;
 }
 
-.dcp-platform-account__profile > span:last-child {
+.dcp-platform-account__profile-name {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.dcp-platform-account__profile-name:hover {
+  color: var(--tertiary-high-or-tertiary);
 }
 
 .dcp-platform-layout {
@@ -386,7 +402,7 @@ body.dcp-platform-shell-active #main-outlet {
   }
 
   .dcp-platform-brand__name,
-  .dcp-platform-account__profile > span:last-child {
+  .dcp-platform-account__profile-name {
     display: none;
   }
 
