@@ -101,23 +101,42 @@
   color: var(--primary-low-mid);
 }
 
-.dcp-topic-context__author {
+.dcp-topic-context__author-group {
   display: inline-flex;
   min-width: 0;
   align-items: center;
   gap: 0.35rem;
+}
+
+.dcp-topic-context__author-avatar,
+.dcp-topic-context__author {
   color: var(--primary-high);
-  font-weight: 600;
   text-decoration: none;
+}
+
+.dcp-topic-context__author-avatar:focus-visible,
+.dcp-topic-context__author:focus-visible {
+  outline: 2px solid var(--tertiary);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.dcp-topic-context__author {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dcp-topic-context__author:hover {
   color: var(--tertiary);
 }
 
-.dcp-topic-context__author .avatar {
+.dcp-topic-context__author-avatar .avatar {
   width: 20px;
   height: 20px;
+  box-shadow: 0 0 0 2px var(--secondary);
 }
 
 .dcp-topic-context__time {
