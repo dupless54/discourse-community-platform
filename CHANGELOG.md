@@ -85,7 +85,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 
 - Community/category visibility is checked through Discourse Guardian before plugin data is serialized.
 - Private/restricted community data is not exposed through public feed/discovery paths.
-- AutoModerator does not support arbitrary user regex, direct delete, ban, silence, or global Discourse moderation authority.
+- AutoModerator does not support arbitrary user regex, direct delete, ban, silence, or global moderator escalation.
 - Management-only JSON endpoints return `X-Robots-Tag: noindex, nofollow` and `Cache-Control: private, no-store`, including unauthenticated and unauthorized responses.
 - Analytics responses contain aggregate counts only and do not serialize contributor identity, raw content, email, IP, or device data.
 
