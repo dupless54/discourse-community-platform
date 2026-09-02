@@ -8,6 +8,11 @@ Use this checklist before publishing a Discourse Community Platform release cand
 - [ ] Branch is `behind_by=0` against `main` immediately before merge.
 - [ ] Official Discourse Plugin CI is associated with that exact head SHA.
 - [ ] `check_for_tests` passes.
+- [ ] The JS package manager is detected and frontend dependencies install from the committed lockfile.
+- [ ] ESLint runs (is not skipped) and passes.
+- [ ] Stylelint runs (is not skipped) and passes.
+- [ ] Prettier runs (is not skipped) and passes.
+- [ ] Glint/TypeScript `Types` runs (is not skipped) and passes.
 - [ ] RuboCop passes.
 - [ ] Syntax Tree passes.
 - [ ] Plugin annotations pass.
@@ -18,6 +23,7 @@ Use this checklist before publishing a Discourse Community Platform release cand
 - [ ] Ember Build passes.
 - [ ] Plugin QUnit passes.
 - [ ] System tests are either successful or explicitly skipped because the plugin has no applicable system-test suite.
+- [ ] Any workflow step reported as `skipped` is recorded as skipped rather than being counted as a passing gate.
 
 ## 2. Staging install / upgrade smoke test
 
