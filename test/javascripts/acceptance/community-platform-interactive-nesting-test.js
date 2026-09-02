@@ -13,7 +13,9 @@ const NESTED_INTERACTIVE_SELECTOR = [
   "button input",
   "button select",
   "button textarea",
-].join(", ");
+]
+  .map((selector) => `.dcp-platform-shell ${selector}`)
+  .join(", ");
 
 acceptance("Community Platform | interactive nesting", function (needs) {
   needs.user();
@@ -82,6 +84,6 @@ acceptance("Community Platform | interactive nesting", function (needs) {
     assert.dom(".dcp-topic-preview").exists();
     assert.dom(".dcp-feed-action--discussion").exists();
     assert.dom(".dcp-platform-right-rail a").exists();
-    assert.dom(`.dcp-platform-shell ${NESTED_INTERACTIVE_SELECTOR}`).doesNotExist();
+    assert.dom(NESTED_INTERACTIVE_SELECTOR).doesNotExist();
   });
 });
