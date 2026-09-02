@@ -63,7 +63,7 @@ module ::DiscourseCommunityPlatform
 
       def call
         topic_ids = self.class.cached_topic_ids
-        topics_by_id = Topic.where(id: topic_ids).includes(:category).index_by(&:id)
+        topics_by_id = Topic.where(id: topic_ids).includes(:category, :user).index_by(&:id)
 
         topics =
           topic_ids.filter_map do |topic_id|
@@ -86,8 +86,7 @@ module ::DiscourseCommunityPlatform
 
           score = scores[topic.id]
           preview = previews.fetch(topic.id, {})
-
-          {
+          item = {
             id: topic.id,
             title: topic.title,
             slug: topic.slug,
@@ -105,10 +104,22 @@ module ::DiscourseCommunityPlatform
             image_url: preview[:image_url],
             community: community_identity(community),
           }
+
+          item[:author] = topic_author(topic) if topic.user
+          item
         end
       end
 
       private
+
+      def topic_author(topic)
+        {
+          id: topic.user.id,
+          username: topic.user.username,
+          name: topic.user.name,
+          path: "/u/#{topic.user.username}",
+        }
+      end
 
       def community_identity(community)
         icon_upload = community.icon_upload
