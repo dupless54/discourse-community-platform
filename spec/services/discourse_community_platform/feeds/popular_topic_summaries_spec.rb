@@ -30,11 +30,12 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::PopularTopicSummaries do
       [topic.id],
       expires_in: DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_TTL,
     )
-    expect(DiscourseCommunityPlatform::Feeds::PopularTopics).not_to receive(:rebuild_cache)
+    allow(DiscourseCommunityPlatform::Feeds::PopularTopics).to receive(:rebuild_cache)
 
     result = described_class.call(guardian: Guardian.new(viewer), limit: 1)
     summary = result.first
 
+    expect(DiscourseCommunityPlatform::Feeds::PopularTopics).not_to have_received(:rebuild_cache)
     expect(summary[:id]).to eq(topic.id)
     expect(summary[:title]).to eq(topic.title)
     expect(summary[:path]).to eq(topic.relative_url)

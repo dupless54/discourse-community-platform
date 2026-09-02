@@ -77,10 +77,11 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
   end
 
   it "returns no personalized Following data to guests and does not rebuild Popular for the rail" do
-    expect(DiscourseCommunityPlatform::Feeds::PopularTopics).not_to receive(:rebuild_cache)
+    allow(DiscourseCommunityPlatform::Feeds::PopularTopics).to receive(:rebuild_cache)
 
     get "/community-platform/feeds/following.json"
 
+    expect(DiscourseCommunityPlatform::Feeds::PopularTopics).not_to have_received(:rebuild_cache)
     expect(response.status).to eq(200)
     payload = response.parsed_body
     expect(payload["order"]).to eq("following")
