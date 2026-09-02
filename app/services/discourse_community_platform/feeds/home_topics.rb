@@ -207,6 +207,7 @@ module ::DiscourseCommunityPlatform
           id: topic.user.id,
           username: topic.user.username,
           name: topic.user.name,
+          avatar_template: topic.user.avatar_template,
           path: "/u/#{topic.user.username}",
         }
       end
