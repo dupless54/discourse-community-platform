@@ -1,6 +1,7 @@
 import { visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
+import { i18n } from "discourse-i18n";
 
 acceptance("Community Platform | platform shell", function (needs) {
   needs.user();
@@ -39,7 +40,8 @@ acceptance("Community Platform | platform shell", function (needs) {
     assert
       .dom('.dcp-platform-search input[name="q"]')
       .hasAttribute("type", "search")
-      .hasAttribute("aria-label", "Search");
+      .hasAttribute("aria-label", i18n("search.title"))
+      .hasAttribute("placeholder", i18n("search.title"));
     assert.dom(".dcp-platform-account__profile").exists();
   });
 });

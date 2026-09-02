@@ -40,8 +40,8 @@ export default class CommunityPlatformShell extends Component {
             <input
               type="search"
               name="q"
-              aria-label={{i18n "search"}}
-              placeholder={{i18n "search"}}
+              aria-label={{i18n "search.title"}}
+              placeholder={{i18n "search.title"}}
               autocomplete="off"
             />
           </form>
