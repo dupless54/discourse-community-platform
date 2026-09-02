@@ -10,6 +10,7 @@ export default class CommunityPlatformExploreRoute extends DiscourseRoute {
       topics: payload.topics || [],
       recommendedCommunities: payload.recommended_communities || [],
       recommendedPeople: payload.recommended_people || [],
+      trendingTopics: payload.trending_topics || [],
       order: payload.order || "explore",
       personalized: payload.personalized || false,
     };

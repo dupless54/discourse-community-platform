@@ -6,6 +6,7 @@ import { on } from "@ember/modifier";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import CommunityIdentity from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/community-identity";
+import FeedActions from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-actions";
 import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
 import TopicContext from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-context";
 import TopicPreview from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-preview";
@@ -203,12 +204,7 @@ export default class CommunityPlatformHomePage extends Component {
               </a>
 
               <TopicPreview @topic={{topic}} />
-
-              <div class="dcp-topic-card__meta">
-                <span>{{topic.posts_count}} {{i18n "community_platform.posts"}}</span>
-                <span>{{topic.views}} {{i18n "community_platform.views"}}</span>
-                <span>{{topic.like_count}} {{i18n "community_platform.likes"}}</span>
-              </div>
+              <FeedActions @topic={{topic}} />
             </div>
           </article>
         {{else}}

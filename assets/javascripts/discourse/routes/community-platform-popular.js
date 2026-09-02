@@ -8,6 +8,7 @@ export default class CommunityPlatformPopularRoute extends DiscourseRoute {
 
     return {
       topics: payload.topics || [],
+      trendingTopics: payload.trending_topics || [],
       order: payload.order || "popular",
     };
   }

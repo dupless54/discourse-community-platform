@@ -19,6 +19,21 @@ acceptance("Community Platform | platform shell", function (needs) {
             path: "/s/hardware",
           },
         ],
+        trending_topics: [
+          {
+            id: 91,
+            title: "A cached trending discussion",
+            path: "/t/cached-trending-discussion/91",
+            posts_count: 14,
+            score: 23,
+            community: {
+              id: 7,
+              name: "Gaming",
+              slug: "gaming",
+              path: "/s/gaming",
+            },
+          },
+        ],
         topics: [],
       });
     });
@@ -35,6 +50,13 @@ acceptance("Community Platform | platform shell", function (needs) {
     assert
       .dom('.dcp-platform-right-rail a[href="/s/hardware"]')
       .exists();
+    assert
+      .dom('.dcp-platform-trending-item__title[href="/t/cached-trending-discussion/91"]')
+      .hasText("A cached trending discussion");
+    assert
+      .dom('.dcp-platform-trending-community[href="/s/gaming"]')
+      .includesText("s/gaming");
+    assert.dom(".dcp-platform-trending-item__meta").includesText("23 score");
     assert.dom('[data-platform-feed="home"]').exists({ count: 2 });
     assert.dom('[data-platform-feed="home"]').hasClass("active");
     assert

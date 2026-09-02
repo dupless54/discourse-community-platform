@@ -12,6 +12,8 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Rich previews are shared across Community, Home, Following, Explore, and Popular topic cards without creating a second content store or alternate canonical topic URL.
 - Feed topic context now carries the Discourse author avatar/username and relative creation time across Home, Following, Popular, and Explore cards; Explore also preserves the same rich preview and Community identity contract as the other feeds.
 - Home, Following, Explore, Popular, and `/s/:slug` now share a route-scoped platform shell with a custom header, responsive navigation, center content column, and contextual discovery rail while leaving normal Discourse routes untouched.
+- Platform feed cards now expose a real topic discussion link plus existing view/like counters in a shared social action row; no second comment system is introduced.
+- Home, Following, Explore, and Popular receive a bounded right-rail Popular summary sourced from the existing background-ranked Popular cache.
 - Community managers can upload a logo and cover image through Discourse's supported image uploader UI; emoji and banner color remain fallbacks.
 - Explore community cards can display uploaded community logos.
 - Uploaded community logos now appear consistently in Home/Following joined-community chips and Home/Following/Popular/Explore topic context links, with emoji or initial fallbacks when no logo is available.
@@ -27,6 +29,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Community logo and cover URLs also pass through the current Discourse Guardian upload-visibility check, preventing a visible Community response from bypassing secure-upload access rules.
 - Feed community identity returns a branding image URL only when the current Guardian can see that Discourse upload.
 - Explore quick-join capability is only advertised for an eligible authenticated user; the server-side membership service remains authoritative for Guardian visibility, staged/suspended-account checks, private-community protection, and mapped Group membership.
+- Right-rail Popular summaries are Guardian-filtered and intentionally omit topic previews, author context, user votes, and raw post content.
 
 ### Accessibility and responsive UI
 
@@ -37,6 +40,11 @@ The project is still pre-stable. Until the first stable release, breaking change
 - The platform shell keeps native links, search semantics, current-user profile navigation, active-route state, and separate desktop/mobile navigation while using Discourse-supported `apiInitializer` and `onPageChange` APIs instead of core patches.
 - Platform feed cards use a denser feed-first hierarchy with compact route headings, edge-to-edge media crops, interaction-stat pills, stronger keyboard focus treatment, and mobile vote controls that move above the post body instead of squeezing the content column.
 - Home and Following avoid duplicating joined Communities in the center column when the desktop right rail is visible; the horizontal list remains available automatically when the rail collapses on tablet and mobile.
+- Feed discussion links and right-rail trend titles retain visible keyboard focus treatment and native link semantics.
+
+### Performance
+
+- Right-rail Popular summaries reuse the existing cached Popular topic IDs and hydrate at most a small bounded set instead of running the ranking aggregate during a page request.
 
 ## [0.1.0-rc.1] - 2026-09-02
 

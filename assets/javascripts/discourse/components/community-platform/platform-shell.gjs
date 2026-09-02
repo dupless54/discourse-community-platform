@@ -22,6 +22,14 @@ export default class CommunityPlatformShell extends Component {
     return this.sidebarCommunities.length > 0;
   }
 
+  get trendingTopics() {
+    return (this.args.trendingTopics || []).slice(0, 5);
+  }
+
+  get hasTrendingTopics() {
+    return this.trendingTopics.length > 0;
+  }
+
   <template>
     <div class="dcp-platform-shell" data-platform-section={{@section}}>
       <header class="dcp-platform-header">
@@ -88,6 +96,28 @@ export default class CommunityPlatformShell extends Component {
                   @community={{@currentCommunity}}
                   class="dcp-platform-rail-community"
                 />
+              </section>
+            {{/if}}
+
+            {{#if this.hasTrendingTopics}}
+              <section class="dcp-platform-rail-card dcp-platform-rail-card--trending">
+                <h2>{{i18n "community_platform.popular.title"}}</h2>
+                <div class="dcp-platform-trending-list">
+                  {{#each this.trendingTopics as |topic|}}
+                    <article class="dcp-platform-trending-item">
+                      <a class="dcp-platform-trending-item__title" href={{topic.path}}>
+                        {{topic.title}}
+                      </a>
+                      <div class="dcp-platform-trending-item__meta">
+                        <CommunityIdentity
+                          @community={{topic.community}}
+                          class="dcp-platform-trending-community"
+                        />
+                        <span>{{topic.score}} {{i18n "community_platform.score"}}</span>
+                      </div>
+                    </article>
+                  {{/each}}
+                </div>
               </section>
             {{/if}}
 

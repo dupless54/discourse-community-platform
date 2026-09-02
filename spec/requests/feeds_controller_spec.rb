@@ -36,6 +36,11 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["topics"].first.dig("community", "slug")).to eq("technology")
     expect(payload["topics"].first).not_to have_key("raw")
     expect(payload["topics"].first).not_to have_key("posts")
+    expect(payload["trending_topics"].first["id"]).to eq(topic.id)
+    expect(payload["trending_topics"].first.dig("community", "slug")).to eq("technology")
+    expect(payload["trending_topics"].first).not_to have_key("excerpt")
+    expect(payload["trending_topics"].first).not_to have_key("author")
+    expect(payload["trending_topics"].first).not_to have_key("user_vote")
   end
 
   it "returns cached community recommendations with the public Explore payload" do
@@ -64,15 +69,19 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["personalized"]).to eq(false)
     expect(payload["recommended_communities"].first["id"]).to eq(community.id)
     expect(payload["recommended_communities"].first["recent_topics_count"]).to eq(3)
+    expect(payload["trending_topics"].first["id"]).to eq(topic.id)
     expect(payload["topics"].first["id"]).to eq(topic.id)
     expect(payload["topics"].first.dig("community", "slug")).to eq("gaming")
     expect(payload["topics"].first).not_to have_key("raw")
     expect(payload["topics"].first).not_to have_key("posts")
   end
 
-  it "returns no personalized Following data to guests" do
+  it "returns no personalized Following data to guests and does not rebuild Popular for the rail" do
+    allow(DiscourseCommunityPlatform::Feeds::PopularTopics).to receive(:rebuild_cache)
+
     get "/community-platform/feeds/following.json"
 
+    expect(DiscourseCommunityPlatform::Feeds::PopularTopics).not_to have_received(:rebuild_cache)
     expect(response.status).to eq(200)
     payload = response.parsed_body
     expect(payload["order"]).to eq("following")
@@ -80,5 +89,6 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["personalized"]).to eq(false)
     expect(payload["joined_communities"]).to eq([])
     expect(payload["topics"]).to eq([])
+    expect(payload["trending_topics"]).to eq([])
   end
 end
