@@ -32,8 +32,7 @@ module ::DiscourseCommunityPlatform
         topics.map do |topic|
           score = scores[topic.id]
           preview = previews.fetch(topic.id, {})
-
-          {
+          item = {
             id: topic.id,
             title: topic.title,
             slug: topic.slug,
@@ -50,6 +49,9 @@ module ::DiscourseCommunityPlatform
             excerpt: preview[:excerpt],
             image_url: preview[:image_url],
           }
+
+          item[:author] = topic_author(topic) if topic.user
+          item
         end
       end
 
@@ -61,6 +63,7 @@ module ::DiscourseCommunityPlatform
             .where(category_id: @community.category_id, deleted_at: nil, visible: true)
             .where(archetype: Archetype.default)
             .where.not(id: @community.category.topic_id)
+            .includes(:user)
             .joins(
               <<~SQL.squish,
                 LEFT JOIN discourse_community_platform_topic_scores dcp_scores
@@ -108,6 +111,16 @@ module ::DiscourseCommunityPlatform
             GROUP BY topic_id
           ) dcp_rising ON dcp_rising.topic_id = topics.id
         SQL
+      end
+
+      def topic_author(topic)
+        {
+          id: topic.user.id,
+          username: topic.user.username,
+          name: topic.user.name,
+          avatar_template: topic.user.avatar_template,
+          path: "/u/#{topic.user.username}",
+        }
       end
 
       def user_votes(topics)

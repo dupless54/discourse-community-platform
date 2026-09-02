@@ -142,7 +142,7 @@ acceptance("Community Platform | personalized home page", function (needs) {
       .dom(".dcp-home-card:nth-child(2) .dcp-home-card__source")
       .hasText("Following");
     assert
-      .dom(".dcp-home-card:nth-child(2) .dcp-home-card__author")
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-context__author")
       .hasText("@followed-user")
       .hasAttribute("href", "/u/followed-user");
     assert

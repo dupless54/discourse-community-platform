@@ -11,10 +11,11 @@ module ::DiscourseCommunityPlatform
           PopularTopics.cached_topic_ids.first(
             [@limit * CANDIDATE_MULTIPLIER, PopularTopics::CANDIDATE_LIMIT].min,
           )
-        topics_by_id = Topic.where(id: candidate_ids).includes(:category).index_by(&:id)
+        topics_by_id = Topic.where(id: candidate_ids).includes(:category, :user).index_by(&:id)
         communities =
           Community
             .where(category_id: topics_by_id.values.map(&:category_id), visibility: "public")
+            .includes(:icon_upload)
             .index_by(&:category_id)
         joined_category_ids = joined_category_ids_for(@guardian.user)
         community_counts = Hash.new(0)
@@ -71,11 +72,12 @@ module ::DiscourseCommunityPlatform
         topics = topic_communities.map(&:first)
         scores = TopicScore.where(topic_id: topics.map(&:id)).index_by(&:topic_id)
         votes = user_votes(topics)
+        previews = TopicPreviews.call(topics:, guardian: @guardian)
 
         topic_communities.map do |topic, community|
           score = scores[topic.id]
-
-          {
+          preview = previews.fetch(topic.id, {})
+          item = {
             id: topic.id,
             title: topic.title,
             slug: topic.slug,
@@ -89,13 +91,13 @@ module ::DiscourseCommunityPlatform
             upvotes: score&.upvotes || 0,
             downvotes: score&.downvotes || 0,
             user_vote: votes.fetch(topic.id, 0),
-            community: {
-              id: community.id,
-              name: community.name,
-              slug: community.slug,
-              path: "/s/#{community.slug}",
-            },
+            excerpt: preview[:excerpt],
+            image_url: preview[:image_url],
+            community: community_identity(community),
           }
+
+          item[:author] = topic_author(topic) if topic.user
+          item
         end
       end
     end

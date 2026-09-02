@@ -10,6 +10,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 
 - Rich feed cards can show a Guardian-visible Discourse topic image or, when no image is available, a bounded plain-text excerpt from the visible first regular post.
 - Rich previews are shared across Community, Home, Following, Explore, and Popular topic cards without creating a second content store or alternate canonical topic URL.
+- Feed topic context now carries the Discourse author avatar/username and relative creation time across Home, Following, Popular, and Explore cards; Explore also preserves the same rich preview and Community identity contract as the other feeds.
 - Community managers can upload a logo and cover image through Discourse's supported image uploader UI; emoji and banner color remain fallbacks.
 - Explore community cards can display uploaded community logos.
 - Uploaded community logos now appear consistently in Home/Following joined-community chips and Home/Following/Popular/Explore topic context links, with emoji or initial fallbacks when no logo is available.
@@ -30,6 +31,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 
 - Rich image/text previews preserve normal topic links and remain responsive on desktop, mobile, and constrained tablet layouts.
 - Community logo/cover controls reuse Discourse's keyboard-accessible `UppyImageUploader` component.
+- Feed author/time context uses Discourse's native avatar and relative-date UI primitives and keeps community, author, and timestamp as separate accessible links/text.
 - Explore recommendation cards keep navigation and membership actions as separate interactive controls, announce successful joins with status semantics, and expose membership failures through an alert.
 
 ## [0.1.0-rc.1] - 2026-09-02

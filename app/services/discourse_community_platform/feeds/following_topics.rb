@@ -30,15 +30,7 @@ module ::DiscourseCommunityPlatform
           order: "following",
           personalized: !login_required,
           login_required:,
-          joined_communities:
-            communities.map do |community|
-              {
-                id: community.id,
-                name: community.name,
-                slug: community.slug,
-                path: "/s/#{community.slug}",
-              }
-            end,
+          joined_communities: communities.map { |community| community_identity(community) },
           topics:,
         }
       end

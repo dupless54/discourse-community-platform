@@ -57,6 +57,9 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
     expect(result[:joined_communities].map { |community| community[:slug] }).to include("hardware")
     expect(result[:topics].first[:id]).to eq(joined_topic.id)
     expect(result[:topics].first[:feed_source]).to eq("joined")
+    expect(result[:topics].first.dig(:author, :username)).to eq(owner.username)
+    expect(result[:topics].first.dig(:author, :avatar_template)).to eq(owner.avatar_template)
+    expect(result[:topics].first[:created_at]).to be_within(0.000001).of(joined_topic.created_at)
     expect(result[:topics].map { |topic| topic[:id] }).to include(popular_topic.id)
     expect(result[:topics].find { |topic| topic[:id] == popular_topic.id }[:feed_source]).to eq("popular")
   end
@@ -145,6 +148,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
     expect(result[:joined_communities]).to eq([])
     expect(item[:feed_source]).to eq("followed")
     expect(item.dig(:author, :username)).to eq(followed_user.username)
+    expect(item.dig(:author, :avatar_template)).to eq(followed_user.avatar_template)
     expect(item.dig(:author, :path)).to eq("/u/#{followed_user.username}")
   end
 

@@ -67,6 +67,7 @@ module ::DiscourseCommunityPlatform
           Topic
             .where(category_id: category_ids, deleted_at: nil, visible: true)
             .where(archetype: Archetype.default)
+            .includes(:user)
             .joins(
               <<~SQL.squish,
                 LEFT JOIN discourse_community_platform_topic_scores dcp_home_scores
@@ -103,6 +104,8 @@ module ::DiscourseCommunityPlatform
               limit: @limit * CANDIDATE_MULTIPLIER,
             )
             .to_a
+
+        ActiveRecord::Associations::Preloader.new(records: topics, associations: :user).call if topics.any?
 
         communities =
           Community.where(category_id: topics.map(&:category_id)).includes(:category).index_by(&:category_id)
@@ -169,12 +172,11 @@ module ::DiscourseCommunityPlatform
             votes,
             previews,
             feed_source: "followed",
-            include_author: true,
           )
         end
       end
 
-      def serialize_topic(topic, community, score, votes, previews, feed_source:, include_author: false)
+      def serialize_topic(topic, community, score, votes, previews, feed_source:)
         preview = previews.fetch(topic.id, {})
         item = {
           id: topic.id,
@@ -196,16 +198,18 @@ module ::DiscourseCommunityPlatform
           community: community_identity(community),
         }
 
-        if include_author && topic.user
-          item[:author] = {
-            id: topic.user.id,
-            username: topic.user.username,
-            name: topic.user.name,
-            path: "/u/#{topic.user.username}",
-          }
-        end
-
+        item[:author] = topic_author(topic) if topic.user
         item
+      end
+
+      def topic_author(topic)
+        {
+          id: topic.user.id,
+          username: topic.user.username,
+          name: topic.user.name,
+          avatar_template: topic.user.avatar_template,
+          path: "/u/#{topic.user.username}",
+        }
       end
 
       def community_identity(community)

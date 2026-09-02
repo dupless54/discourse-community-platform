@@ -1,6 +1,6 @@
 import Component from "@glimmer/component";
-import CommunityIdentity from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/community-identity";
 import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
+import TopicContext from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-context";
 import TopicPreview from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-preview";
 import { i18n } from "discourse-i18n";
 
@@ -24,10 +24,7 @@ export default class CommunityPlatformPopularPage extends Component {
             </div>
 
             <div class="dcp-popular-card__content">
-              <CommunityIdentity
-                @community={{topic.community}}
-                class="dcp-popular-card__community"
-              />
+              <TopicContext @topic={{topic}} @community={{topic.community}} />
               <a class="dcp-popular-card__title" href={{topic.path}}>
                 {{topic.title}}
               </a>
