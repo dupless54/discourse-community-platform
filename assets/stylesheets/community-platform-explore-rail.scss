@@ -25,6 +25,8 @@
 .dcp-explore-discovery-community__link {
   display: flex;
   min-width: 0;
+  flex: none;
+  flex-direction: row;
   align-items: center;
   gap: 0.6rem;
   color: var(--primary);
@@ -83,17 +85,20 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem 0.65rem;
+  margin-top: 0;
   color: var(--primary-medium);
   font-size: var(--font-down-2);
 }
 
 .dcp-explore-discovery-community__actions {
   display: flex;
+  min-height: 0;
   align-items: center;
   justify-content: flex-end;
 }
 
 .dcp-explore-discovery-community__actions .btn {
+  min-width: 0;
   min-height: 30px;
   padding: 0.3rem 0.65rem;
   font-size: var(--font-down-2);
