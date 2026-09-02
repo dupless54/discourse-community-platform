@@ -94,8 +94,10 @@ For AutoModerator rules, audit history, moderation insights, and community activ
 Check desktop, tablet, and mobile widths, including an iPad-class width with the Discourse sidebar visible.
 
 - [ ] Community title and major manager insight sections have usable accessible names.
-- [ ] Feed order buttons expose pressed state.
+- [ ] Feed order controls are exposed as one named group, and each order button exposes its pressed state.
 - [ ] Vote buttons expose labels and pressed state.
+- [ ] Platform-shell account avatar/username and feed author avatar/username remain separate sibling profile links; no profile control nests one anchor inside another.
+- [ ] Navigation, topic/community links, vote controls, and Explore quick-join buttons do not nest interactive controls inside another interactive control.
 - [ ] Activity insight table is understandable with a screen reader/navigation inspector.
 - [ ] Loading/warming status is exposed without trapping keyboard focus.
 - [ ] Forms remain keyboard operable.
