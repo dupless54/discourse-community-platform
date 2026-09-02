@@ -1,5 +1,8 @@
+import PlatformShell from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/platform-shell";
 import PopularPage from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/popular-page";
 
 export default <template>
-  <PopularPage @topics={{@controller.model.topics}} />
+  <PlatformShell @section="popular">
+    <PopularPage @topics={{@controller.model.topics}} />
+  </PlatformShell>
 </template>;

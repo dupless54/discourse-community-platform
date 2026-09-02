@@ -1,0 +1,401 @@
+body.dcp-platform-shell-active {
+  --dcp-shell-max-width: 1460px;
+  --dcp-shell-header-height: 72px;
+
+  background: var(--primary-very-low);
+}
+
+body.dcp-platform-shell-active .d-header-wrap {
+  display: none;
+}
+
+body.dcp-platform-shell-active #main-outlet-wrapper {
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+body.dcp-platform-shell-active #main-outlet-wrapper > .sidebar-wrapper {
+  display: none;
+}
+
+body.dcp-platform-shell-active #main-outlet {
+  width: 100%;
+  max-width: none;
+}
+
+.dcp-platform-shell {
+  min-height: 100vh;
+  color: var(--primary);
+}
+
+.dcp-platform-header {
+  position: sticky;
+  z-index: 100;
+  top: 0;
+  border-bottom: 1px solid var(--primary-low);
+  background: var(--secondary);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 2%);
+}
+
+.dcp-platform-header__inner {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(260px, 620px) minmax(180px, 1fr);
+  align-items: center;
+  gap: 1rem;
+  width: min(calc(100% - 3rem), var(--dcp-shell-max-width));
+  min-height: var(--dcp-shell-header-height);
+  margin: 0 auto;
+}
+
+.dcp-platform-brand {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--primary);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.dcp-platform-brand:hover {
+  color: var(--primary);
+}
+
+.dcp-platform-brand__mark {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--tertiary);
+  color: var(--secondary);
+  font-size: var(--font-down-1);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.dcp-platform-brand__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dcp-platform-search {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 999px;
+  background: var(--primary-very-low);
+}
+
+.dcp-platform-search:focus-within {
+  border-color: var(--tertiary);
+  box-shadow: 0 0 0 2px var(--tertiary-low);
+}
+
+.dcp-platform-search__icon {
+  flex: 0 0 auto;
+  color: var(--primary-medium);
+  font-size: 1.1rem;
+}
+
+.dcp-platform-search input {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--primary);
+  font: inherit;
+}
+
+.dcp-platform-account {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dcp-platform-account__profile {
+  display: inline-flex;
+  max-width: 220px;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+  color: var(--primary);
+  font-size: var(--font-down-1);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dcp-platform-account__profile:hover {
+  background: var(--primary-very-low);
+  color: var(--primary);
+}
+
+.dcp-platform-account__profile > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dcp-platform-layout {
+  display: grid;
+  grid-template-columns: minmax(190px, 220px) minmax(0, 760px) minmax(250px, 300px);
+  justify-content: center;
+  gap: 1.25rem;
+  width: min(calc(100% - 3rem), var(--dcp-shell-max-width));
+  margin: 0 auto;
+  padding: 1.25rem 0 3rem;
+}
+
+.dcp-platform-sidebar,
+.dcp-platform-right-rail {
+  min-width: 0;
+}
+
+.dcp-platform-sidebar__sticky,
+.dcp-platform-right-rail__sticky {
+  position: sticky;
+  top: calc(var(--dcp-shell-header-height) + 1.25rem);
+}
+
+.dcp-platform-navigation {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.dcp-platform-navigation__link {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 12px;
+  color: var(--primary-medium);
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background 120ms ease,
+    color 120ms ease,
+    transform 120ms ease;
+}
+
+.dcp-platform-navigation__link:hover {
+  background: var(--secondary);
+  color: var(--primary);
+  transform: translateX(1px);
+}
+
+.dcp-platform-navigation__link.active {
+  background: var(--secondary);
+  color: var(--tertiary-high-or-tertiary);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 5%);
+}
+
+.dcp-platform-navigation__icon {
+  display: inline-grid;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--primary-very-low);
+  color: currentcolor;
+  font-size: 1rem;
+}
+
+.dcp-platform-navigation__link.active .dcp-platform-navigation__icon {
+  background: var(--tertiary-low);
+}
+
+.dcp-platform-content {
+  min-width: 0;
+}
+
+.dcp-platform-shell .dcp-feed-navigation-shell {
+  display: none;
+}
+
+.dcp-platform-shell .dcp-home-page,
+.dcp-platform-shell .dcp-explore-page,
+.dcp-platform-shell .dcp-popular-page,
+.dcp-platform-shell .dcp-community-page,
+.dcp-platform-shell .dcp-automod-page-panel {
+  width: 100%;
+  max-width: none;
+  margin-right: 0;
+  margin-left: 0;
+  padding-top: 0;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.dcp-platform-rail-card {
+  margin-bottom: 0.85rem;
+  padding: 1rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 16px;
+  background: var(--secondary);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 4%);
+}
+
+.dcp-platform-rail-card h2 {
+  margin: 0 0 0.75rem;
+  font-size: var(--font-up-1);
+}
+
+.dcp-platform-rail-card p {
+  margin: 0 0 0.85rem;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+  line-height: 1.45;
+}
+
+.dcp-platform-rail-community-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.dcp-platform-rail-community {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  padding: 0.45rem 0.5rem;
+  border-radius: 10px;
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dcp-platform-rail-community:hover {
+  background: var(--primary-very-low);
+  color: var(--tertiary-high-or-tertiary);
+}
+
+.dcp-platform-rail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dcp-platform-mobile-navigation {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .dcp-platform-layout {
+    grid-template-columns: minmax(180px, 210px) minmax(0, 760px) minmax(220px, 260px);
+  }
+}
+
+@media (max-width: 1040px) {
+  .dcp-platform-header__inner,
+  .dcp-platform-layout {
+    width: min(calc(100% - 2rem), 980px);
+  }
+
+  .dcp-platform-header__inner {
+    grid-template-columns: minmax(150px, 210px) minmax(220px, 1fr) minmax(150px, auto);
+  }
+
+  .dcp-platform-layout {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+
+  .dcp-platform-right-rail {
+    display: none;
+  }
+}
+
+@media (max-width: 820px) {
+  body.dcp-platform-shell-active {
+    --dcp-shell-header-height: auto;
+  }
+
+  .dcp-platform-header {
+    position: relative;
+  }
+
+  .dcp-platform-header__inner,
+  .dcp-platform-layout {
+    width: calc(100% - 1.4rem);
+  }
+
+  .dcp-platform-header__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(140px, auto);
+    gap: 0.7rem;
+    padding: 0.7rem 0 0.55rem;
+  }
+
+  .dcp-platform-search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .dcp-platform-layout {
+    display: block;
+    padding-top: 0.8rem;
+  }
+
+  .dcp-platform-sidebar {
+    display: none;
+  }
+
+  .dcp-platform-mobile-navigation {
+    display: block;
+    overflow-x: auto;
+    width: calc(100% - 1.4rem);
+    margin: 0 auto;
+    padding: 0 0 0.65rem;
+    scrollbar-width: thin;
+  }
+
+  .dcp-platform-mobile-navigation .dcp-platform-navigation {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+    gap: 0.35rem;
+  }
+
+  .dcp-platform-mobile-navigation .dcp-platform-navigation__link {
+    min-height: 38px;
+    padding: 0.4rem 0.65rem;
+    white-space: nowrap;
+  }
+
+  .dcp-platform-mobile-navigation .dcp-platform-navigation__icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 520px) {
+  .dcp-platform-header__inner,
+  .dcp-platform-layout,
+  .dcp-platform-mobile-navigation {
+    width: calc(100% - 0.8rem);
+  }
+
+  .dcp-platform-brand__name,
+  .dcp-platform-account__profile > span:last-child {
+    display: none;
+  }
+
+  .dcp-platform-account__profile {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .dcp-platform-search input {
+    height: 38px;
+  }
+}

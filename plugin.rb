@@ -16,6 +16,7 @@ register_asset "stylesheets/community-platform-automod.scss"
 register_asset "stylesheets/community-platform-analytics.scss"
 register_asset "stylesheets/community-platform-responsive.scss"
 register_asset "stylesheets/community-platform-rich-content.scss"
+register_asset "stylesheets/community-platform-shell.scss"
 
 register_homepage(
   "community-home",
