@@ -61,7 +61,7 @@ acceptance("Community Platform | explore page", function (needs) {
     });
   });
 
-  test("renders community branding, people, and rich topic discovery surfaces", async function (assert) {
+  test("keeps discovery recommendations in one shell rail with real avatars", async function (assert) {
     await visit("/explore");
 
     assert.dom(".dcp-feed-navigation").exists();
@@ -73,22 +73,32 @@ acceptance("Community Platform | explore page", function (needs) {
       .hasAttribute("href", "/explore");
     assert.dom('[data-feed="popular"]').hasAttribute("href", "/popular");
     assert.dom(".dcp-explore-hero h1").hasText("Explore");
-    assert.dom(".dcp-explore-community-card").exists({ count: 1 });
+
+    assert.dom("[data-test-explore-discovery]").exists({ count: 1 });
+    assert.dom(".dcp-explore-communities").doesNotExist();
+    assert.dom(".dcp-explore-people").doesNotExist();
+    assert.dom(".dcp-explore-discovery-community").exists({ count: 1 });
     assert
-      .dom(".dcp-explore-community-card__link")
-      .hasAttribute("href", "/s/research");
-    assert.dom(".dcp-explore-community-card__join").doesNotExist();
-    assert.dom(".dcp-explore-community-card__top strong").hasText("s/research");
+      .dom(".dcp-explore-discovery-community__link")
+      .hasAttribute("href", "/s/research")
+      .includesText("s/research");
     assert
-      .dom(".dcp-explore-community-card__icon img")
+      .dom(".dcp-explore-discovery-community__icon img")
       .hasAttribute("src", "/uploads/default/original/1X/research-logo.png");
     assert
-      .dom(".dcp-explore-community-card__meta")
+      .dom(".dcp-explore-discovery-community__meta")
       .includesText("6 active topics");
-    assert.dom(".dcp-explore-person-card").exists({ count: 1 });
-    assert.dom(".dcp-explore-person-card").hasAttribute("href", "/u/ada");
-    assert.dom(".dcp-explore-person-card__identity strong").hasText("@ada");
-    assert.dom(".dcp-explore-person-card").includesText("3 recent public topics");
+
+    assert.dom(".dcp-explore-discovery-person").exists({ count: 1 });
+    assert.dom(".dcp-explore-discovery-person .avatar").exists();
+    assert
+      .dom(".dcp-explore-discovery-person__username")
+      .hasAttribute("href", "/u/ada")
+      .hasText("@ada");
+    assert
+      .dom(".dcp-explore-discovery-person__meta")
+      .includesText("3 recent public topics");
+
     assert.dom(".dcp-explore-card").exists({ count: 1 });
     assert
       .dom(".dcp-explore-card .dcp-feed-community-identity")

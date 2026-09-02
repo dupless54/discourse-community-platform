@@ -4,14 +4,12 @@ import PlatformShell from "discourse/plugins/discourse-community-platform/discou
 export default <template>
   <PlatformShell
     @section="explore"
-    @communities={{@controller.model.recommendedCommunities}}
     @trendingTopics={{@controller.model.trendingTopics}}
-    @sidebarHeadingKey="community_platform.explore.recommended_title"
+    @recommendedCommunities={{@controller.model.recommendedCommunities}}
+    @recommendedPeople={{@controller.model.recommendedPeople}}
   >
     <ExplorePage
       @topics={{@controller.model.topics}}
-      @recommendedCommunities={{@controller.model.recommendedCommunities}}
-      @recommendedPeople={{@controller.model.recommendedPeople}}
       @personalized={{@controller.model.personalized}}
     />
   </PlatformShell>

@@ -20,6 +20,7 @@ register_asset "stylesheets/community-platform-shell.scss"
 register_asset "stylesheets/community-platform-feed-polish.scss"
 register_asset "stylesheets/community-platform-social-actions.scss"
 register_asset "stylesheets/community-platform-community-shell.scss"
+register_asset "stylesheets/community-platform-explore-rail.scss"
 
 register_homepage(
   "community-home",

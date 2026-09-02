@@ -45,9 +45,11 @@ acceptance("Community Platform | Explore quick join", function (needs) {
     });
   });
 
-  test("joins a recommended community without nesting the action inside its link", async function (assert) {
+  test("keeps one rail-owned join state while preserving separate navigation", async function (assert) {
     await visit("/explore");
 
+    assert.dom("[data-test-explore-discovery]").exists({ count: 1 });
+    assert.dom(".dcp-explore-communities").doesNotExist();
     assert
       .dom(".dcp-explore-community-card__link")
       .hasAttribute("href", "/s/hardware")
@@ -63,5 +65,6 @@ acceptance("Community Platform | Explore quick join", function (needs) {
     assert.dom(".dcp-explore-community-card__joined").hasText("Joined");
     assert.dom(".dcp-explore-community-card__meta").includesText("85 members");
     assert.dom(".dcp-explore-membership-error").doesNotExist();
+    assert.dom("[data-test-explore-discovery]").exists({ count: 1 });
   });
 });
