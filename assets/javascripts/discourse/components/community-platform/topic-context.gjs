@@ -18,10 +18,18 @@ export default class CommunityPlatformTopicContext extends Component {
           <span class="dcp-topic-context__separator" aria-hidden="true">·</span>
         {{/if}}
 
-        <a class="dcp-topic-context__author" href={{@topic.author.path}}>
-          <DUserAvatar @user={{@topic.author}} @size="tiny" />
-          <span>@{{@topic.author.username}}</span>
-        </a>
+        <span class="dcp-topic-context__author-group">
+          <DUserAvatar
+            @user={{@topic.author}}
+            @size="tiny"
+            @href={{@topic.author.path}}
+            @ariaLabel={{@topic.author.username}}
+            class="dcp-topic-context__author-avatar"
+          />
+          <a class="dcp-topic-context__author" href={{@topic.author.path}}>
+            @{{@topic.author.username}}
+          </a>
+        </span>
       {{/if}}
 
       {{#if @topic.created_at}}
