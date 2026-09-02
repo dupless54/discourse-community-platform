@@ -28,6 +28,31 @@ function topic(community) {
   };
 }
 
+function assertAccessibleAuthorContext(assert, cardSelector) {
+  const groupSelector = `${cardSelector} .dcp-topic-context__author-group`;
+  const avatarSelector = `${groupSelector} .dcp-topic-context__author-avatar`;
+  const usernameSelector = `${groupSelector} .dcp-topic-context__author`;
+
+  assert.dom(groupSelector).hasTagName("span");
+  assert.dom(`${groupSelector} > a`).exists({ count: 2 });
+  assert.dom(`${groupSelector} a a`).doesNotExist();
+  assert.dom(avatarSelector).hasAttribute("aria-label", "mert");
+  assert.dom(`${avatarSelector} .avatar`).exists();
+  assert
+    .dom(usernameSelector)
+    .hasAttribute("href", "/u/mert")
+    .includesText("@mert");
+
+  const avatarLink = document.querySelector(avatarSelector);
+  const usernameLink = document.querySelector(usernameSelector);
+
+  assert.strictEqual(
+    avatarLink?.getAttribute("href"),
+    usernameLink?.getAttribute("href"),
+    "avatar and username target the same canonical Discourse author profile"
+  );
+}
+
 acceptance("Community Platform | Home community identity", function (needs) {
   needs.user();
 
@@ -68,11 +93,7 @@ acceptance("Community Platform | Home community identity", function (needs) {
     assert
       .dom(".dcp-home-card .dcp-feed-community-identity__icon img")
       .hasAttribute("src", "/uploads/default/original/1X/hardware-logo.png");
-    assert
-      .dom(".dcp-home-card .dcp-topic-context__author")
-      .hasAttribute("href", "/u/mert")
-      .includesText("@mert");
-    assert.dom(".dcp-home-card .dcp-topic-context__author .avatar").exists();
+    assertAccessibleAuthorContext(assert, ".dcp-home-card");
     assert.dom(".dcp-home-card .dcp-topic-context__time").exists();
   });
 });
@@ -106,11 +127,7 @@ acceptance("Community Platform | Popular community identity", function (needs) {
     assert
       .dom(".dcp-popular-card .dcp-feed-community-identity__icon img")
       .hasAttribute("src", "/uploads/default/original/1X/technology-logo.png");
-    assert
-      .dom(".dcp-popular-card .dcp-topic-context__author")
-      .hasAttribute("href", "/u/mert")
-      .includesText("@mert");
-    assert.dom(".dcp-popular-card .dcp-topic-context__author .avatar").exists();
+    assertAccessibleAuthorContext(assert, ".dcp-popular-card");
     assert.dom(".dcp-popular-card .dcp-topic-context__time").exists();
   });
 });
