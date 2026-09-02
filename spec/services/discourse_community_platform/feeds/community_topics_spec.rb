@@ -34,6 +34,20 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::CommunityTopics do
     expect(result.first[:user_vote]).to eq(1)
   end
 
+  it "exposes Discourse author and creation context for visible community topics" do
+    community = create_community
+    topic = Fabricate(:topic, category: community.category, user: owner, created_at: 3.hours.ago)
+
+    result = described_class.call(community:, guardian: Guardian.new(voter), order: "new")
+    item = result.find { |candidate| candidate[:id] == topic.id }
+
+    expect(item[:created_at]).to eq(topic.created_at)
+    expect(item.dig(:author, :id)).to eq(owner.id)
+    expect(item.dig(:author, :username)).to eq(owner.username)
+    expect(item.dig(:author, :avatar_template)).to eq(owner.avatar_template)
+    expect(item.dig(:author, :path)).to eq("/u/#{owner.username}")
+  end
+
   it "orders new topics by Discourse topic creation time" do
     community = create_community
     older = Fabricate(:topic, category: community.category, user: owner, created_at: 2.days.ago)
