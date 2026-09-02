@@ -20,6 +20,7 @@ acceptance("Community Platform | explore page", function (needs) {
             icon_url: "/uploads/default/original/1X/research-logo.png",
             banner_color: "334455",
             recent_topics_count: 6,
+            can_join: false,
           },
         ],
         recommended_people: [
@@ -74,8 +75,9 @@ acceptance("Community Platform | explore page", function (needs) {
     assert.dom(".dcp-explore-hero h1").hasText("Explore");
     assert.dom(".dcp-explore-community-card").exists({ count: 1 });
     assert
-      .dom(".dcp-explore-community-card")
+      .dom(".dcp-explore-community-card__link")
       .hasAttribute("href", "/s/research");
+    assert.dom(".dcp-explore-community-card__join").doesNotExist();
     assert.dom(".dcp-explore-community-card__top strong").hasText("s/research");
     assert
       .dom(".dcp-explore-community-card__icon img")

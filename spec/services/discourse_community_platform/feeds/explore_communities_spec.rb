@@ -56,6 +56,34 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::ExploreCommunities do
     expect(result.map { |community| community[:id] }).to eq([visible.id])
     expect(result.first[:recent_topics_count]).to eq(2)
     expect(result.first[:path]).to eq("/s/science")
+    expect(result.first[:can_join]).to eq(true)
     expect(described_class).not_to have_received(:rebuild_cache)
+  end
+
+  it "does not offer quick join to guests" do
+    visible = create_community(name: "Science", slug: "science")
+    Discourse.cache.write(
+      described_class::CACHE_KEY,
+      [[visible.id, 2, 20.0]],
+      expires_in: described_class::CACHE_TTL,
+    )
+
+    result = described_class.call(guardian: Guardian.new(nil))
+
+    expect(result.first[:can_join]).to eq(false)
+  end
+
+  it "does not offer quick join to suspended users" do
+    visible = create_community(name: "Science", slug: "science")
+    member.stubs(:suspended?).returns(true)
+    Discourse.cache.write(
+      described_class::CACHE_KEY,
+      [[visible.id, 2, 20.0]],
+      expires_in: described_class::CACHE_TTL,
+    )
+
+    result = described_class.call(guardian: Guardian.new(member))
+
+    expect(result.first[:can_join]).to eq(false)
   end
 end

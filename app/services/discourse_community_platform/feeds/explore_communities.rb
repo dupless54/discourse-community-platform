@@ -79,7 +79,7 @@ module ::DiscourseCommunityPlatform
         communities =
           Community
             .where(id: community_ids, visibility: "public")
-            .includes(:category, :icon_upload)
+            .includes(:category, :member_group, :icon_upload)
             .index_by(&:id)
         joined_category_ids = joined_category_ids_for(@guardian.user)
 
@@ -103,11 +103,19 @@ module ::DiscourseCommunityPlatform
             icon_url:,
             banner_color: community.banner_color,
             recent_topics_count:,
+            can_join: can_join?(community),
           }
         end.first(@limit)
       end
 
       private
+
+      def can_join?(community)
+        user = @guardian.user
+        return false if user.blank? || user.staged? || user.suspended?
+
+        community.member_group.present?
+      end
 
       def joined_category_ids_for(user)
         return {} if user.blank?

@@ -1,10 +1,58 @@
 import Component from "@glimmer/component";
+import { fn } from "@ember/helper";
+import { action } from "@ember/object";
+import { tracked } from "@glimmer/tracking";
+import { on } from "@ember/modifier";
+import { ajax } from "discourse/lib/ajax";
 import CommunityIdentity from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/community-identity";
 import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
 import TopicPreview from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-preview";
+import { eq } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
 
 export default class CommunityPlatformExplorePage extends Component {
+  @tracked recommendedCommunities = [];
+  @tracked joiningCommunityId = null;
+  @tracked membershipError = null;
+
+  constructor(owner, args) {
+    super(owner, args);
+    this.recommendedCommunities = args.recommendedCommunities || [];
+  }
+
+  @action
+  async joinCommunity(community) {
+    if (!community.can_join || this.joiningCommunityId) {
+      return;
+    }
+
+    this.joiningCommunityId = community.id;
+    this.membershipError = null;
+
+    try {
+      const response = await ajax(
+        `/community-platform/communities/${community.slug}/join.json`,
+        { type: "POST" }
+      );
+      const joinedCommunity = response.community;
+
+      this.recommendedCommunities = this.recommendedCommunities.map((item) =>
+        item.id === community.id
+          ? {
+              ...item,
+              members_count: joinedCommunity.members_count,
+              can_join: false,
+              joined: true,
+            }
+          : item
+      );
+    } catch {
+      this.membershipError = i18n("community_platform.membership_error");
+    } finally {
+      this.joiningCommunityId = null;
+    }
+  }
+
   <template>
     <div class="dcp-popular-page dcp-explore-page container">
       <FeedNavigation />
@@ -19,7 +67,7 @@ export default class CommunityPlatformExplorePage extends Component {
         {{/if}}
       </header>
 
-      {{#if @recommendedCommunities.length}}
+      {{#if this.recommendedCommunities.length}}
         <section class="dcp-explore-communities" aria-labelledby="dcp-explore-communities-title">
           <header class="dcp-explore-communities__heading">
             <div>
@@ -30,37 +78,67 @@ export default class CommunityPlatformExplorePage extends Component {
             </div>
           </header>
 
+          {{#if this.membershipError}}
+            <div class="alert alert-error dcp-explore-membership-error" role="alert">
+              {{this.membershipError}}
+            </div>
+          {{/if}}
+
           <div class="dcp-explore-community-grid">
-            {{#each @recommendedCommunities as |community|}}
-              <a class="dcp-explore-community-card" href={{community.path}}>
-                <div class="dcp-explore-community-card__top">
-                  {{#if community.icon_url}}
-                    <span class="dcp-explore-community-card__icon" aria-hidden="true">
-                      <img src={{community.icon_url}} alt="" loading="lazy" />
-                    </span>
-                  {{else if community.icon_emoji}}
-                    <span class="dcp-explore-community-card__icon" aria-hidden="true">
-                      {{community.icon_emoji}}
-                    </span>
-                  {{/if}}
-                  <div>
-                    <strong>s/{{community.slug}}</strong>
-                    <span>{{community.name}}</span>
+            {{#each this.recommendedCommunities as |community|}}
+              <article class="dcp-explore-community-card">
+                <a class="dcp-explore-community-card__link" href={{community.path}}>
+                  <div class="dcp-explore-community-card__top">
+                    {{#if community.icon_url}}
+                      <span class="dcp-explore-community-card__icon" aria-hidden="true">
+                        <img src={{community.icon_url}} alt="" loading="lazy" />
+                      </span>
+                    {{else if community.icon_emoji}}
+                      <span class="dcp-explore-community-card__icon" aria-hidden="true">
+                        {{community.icon_emoji}}
+                      </span>
+                    {{/if}}
+                    <div>
+                      <strong>s/{{community.slug}}</strong>
+                      <span>{{community.name}}</span>
+                    </div>
                   </div>
-                </div>
 
-                {{#if community.description}}
-                  <p>{{community.description}}</p>
-                {{/if}}
+                  {{#if community.description}}
+                    <p>{{community.description}}</p>
+                  {{/if}}
 
-                <div class="dcp-explore-community-card__meta">
-                  <span>{{community.members_count}} {{i18n "community_platform.members"}}</span>
-                  <span>
-                    {{community.recent_topics_count}}
-                    {{i18n "community_platform.explore.active_topics"}}
-                  </span>
+                  <div class="dcp-explore-community-card__meta">
+                    <span>{{community.members_count}} {{i18n "community_platform.members"}}</span>
+                    <span>
+                      {{community.recent_topics_count}}
+                      {{i18n "community_platform.explore.active_topics"}}
+                    </span>
+                  </div>
+                </a>
+
+                <div class="dcp-explore-community-card__actions">
+                  {{#if community.joined}}
+                    <span class="dcp-explore-community-card__joined" role="status">
+                      {{i18n "community_platform.joined"}}
+                    </span>
+                  {{else if community.can_join}}
+                    <button
+                      type="button"
+                      class="btn btn-primary dcp-explore-community-card__join"
+                      disabled={{eq this.joiningCommunityId community.id}}
+                      aria-busy={{if (eq this.joiningCommunityId community.id) "true" "false"}}
+                      {{on "click" (fn this.joinCommunity community)}}
+                    >
+                      {{#if (eq this.joiningCommunityId community.id)}}
+                        {{i18n "community_platform.explore.joining"}}
+                      {{else}}
+                        {{i18n "community_platform.join"}}
+                      {{/if}}
+                    </button>
+                  {{/if}}
                 </div>
-              </a>
+              </article>
             {{/each}}
           </div>
         </section>

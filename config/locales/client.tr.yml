@@ -61,6 +61,7 @@ tr:
         recommended_title: "Keşfetmeye değer topluluklar"
         recommended_description: "Arka planda hesaplanan aktivite sinyalleri, güncel ve hareketli herkese açık toplulukları öne çıkarır."
         active_topics: "aktif konu"
+        joining: "Katılınıyor..."
         people_title: "Keşfetmeye değer kişiler"
         people_description: "Görünür herkese açık topluluk tartışmalarındaki aktif katkı sağlayan kullanıcılar. Takip işlemleri Discourse Follow üzerinden normal kullanıcı profillerinde kalır."
         recent_public_topics: "yakın tarihli herkese açık konu"

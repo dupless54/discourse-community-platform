@@ -13,6 +13,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Community managers can upload a logo and cover image through Discourse's supported image uploader UI; emoji and banner color remain fallbacks.
 - Explore community cards can display uploaded community logos.
 - Uploaded community logos now appear consistently in Home/Following joined-community chips and Home/Following/Popular/Explore topic context links, with emoji or initial fallbacks when no logo is available.
+- Signed-in eligible users can join a recommended public Community directly from Explore; the action still delegates membership changes to the existing Discourse-backed Community join endpoint.
 - Community branding uploads are retained with explicit `UploadReference` records so normal Discourse cleanup does not treat active branding as orphaned files.
 - English and Turkish management copy for logo and cover-image controls.
 
@@ -23,11 +24,13 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Community branding assignment is manager-only, image-only, and rejects arbitrary unrelated-user upload IDs; internal branding upload IDs are serialized only to authorized community managers.
 - Community logo and cover URLs also pass through the current Discourse Guardian upload-visibility check, preventing a visible Community response from bypassing secure-upload access rules.
 - Feed community identity returns a branding image URL only when the current Guardian can see that Discourse upload.
+- Explore quick-join capability is only advertised for an eligible authenticated user; the server-side membership service remains authoritative for Guardian visibility, staged/suspended-account checks, private-community protection, and mapped Group membership.
 
 ### Accessibility and responsive UI
 
 - Rich image/text previews preserve normal topic links and remain responsive on desktop, mobile, and constrained tablet layouts.
 - Community logo/cover controls reuse Discourse's keyboard-accessible `UppyImageUploader` component.
+- Explore recommendation cards keep navigation and membership actions as separate interactive controls, announce successful joins with status semantics, and expose membership failures through an alert.
 
 ## [0.1.0-rc.1] - 2026-09-02
 
