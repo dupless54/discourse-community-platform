@@ -14,6 +14,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Home, Following, Explore, Popular, and `/s/:slug` now share a route-scoped platform shell with a custom header, responsive navigation, center content column, and contextual discovery rail while leaving normal Discourse routes untouched.
 - Platform feed cards now expose a real topic discussion link plus existing view/like counters in a shared social action row; no second comment system is introduced.
 - Home, Following, Explore, and Popular receive a bounded right-rail Popular summary sourced from the existing background-ranked Popular cache.
+- `/s/:slug` Community topic cards now use the same author/time, rich preview, canonical discussion action, and responsive vote-card hierarchy as the global platform feeds.
 - Community managers can upload a logo and cover image through Discourse's supported image uploader UI; emoji and banner color remain fallbacks.
 - Explore community cards can display uploaded community logos.
 - Uploaded community logos now appear consistently in Home/Following joined-community chips and Home/Following/Popular/Explore topic context links, with emoji or initial fallbacks when no logo is available.
@@ -41,6 +42,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 - Platform feed cards use a denser feed-first hierarchy with compact route headings, edge-to-edge media crops, interaction-stat pills, stronger keyboard focus treatment, and mobile vote controls that move above the post body instead of squeezing the content column.
 - Home and Following avoid duplicating joined Communities in the center column when the desktop right rail is visible; the horizontal list remains available automatically when the rail collapses on tablet and mobile.
 - Feed discussion links and right-rail trend titles retain visible keyboard focus treatment and native link semantics.
+- Inside the platform shell, Community About, Rules, and manager controls become a responsive details grid below the topic feed instead of consuming a second nested right sidebar; all controls remain present on tablet and mobile.
 
 ### Performance
 

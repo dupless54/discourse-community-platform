@@ -7,6 +7,8 @@ import { htmlSafe } from "@ember/template";
 import { tracked } from "@glimmer/tracking";
 import UppyImageUploader from "discourse/components/uppy-image-uploader";
 import { ajax } from "discourse/lib/ajax";
+import FeedActions from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-actions";
+import TopicContext from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-context";
 import TopicPreview from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-preview";
 import { eq } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
@@ -372,7 +374,7 @@ export default class CommunityPlatformCommunityPage extends Component {
 
           <div class="dcp-topic-feed" aria-busy={{this.feedBusy}}>
             {{#each this.topics as |topic|}}
-              <article class="dcp-topic-card">
+              <article class="dcp-topic-card dcp-community-feed-card">
                 <div class="dcp-topic-vote">
                   {{#if this.currentUser}}
                     <button
@@ -400,16 +402,12 @@ export default class CommunityPlatformCommunityPage extends Component {
                 </div>
 
                 <div class="dcp-topic-card__content">
+                  <TopicContext @topic={{topic}} />
                   <a class="dcp-topic-card__title" href={{topic.path}}>
                     {{topic.title}}
                   </a>
                   <TopicPreview @topic={{topic}} />
-                  <div class="dcp-topic-card__meta">
-                    <span>{{topic.posts_count}} {{i18n "community_platform.posts"}}</span>
-                    <span>{{topic.views}} {{i18n "community_platform.views"}}</span>
-                    <span>{{topic.like_count}} {{i18n "community_platform.likes"}}</span>
-                    <span>{{topic.score}} {{i18n "community_platform.score"}}</span>
-                  </div>
+                  <FeedActions @topic={{topic}} />
                 </div>
               </article>
             {{else}}
