@@ -52,7 +52,10 @@ acceptance("Community Platform | Explore quick join", function (needs) {
       .dom(".dcp-explore-community-card__link")
       .hasAttribute("href", "/s/hardware")
       .includesText("s/hardware");
-    assert.dom(".dcp-explore-community-card__join").hasText("Join").isEnabled();
+    assert
+      .dom(".dcp-explore-community-card__join")
+      .hasText("Join")
+      .isNotDisabled();
 
     await click(".dcp-explore-community-card__join");
 
