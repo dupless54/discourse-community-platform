@@ -41,7 +41,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::CommunityTopics do
     result = described_class.call(community:, guardian: Guardian.new(voter), order: "new")
     item = result.find { |candidate| candidate[:id] == topic.id }
 
-    expect(item[:created_at]).to be_within(1.microsecond).of(topic.created_at)
+    expect(item[:created_at]).to be_within(0.000001).of(topic.created_at)
     expect(item.dig(:author, :id)).to eq(owner.id)
     expect(item.dig(:author, :username)).to eq(owner.username)
     expect(item.dig(:author, :avatar_template)).to eq(owner.avatar_template)
