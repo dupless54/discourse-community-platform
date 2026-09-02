@@ -43,6 +43,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 - The platform shell keeps native links, search semantics, current-user profile navigation, active-route state, and separate desktop/mobile navigation while using Discourse-supported `apiInitializer` and `onPageChange` APIs instead of core patches.
 - The signed-in shell account control no longer nests `DUserAvatar`'s native profile link inside a second anchor; avatar and username remain separate keyboard-focusable links to the same Discourse profile.
 - Feed author context no longer nests `DUserAvatar` inside a second author anchor; avatar and `@username` are sibling keyboard-focusable links to the same canonical Discourse profile across Home, Following, Explore, Popular, and Community cards.
+- Community feed ordering now exposes Hot/New/Top/Rising as one named control group while preserving per-button `aria-pressed` state.
 - Platform feed cards use a denser feed-first hierarchy with compact route headings, edge-to-edge media crops, interaction-stat pills, stronger keyboard focus treatment, and mobile vote controls that move above the post body instead of squeezing the content column.
 - Home and Following avoid duplicating joined Communities in the center column when the desktop right rail is visible; the horizontal list remains available automatically when the rail collapses on tablet and mobile.
 - Feed discussion links and right-rail trend titles retain visible keyboard focus treatment and native link semantics.
