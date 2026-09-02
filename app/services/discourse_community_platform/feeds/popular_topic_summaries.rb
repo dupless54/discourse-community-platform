@@ -16,7 +16,7 @@ module ::DiscourseCommunityPlatform
       end
 
       def call
-        topic_ids = PopularTopics.cached_topic_ids
+        topic_ids = Discourse.cache.read(PopularTopics::CACHE_KEY).presence || []
         return [] if topic_ids.empty?
 
         topics_by_id = Topic.where(id: topic_ids).includes(:category).index_by(&:id)
