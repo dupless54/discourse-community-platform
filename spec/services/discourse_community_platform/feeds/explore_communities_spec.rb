@@ -75,7 +75,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::ExploreCommunities do
 
   it "does not offer quick join to suspended users" do
     visible = create_community(name: "Science", slug: "science")
-    member.update!(suspended_till: 1.day.from_now)
+    member.stubs(:suspended?).returns(true)
     Discourse.cache.write(
       described_class::CACHE_KEY,
       [[visible.id, 2, 20.0]],
