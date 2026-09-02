@@ -30,7 +30,10 @@ acceptance("Community Platform | platform shell", function (needs) {
     assert.dom('.dcp-platform-shell[data-platform-section="home"]').exists();
     assert.dom(".dcp-platform-header").exists();
     assert.dom(".dcp-platform-sidebar").exists();
-    assert.dom(".dcp-platform-right-rail").includesText("Hardware");
+    assert.dom(".dcp-platform-right-rail").includesText("s/hardware");
+    assert
+      .dom('.dcp-platform-right-rail a[href="/s/hardware"]')
+      .exists();
     assert.dom('[data-platform-feed="home"]').exists({ count: 2 });
     assert.dom('[data-platform-feed="home"]').hasClass("active");
     assert
