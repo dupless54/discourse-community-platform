@@ -2,6 +2,7 @@ import Component from "@glimmer/component";
 import { LinkTo } from "@ember/routing";
 import { service } from "@ember/service";
 import CommunityIdentity from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/community-identity";
+import ExploreDiscoveryRail from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/explore-discovery-rail";
 import PlatformNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/platform-navigation";
 import DUserAvatar from "discourse/ui-kit/d-user-avatar";
 import { i18n } from "discourse-i18n";
@@ -12,6 +13,10 @@ export default class CommunityPlatformShell extends Component {
 
   get profilePath() {
     return this.currentUser ? `/u/${this.currentUser.username}` : null;
+  }
+
+  get isExplore() {
+    return this.args.section === "explore";
   }
 
   get sidebarCommunities() {
@@ -99,6 +104,13 @@ export default class CommunityPlatformShell extends Component {
               </section>
             {{/if}}
 
+            {{#if this.isExplore}}
+              <ExploreDiscoveryRail
+                @recommendedCommunities={{@recommendedCommunities}}
+                @recommendedPeople={{@recommendedPeople}}
+              />
+            {{/if}}
+
             {{#if this.hasTrendingTopics}}
               <section class="dcp-platform-rail-card dcp-platform-rail-card--trending">
                 <h2>{{i18n "community_platform.popular.title"}}</h2>
@@ -121,32 +133,34 @@ export default class CommunityPlatformShell extends Component {
               </section>
             {{/if}}
 
-            {{#if this.hasSidebarCommunities}}
-              <section class="dcp-platform-rail-card">
-                <h2>{{i18n @sidebarHeadingKey}}</h2>
-                <div class="dcp-platform-rail-community-list">
-                  {{#each this.sidebarCommunities as |community|}}
-                    <CommunityIdentity
-                      @community={{community}}
-                      class="dcp-platform-rail-community"
-                    />
-                  {{/each}}
+            {{#unless this.isExplore}}
+              {{#if this.hasSidebarCommunities}}
+                <section class="dcp-platform-rail-card">
+                  <h2>{{i18n @sidebarHeadingKey}}</h2>
+                  <div class="dcp-platform-rail-community-list">
+                    {{#each this.sidebarCommunities as |community|}}
+                      <CommunityIdentity
+                        @community={{community}}
+                        class="dcp-platform-rail-community"
+                      />
+                    {{/each}}
+                  </div>
+                </section>
+              {{/if}}
+
+              <section class="dcp-platform-rail-card dcp-platform-rail-card--discover">
+                <h2>{{i18n "community_platform.explore.title"}}</h2>
+                <p>{{i18n "community_platform.explore.description"}}</p>
+                <div class="dcp-platform-rail-actions">
+                  <LinkTo @route="community-platform-explore" class="btn btn-default">
+                    {{i18n "community_platform.explore.title"}}
+                  </LinkTo>
+                  <LinkTo @route="community-platform-popular" class="btn btn-default">
+                    {{i18n "community_platform.popular.title"}}
+                  </LinkTo>
                 </div>
               </section>
-            {{/if}}
-
-            <section class="dcp-platform-rail-card dcp-platform-rail-card--discover">
-              <h2>{{i18n "community_platform.explore.title"}}</h2>
-              <p>{{i18n "community_platform.explore.description"}}</p>
-              <div class="dcp-platform-rail-actions">
-                <LinkTo @route="community-platform-explore" class="btn btn-default">
-                  {{i18n "community_platform.explore.title"}}
-                </LinkTo>
-                <LinkTo @route="community-platform-popular" class="btn btn-default">
-                  {{i18n "community_platform.popular.title"}}
-                </LinkTo>
-              </div>
-            </section>
+            {{/unless}}
           </div>
         </aside>
       </div>
