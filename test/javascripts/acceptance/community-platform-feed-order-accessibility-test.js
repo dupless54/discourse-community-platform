@@ -39,7 +39,12 @@ acceptance("Community Platform | feed order accessibility", function (needs) {
 
     server.get(
       "/community-platform/communities/technology/topics.json",
-      () => helper.response({ community: { id: 1, slug: "technology" }, order: "hot", topics: [] })
+      () =>
+        helper.response({
+          community: { id: 1, slug: "technology" },
+          order: "hot",
+          topics: [],
+        })
     );
   });
 
