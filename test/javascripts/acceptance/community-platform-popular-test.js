@@ -47,7 +47,7 @@ acceptance("Community Platform | popular page", function (needs) {
     assert.dom(".dcp-popular-hero h1").hasText("Popular");
     assert.dom(".dcp-popular-card").exists({ count: 1 });
     assert
-      .dom(".dcp-popular-card__community")
+      .dom(".dcp-popular-card .dcp-feed-community-identity")
       .includesText("s/technology")
       .hasAttribute("href", "/s/technology");
     assert
