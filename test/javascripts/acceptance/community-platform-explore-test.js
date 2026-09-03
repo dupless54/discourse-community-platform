@@ -13,7 +13,7 @@ acceptance("Community Platform | explore page", function (needs) {
             id: 12,
             name: "Research",
             slug: "research",
-            path: "/s/research",
+            path: "/c/research/12",
             description: "A community for active research discussions.",
             members_count: 84,
             icon_emoji: "🔬",
@@ -53,7 +53,7 @@ acceptance("Community Platform | explore page", function (needs) {
               id: 11,
               name: "Science",
               slug: "science",
-              path: "/s/science",
+              path: "/c/science/11",
             },
           },
         ],
@@ -61,11 +61,11 @@ acceptance("Community Platform | explore page", function (needs) {
     });
   });
 
-  test("keeps discovery recommendations in one shell rail with real avatars", async function (assert) {
+  test("keeps discovery recommendations in one shell rail with native category links", async function (assert) {
     await visit("/explore");
 
     assert.dom(".dcp-feed-navigation").exists();
-    assert.dom('[data-feed="home"]').hasAttribute("href", "/home");
+    assert.dom('[data-feed="home"]').hasAttribute("href", "/");
     assert.dom('[data-feed="following"]').hasAttribute("href", "/following");
     assert
       .dom('[data-feed="explore"]')
@@ -80,8 +80,8 @@ acceptance("Community Platform | explore page", function (needs) {
     assert.dom(".dcp-explore-discovery-community").exists({ count: 1 });
     assert
       .dom(".dcp-explore-discovery-community__link")
-      .hasAttribute("href", "/s/research")
-      .includesText("s/research");
+      .hasAttribute("href", "/c/research/12")
+      .includesText("Research");
     assert
       .dom(".dcp-explore-discovery-community__icon img")
       .hasAttribute("src", "/uploads/default/original/1X/research-logo.png");
@@ -102,8 +102,8 @@ acceptance("Community Platform | explore page", function (needs) {
     assert.dom(".dcp-explore-card").exists({ count: 1 });
     assert
       .dom(".dcp-explore-card .dcp-feed-community-identity")
-      .includesText("s/science")
-      .hasAttribute("href", "/s/science");
+      .includesText("Science")
+      .hasAttribute("href", "/c/science/11");
     assert
       .dom(".dcp-explore-card .dcp-popular-card__title")
       .hasText("Discover a new community discussion")
