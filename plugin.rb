@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # name: discourse-community-platform
-# about: Adds Reddit-inspired communities, membership, moderation, ranking, and discovery while preserving Discourse core behavior.
+# about: Adds a first-class community experience on top of native Discourse categories, topics, posts, groups, and moderation.
 # version: 0.1.0-rc.2
 # authors: dupless54
 # url: https://github.com/dupless54/discourse-community-platform
@@ -40,6 +40,8 @@ require_relative "lib/discourse_community_platform/community_authorization"
 
 after_initialize do
   Discourse::Application.routes.append do
+    # `/home` remains the registered homepage implementation path. When the
+    # `community-home` homepage option is selected, Discourse exposes it at `/`.
     get "/home" => "discourse_community_platform/home#index"
     get "/following" => "discourse_community_platform/home#index"
     get "/explore" => "discourse_community_platform/home#index"
