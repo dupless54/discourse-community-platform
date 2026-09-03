@@ -55,7 +55,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::ExploreCommunities do
 
     expect(result.map { |community| community[:id] }).to eq([visible.id])
     expect(result.first[:recent_topics_count]).to eq(2)
-    expect(result.first[:path]).to eq("/s/science")
+    expect(result.first[:path]).to eq(visible.category.url)
     expect(result.first[:can_join]).to eq(true)
     expect(described_class).not_to have_received(:rebuild_cache)
   end
