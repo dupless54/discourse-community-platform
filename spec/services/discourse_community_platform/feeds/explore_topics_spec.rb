@@ -52,7 +52,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::ExploreTopics do
     expect(result.count { |topic| topic.dig(:community, :slug) == "technology" }).to eq(2)
   end
 
-  it "preserves rich preview, community identity, and author context for discovery cards" do
+  it "preserves rich preview, native community identity, and author context for discovery cards" do
     technology = create_community(name: "Technology", slug: "technology")
     topic = Fabricate(:topic, category: technology.category, user: owner, created_at: 2.hours.ago)
     Fabricate(:post, topic:, user: owner, raw: "A bounded Explore preview from the first visible post.")
@@ -65,7 +65,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::ExploreTopics do
     expect(item[:created_at]).to be_within(0.000001).of(topic.created_at)
     expect(item[:excerpt]).to include("bounded Explore preview")
     expect(item.dig(:community, :slug)).to eq("technology")
-    expect(item.dig(:community, :path)).to eq("/s/technology")
+    expect(item.dig(:community, :path)).to eq(technology.category.url)
     expect(item.dig(:author, :username)).to eq(owner.username)
     expect(item.dig(:author, :avatar_template)).to eq(owner.avatar_template)
     expect(item.dig(:author, :path)).to eq("/u/#{owner.username}")
