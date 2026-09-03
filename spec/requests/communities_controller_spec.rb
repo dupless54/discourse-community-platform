@@ -27,7 +27,7 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
   end
 
   describe "GET /community-platform/communities/:slug.json" do
-    it "returns a visible community using the canonical community contract" do
+    it "returns a visible community using the native category contract" do
       get "/community-platform/communities/#{community.slug}.json"
 
       expect(response.status).to eq(200)
@@ -35,7 +35,7 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
 
       expect(body["id"]).to eq(community.id)
       expect(body["slug"]).to eq("technology")
-      expect(body["path"]).to eq("/s/technology")
+      expect(body["path"]).to eq(category.url)
       expect(body["category_id"]).to eq(category.id)
       expect(body["category_url"]).to eq(category.url)
       expect(body["rules"]).to eq([])
@@ -150,7 +150,7 @@ RSpec.describe DiscourseCommunityPlatform::CommunitiesController do
       expect(created.moderator_group.reload.user_count).to eq(1)
       expect(owner.reload.admin).to eq(false)
       expect(owner.moderator).to eq(false)
-      expect(body["path"]).to eq("/s/gaming")
+      expect(body["path"]).to eq(created.category.url)
       expect(body["is_member"]).to eq(true)
       expect(body["is_owner"]).to eq(true)
       expect(body["is_moderator"]).to eq(true)
