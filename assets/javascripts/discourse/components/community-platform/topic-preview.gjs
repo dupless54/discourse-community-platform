@@ -15,9 +15,7 @@ export default class CommunityPlatformTopicPreview extends Component {
         {{#if @topic.excerpt}}
           <span class="dcp-topic-preview__body">
             <span class="dcp-topic-preview__excerpt">{{@topic.excerpt}}</span>
-            <span class="dcp-topic-preview__more">
-              {{i18n "community_platform.read_more"}}
-            </span>
+            <span class="dcp-topic-preview__more">{{i18n "read_more"}}</span>
           </span>
         {{/if}}
       </a>
@@ -27,9 +25,7 @@ export default class CommunityPlatformTopicPreview extends Component {
         href={{@topic.path}}
       >
         <span class="dcp-topic-preview__excerpt">{{@topic.excerpt}}</span>
-        <span class="dcp-topic-preview__more">
-          {{i18n "community_platform.read_more"}}
-        </span>
+        <span class="dcp-topic-preview__more">{{i18n "read_more"}}</span>
       </a>
     {{/if}}
   </template>
