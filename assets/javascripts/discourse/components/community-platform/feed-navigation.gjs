@@ -10,7 +10,7 @@ export default <template>
     >
       <li>
         <LinkTo
-          @route="community-platform-home"
+          @route="discovery.index"
           class="dcp-feed-navigation__link"
           data-feed="home"
         >
