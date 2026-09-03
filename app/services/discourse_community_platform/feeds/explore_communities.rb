@@ -96,7 +96,7 @@ module ::DiscourseCommunityPlatform
             id: community.id,
             name: community.name,
             slug: community.slug,
-            path: "/s/#{community.slug}",
+            path: community.path,
             description: community.description,
             members_count: community.members_count,
             icon_emoji: community.icon_emoji,
