@@ -2,7 +2,7 @@
 
 ## Project goal
 
-Build a Reddit-inspired community layer on top of Discourse without forking or patching Discourse core.
+Build a first-class Community product experience on top of native Discourse without forking or patching Discourse core. The product may borrow useful community concepts from social platforms, but it must not become a Reddit clone or introduce a parallel forum model.
 
 ## Non-negotiable architecture rules
 
@@ -10,7 +10,7 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 2. A Community is a plugin-owned domain record mapped 1:1 to a real Discourse Category.
 3. Authorization must extend or defer to Discourse Guardian/category/group permissions. Never return private or restricted community data merely because a plugin record exists.
 4. Do not patch files in Discourse core. Use plugin APIs, Rails engine routes, serializers, services, event hooks, Guardian extensions, and supported frontend APIs.
-5. Do not create duplicate indexable topic copies. `/s/:slug` is a community UX route; canonical topic SEO must remain single-source unless a later SEO design explicitly and safely changes it.
+5. Native Discourse routes are the public content routes. Community navigation must use the mapped Category URL (`Category#url`), topics must use their normal `/t/...` URL, and the Community homepage must use Discourse's real `/` homepage mechanism. Do not create a second public Community or topic URL tree such as `/s/:slug` for new UX.
 6. Public feed/ranking/search endpoints must filter through visibility rules before serialization.
 7. Background ranking/recommendation work must use jobs/cache; do not build expensive per-request full-table scoring queries.
 8. Community owners and moderators must never receive global Discourse admin/moderator privileges merely to manage a community.
@@ -32,65 +32,56 @@ Build a Reddit-inspired community layer on top of Discourse without forking or p
 24. Manager-only JSON surfaces must inherit the shared management-controller hardening and return `X-Robots-Tag: noindex, nofollow` plus `Cache-Control: private, no-store`. Those headers must be applied before authentication so unauthenticated and unauthorized responses are hardened too.
 25. Dynamic community and management UI must preserve accessible names, state, and structure. Keep feed loading regions labelled, use live/status semantics for asynchronous state where appropriate, and expose data grids/tables with meaningful row/header roles rather than visual-only layout semantics.
 26. Release tags and GitHub prereleases must be created only from an exact candidate revision that has passed Official Discourse Plugin CI and the staging smoke-test checklist. Do not publish an RC merely because a preparation PR is green.
-27. During release-candidate stabilization, prefer compatibility, regression, permission, performance, accessibility, and deployment fixes over expanding the product surface. New automation/analytics features wait until the candidate is stable unless they address a release blocker.
-28. Rich feed previews must be derived only after the topic has passed the current Guardian visibility check. Preview extraction is bounded to the visible first regular post and may serialize only a short plain-text excerpt plus a Guardian-visible Discourse topic image URL; never serialize raw post content or introduce unbounded per-request content scans for feed cards.
+27. During release-candidate stabilization, prefer compatibility, regression, permission, performance, accessibility, and deployment fixes over expanding the product surface. Architecture work explicitly approved for RC3 may proceed before a new release candidate is selected.
+28. Rich feed previews must be derived only after the topic has passed the current Guardian visibility check. Preview extraction is bounded to the visible first regular post and may serialize only a short plain-text excerpt plus a Guardian-visible Discourse topic image URL; never serialize raw post content or introduce unbounded per-request content scans for feed cards. An image and bounded excerpt may be rendered together.
 29. Community logo/cover branding must reuse Discourse `Upload` records and supported upload UI. Assignment is manager-only, image-only, and must not allow a manager to attach an arbitrary unrelated user's upload by guessing its ID. Keep explicit `UploadReference` records for attached branding, keep internal upload IDs manager-only, and preserve Guardian/category visibility as the boundary for community metadata.
 
-## Current phase — Post-RC1 stabilization and RC2 iteration
+## Current phase — RC3 native Community architecture
 
-Implemented foundations:
+Implemented foundations inherited from RC2:
 
-- `0.1.0-rc.1` was published from the exact tested release commit after Official Discourse Plugin CI and staging smoke validation.
 - Community creation links a real Category plus member/moderator Groups.
 - Join/leave membership uses the mapped Discourse Group.
 - Owner/community-moderator management remains community-scoped.
-- Rules and appearance metadata are available on the Community layer.
-- `/s/:slug` is a responsive community UX route while topic canonicals remain Discourse `/t/...` URLs.
 - Voting/ranking persists plugin scores without replacing Discourse likes/posts.
 - Popular uses a cached public candidate pool and Guardian filtering.
 - Home blends joined communities, followed users through Discourse Follow, and public fallback topics.
 - Following contains only joined-community and followed-user content and returns no personalized data to guests.
-- Shared Home/Following/Explore/Popular navigation uses Discourse UI-kit route primitives.
 - Explore excludes joined communities, applies a per-community diversity cap, and keeps every candidate behind Guardian visibility checks.
-- Explore community activity signals are computed by a scheduled job and stored in cache; requests never rebuild the aggregate ranking synchronously.
-- Cached Explore signals promote recommended public communities and influence topic ordering while preserving the existing Popular candidate fallback.
-- Explore people discovery derives candidates from the cached public Popular pool, applies Guardian and current Community visibility checks, and respects Discourse Follow profile/follow opt-out behavior.
-- Feed cards can enrich already-visible topics with a bounded plain-text first-post excerpt or a Guardian-visible Discourse topic image, preferring the image when present.
-- Community managers can attach a Discourse-uploaded logo and cover image; emoji and banner color remain fallbacks.
-- Branding upload assignment validates image type and manager ownership/current attachment, and attached uploads are retained through explicit `UploadReference` rows.
-- AutoModerator rules are plugin-owned community configuration, not global Discourse moderation configuration.
-- AutoModerator rule management is limited to users authorized by `CommunityAuthorization.can_manage?` / `ensure_can_manage!`.
-- AutoModerator evaluates only posts whose `topic.category_id` maps to the configured Community.
-- AutoModerator phrase matching uses normalized bounded term arrays with `any` and `all` modes; arbitrary user regex is intentionally not supported.
-- Rules may target all posts, topic starters only, or replies only.
-- Rules may optionally require the author account to be no older than 1–365 days and/or the current author trust level to be at or below an allowed Discourse trust level.
-- Author conditions use only `User#created_at` and `User#trust_level`; leaving both unset preserves the original all-author behavior.
-- New posts and meaningful `post_edited` content changes enqueue background AutoModerator evaluation jobs.
-- Per-post AutoModerator evaluation is serialized with `DistributedMutex` and identical rule/post/content SHA-256 combinations are deduplicated.
-- A matching post is sent to the normal Discourse review flow via `PostActionCreator`, `Discourse.system_user`, and the `inappropriate` flag type.
-- `queue_for_review` keeps the existing priority review behavior; `flag_only` creates a standard Discourse flag with `queue_for_review: false` and therefore does not force the priority hiding path.
-- Manager-only execution history records rule-name snapshots, post references, create/edit triggers, and `queued_for_review` / `flagged_for_review` / `already_queued` outcomes.
-- Audit UI returns the latest 50 executions and a daily scheduled job removes records older than 90 days.
-- Manager-only moderation insights aggregate the bounded audit table into 7/30-day counts, distinct audited posts, outcome/trigger distributions, and the top five rule-name snapshots without returning raw content or user metadata.
-- Manager-only community activity analytics expose only cached 7/30-day counts for new topics, posts, replies, active topics, and unique contributors. A 15-minute scheduled job rebuilds the cache; requests never rebuild it synchronously.
-- AutoModerator rules, audit history, moderation insights, and community activity analytics share management response hardening so successful, unauthenticated, and unauthorized JSON responses remain non-indexable and non-cacheable by shared/public caches.
-- Dynamic community feed and manager insight surfaces expose explicit accessible region/table/status semantics while retaining keyboard-accessible native controls.
-- The current AutoModerator slice does not auto-delete content, ban/silence users, run arbitrary regex, inspect email/IP/device data, or elevate community managers to global staff.
+- Explore ranking/recommendation and activity analytics use scheduled cache rebuilds rather than request-time full-table work.
+- Feed previews are bounded and Guardian filtered.
+- Community branding uses Discourse Upload records and explicit UploadReference retention.
+- AutoModerator is community/category scoped, bounded, asynchronous, idempotent, review-first, and audited.
+- Manager-only moderation and analytics surfaces remain non-indexable/non-cacheable and do not expose raw user/content data.
+
+RC3 direction:
+
+- The real Discourse homepage `/` is the Community feed. The plugin's registered `community-home` homepage is the implementation surface selected through Discourse's supported homepage mechanism.
+- User-facing Community links use the mapped native Discourse Category URL instead of `/s/:slug`.
+- Topic cards continue to link to the real Discourse `/t/...` topic URL. Do not create a parallel discussion URL.
+- Native Category pages are progressively styled/enriched as Community pages instead of maintaining a separate Community route tree.
+- Native Topic pages are progressively integrated into the Community shell while keeping Discourse Post Stream, composer, permissions, notifications, moderation, search, and SEO intact.
+- Product language and visuals should be original Community UX, not Reddit-specific prefixes or cloning.
+- Feed cards render a bounded excerpt even when a visible topic image exists; the image and text summary complement each other.
+- `/home` may remain as the registered homepage implementation/compatibility path during the migration, but primary navigation must point to `/`.
+- Legacy `/s/:slug` code is transitional only. Do not add new features that depend on it; remove it after native Category management/community UI reaches parity.
 
 Next slices:
 
-1. Finish rich feed-card and community-branding validation on an exact-head PR and require Official Discourse Plugin CI success.
-2. Run staging smoke tests for text/image previews, public/restricted/private visibility, logo/cover persistence, mobile/tablet layouts, and upload permission boundaries.
-3. Collect RC1 production/staging feedback and fix regressions before selecting an exact `0.1.0-rc.2` candidate.
-4. Resume broader AutoModerator or analytics expansion only after the release candidate remains stable.
+1. Finish native Category URL conversion and exact-head regression coverage.
+2. Validate the registered Community homepage at real `/` in staging and document the `default_homepage` selection.
+3. Port Community hero, membership, rules, branding, manager tools, AutoModerator, and analytics into supported native Category-page integration points.
+4. Integrate Community context into native `/t/...` topic pages without replacing Discourse Post Stream/composer.
+5. Evolve the Home visual system toward the approved Senin Community layout: left navigation/community list, center social topic cards and order controls, right trends/recommendations/about rail.
+6. Re-run desktop/tablet/mobile, permission, performance, accessibility, install/upgrade, and release checks before selecting an RC3 candidate.
 
 ## SEO contract
 
 - Keep Discourse topic/post SEO and crawler behavior as the base.
-- Public community landing pages may become indexable after dedicated server-side/crawler rendering is implemented.
+- Community landing pages use their native Discourse Category URLs; do not create an indexable Community alias tree.
 - Private/restricted communities must not expose metadata, counts, titles, previews, images, or topic content to unauthorized users or crawlers.
-- Never make both an alias URL and a Discourse topic URL independently canonical for the same content.
-- Rich feed cards are navigation/UI summaries only; canonical topic content remains on Discourse `/t/...` URLs.
+- Topic content remains single-source on normal Discourse `/t/...` URLs.
+- Rich feed cards are navigation/UI summaries only, not alternate topic documents.
 - AutoModerator configuration, execution-history, moderation-insights, and community activity analytics endpoints are authenticated management surfaces and must not become indexable public content.
 - Manager-only JSON surfaces must send `X-Robots-Tag: noindex, nofollow` and `Cache-Control: private, no-store` even when authentication or authorization fails.
 
