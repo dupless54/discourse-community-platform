@@ -32,7 +32,7 @@ module ::DiscourseCommunityPlatform
     attribute :can_manage
 
     def path
-      "/s/#{object.slug}"
+      object.path
     end
 
     def category_url
