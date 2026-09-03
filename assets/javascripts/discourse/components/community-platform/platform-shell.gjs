@@ -40,11 +40,11 @@ export default class CommunityPlatformShell extends Component {
       <header class="dcp-platform-header">
         <div class="dcp-platform-header__inner">
           <LinkTo
-            @route="community-platform-home"
+            @route="discovery.index"
             class="dcp-platform-brand"
             aria-label={{this.siteSettings.title}}
           >
-            <span class="dcp-platform-brand__mark" aria-hidden="true">s/</span>
+            <span class="dcp-platform-brand__mark" aria-hidden="true">C</span>
             <span
               class="dcp-platform-brand__name"
             >{{this.siteSettings.title}}</span>
