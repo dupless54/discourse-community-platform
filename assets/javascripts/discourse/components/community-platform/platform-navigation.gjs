@@ -7,7 +7,7 @@ export default <template>
     aria-label={{i18n "community_platform.navigation.aria_label"}}
   >
     <LinkTo
-      @route="community-platform-home"
+      @route="discovery.index"
       class="dcp-platform-navigation__link"
       data-platform-feed="home"
     >
