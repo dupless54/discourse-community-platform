@@ -113,13 +113,13 @@ export default class CommunityPlatformExploreDiscoveryRail extends Component {
                       class="dcp-explore-discovery-community__icon"
                       aria-hidden="true"
                     >
-                      s/
+                      C
                     </span>
                   {{/if}}
 
                   <span class="dcp-explore-discovery-community__identity">
-                    <strong>s/{{community.slug}}</strong>
-                    <span>{{community.name}}</span>
+                    <strong>{{community.name}}</strong>
+                    <span>{{community.slug}}</span>
                   </span>
                 </a>
 
