@@ -20,13 +20,14 @@ acceptance("Community Platform | popular page", function (needs) {
             upvotes: 20,
             downvotes: 2,
             user_vote: 0,
-            excerpt: "This text is hidden when an image preview is available.",
+            excerpt:
+              "A bounded topic summary remains visible alongside the image preview.",
             image_url: "/uploads/default/original/1X/popular-preview.png",
             community: {
               id: 7,
               name: "Technology",
               slug: "technology",
-              path: "/s/technology",
+              path: "/c/technology/7",
             },
           },
         ],
@@ -34,11 +35,11 @@ acceptance("Community Platform | popular page", function (needs) {
     });
   });
 
-  test("renders cached global popular topics with community context and image previews", async function (assert) {
+  test("renders native community context with image and excerpt previews", async function (assert) {
     await visit("/popular");
 
     assert.dom(".dcp-feed-navigation").exists();
-    assert.dom('[data-feed="home"]').hasAttribute("href", "/home");
+    assert.dom('[data-feed="home"]').hasAttribute("href", "/");
     assert.dom('[data-feed="following"]').hasAttribute("href", "/following");
     assert
       .dom('[data-feed="popular"]')
@@ -48,20 +49,23 @@ acceptance("Community Platform | popular page", function (needs) {
     assert.dom(".dcp-popular-card").exists({ count: 1 });
     assert
       .dom(".dcp-popular-card .dcp-feed-community-identity")
-      .includesText("s/technology")
-      .hasAttribute("href", "/s/technology");
+      .includesText("Technology")
+      .hasAttribute("href", "/c/technology/7");
     assert
       .dom(".dcp-popular-card__title")
       .hasText("A fast-moving technology discussion")
       .hasAttribute("href", "/t/fast-moving-technology/201");
     assert.dom(".dcp-popular-card__score strong").hasText("18");
     assert
-      .dom(".dcp-topic-preview--image")
+      .dom(".dcp-topic-preview--rich")
       .hasAttribute("href", "/t/fast-moving-technology/201")
       .hasAttribute("aria-label", "A fast-moving technology discussion");
     assert
-      .dom(".dcp-topic-preview--image img")
+      .dom(".dcp-topic-preview__media img")
       .hasAttribute("src", "/uploads/default/original/1X/popular-preview.png");
-    assert.dom(".dcp-topic-preview--excerpt").doesNotExist();
+    assert
+      .dom(".dcp-topic-preview__excerpt")
+      .includesText("A bounded topic summary remains visible");
+    assert.dom(".dcp-topic-preview__more").exists();
   });
 });
