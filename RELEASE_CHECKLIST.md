@@ -25,7 +25,7 @@ Use this checklist before publishing a Discourse Community Platform release cand
 - [ ] System tests are either successful or explicitly skipped because the plugin has no applicable system-test suite.
 - [ ] Any workflow step reported as `skipped` is recorded as skipped rather than being counted as a passing gate.
 
-## 2. Staging install / upgrade smoke test
+## 2. Staging install / upgrade and native-route smoke test
 
 Run these checks on a non-production Discourse instance using the exact release-candidate commit/tag.
 
@@ -33,8 +33,12 @@ Run these checks on a non-production Discourse instance using the exact release-
 - [ ] Existing installation upgrades without losing Community records, votes, AutoModerator rules, or audit history.
 - [ ] Plugin can be disabled and re-enabled without boot errors.
 - [ ] Sidekiq starts and scheduled Community Platform jobs are registered.
-- [ ] `/home`, `/following`, `/explore`, and `/popular` load successfully.
-- [ ] A public Community loads at `/s/:slug`.
+- [ ] The registered `community-home` option is selected as Discourse `default_homepage` for the product deployment.
+- [ ] The Community Home renders at the real site root `/` and primary Home navigation does not expose `/home` as a second product homepage.
+- [ ] `/following`, `/explore`, and `/popular` load successfully.
+- [ ] A public Community navigates to and loads from its native Discourse Category URL (`Category#url`, `/c/...`).
+- [ ] Community feed/API payloads do not advertise `/s/:slug` as the public Community path.
+- [ ] A Community Topic navigates to the normal Discourse `/t/...` URL and uses native Post Stream/composer behavior.
 - [ ] Restricted/private Community visibility behaves like its mapped Discourse Category.
 - [ ] Join and leave update the mapped member Group correctly.
 - [ ] An eligible signed-in user can join a recommended public Community directly from Explore and the returned member count is reflected without a page reload.
@@ -42,16 +46,18 @@ Run these checks on a non-production Discourse instance using the exact release-
 - [ ] Hot/new/top/rising ordering can be switched without a full-page failure.
 - [ ] Upvote/downvote works for an authenticated user and does not replace Discourse likes/posts.
 
-## 3. Rich feed preview and community branding smoke test
+## 3. Rich feed preview and Community branding smoke test
 
 Run these checks with public, restricted, and private test Communities on the exact candidate revision.
 
-- [ ] A visible topic with a Discourse topic image renders the image preview in Community/Home/Following/Explore/Popular where applicable.
-- [ ] A visible topic without an image renders only a bounded plain-text excerpt from the visible first regular post.
+- [ ] A visible Topic with a Guardian-visible Discourse topic image renders the image preview and a bounded plain-text excerpt together where applicable.
+- [ ] A visible Topic without an image renders a bounded plain-text excerpt from the visible first regular post.
+- [ ] Rich cards expose a usable read-more/navigation affordance without creating another Topic document URL.
 - [ ] Preview text does not expose raw Markdown, cooked HTML, hidden/deleted first-post content, or unbounded post content.
-- [ ] Private/restricted topic previews disappear whenever the current Guardian cannot see the underlying topic/post.
+- [ ] Private/restricted Topic previews disappear whenever the current Guardian cannot see the underlying Topic/Post.
 - [ ] A secure topic image or branding upload is not serialized when the current Guardian cannot see that Discourse `Upload`.
-- [ ] Topic-card navigation still points to the canonical Discourse `/t/...` URL.
+- [ ] Topic-card navigation points to the normal Discourse `/t/...` URL.
+- [ ] Community identity links point to the mapped native Category URL rather than `/s/:slug`.
 - [ ] Community manager can upload, replace, and remove a logo and cover image through the supported uploader UI.
 - [ ] Logo and cover remain attached after reload/restart and active branding uploads retain an `UploadReference`.
 - [ ] Replaced/removed branding no longer keeps a stale Community `UploadReference`.
@@ -78,14 +84,16 @@ Run these checks with public, restricted, and private test Communities on the ex
 - [ ] Explore recommendation cache job runs successfully.
 - [ ] Community activity analytics cache job runs successfully.
 - [ ] Cold activity analytics returns `warming` rather than synchronously rebuilding aggregates.
+- [ ] Cold Explore recommendation state fails soft and does not trigger request-time aggregate reconstruction.
 - [ ] 7-day and 30-day activity metrics are plausible for a known test Community.
 - [ ] Community analytics do not contain usernames, user IDs, post IDs/URLs, raw content, email, IP, or device data.
 - [ ] Moderation insights remain bounded to manager-visible aggregate management data.
 - [ ] Loading rich feed cards does not introduce an unbounded per-topic/post query loop or request-time full-content scan.
+- [ ] Loading Community identity paths does not introduce an N+1 Category lookup loop.
 
-## 6. Security / crawler / cache checks
+## 6. Security / crawler / route checks
 
-For AutoModerator rules, audit history, moderation insights, and community activity analytics:
+For AutoModerator rules, audit history, moderation insights, and Community activity analytics:
 
 - [ ] Authorized manager response includes `X-Robots-Tag: noindex, nofollow`.
 - [ ] Authorized manager response includes `Cache-Control: private, no-store`.
@@ -93,29 +101,40 @@ For AutoModerator rules, audit history, moderation insights, and community activ
 - [ ] Guest 403 response keeps both hardening headers.
 - [ ] Public feeds do not serialize private/restricted Community content.
 - [ ] Public Community metadata does not bypass Discourse secure-upload visibility for logo/cover URLs.
-- [ ] `/s/:slug` does not create an alternative canonical copy of topic content; topic links remain normal Discourse `/t/...` URLs.
+- [ ] Native Category URLs are the Community landing URLs; no independently indexable `/s/:slug` Community alias is introduced for RC3.
+- [ ] Topic content remains single-source at native Discourse `/t/...` URLs.
 
 ## 7. Accessibility / responsive smoke test
 
-Check desktop, tablet, and mobile widths, including an iPad-class width with the Discourse sidebar visible.
+Check desktop, tablet, and mobile widths, including an iPad-class width with the Discourse sidebar behavior exercised.
 
 - [ ] Community title and major manager insight sections have usable accessible names.
 - [ ] Feed order controls are exposed as one named group, and each order button exposes its pressed state.
 - [ ] Vote buttons expose labels and pressed state.
 - [ ] Platform-shell account avatar/username and feed author avatar/username remain separate sibling profile links; no profile control nests one anchor inside another.
-- [ ] Navigation, topic/community links, vote controls, and Explore quick-join buttons do not nest interactive controls inside another interactive control.
+- [ ] Navigation, Topic/Community links, vote controls, and Explore quick-join buttons do not nest interactive controls inside another interactive control.
 - [ ] Activity insight table is understandable with a screen reader/navigation inspector.
 - [ ] Loading/warming status is exposed without trapping keyboard focus.
 - [ ] Forms remain keyboard operable.
 - [ ] Management cards do not overflow or hide primary actions on narrow screens.
-- [ ] Rich image/text previews do not overflow cards, overlap vote controls, or force horizontal page scrolling.
+- [ ] Rich image+text previews do not overflow cards, overlap vote controls, or force horizontal page scrolling.
 - [ ] Community logo, cover image, title, and management actions remain usable at desktop, tablet, and narrow mobile widths.
 - [ ] Branding upload controls remain keyboard operable and retain visible labels/status.
 - [ ] Explore recommendation navigation and quick-join controls remain separate keyboard targets, and successful/error membership states are announced appropriately.
 
-## 8. Release publication
+## 8. Native Category / Topic UI integration gate
 
-Only after sections 1–7 are complete:
+Required once the RC3 Category/Topic visual integration lands:
+
+- [ ] Native Category pages expose Community hero, membership, rules, branding, and manager actions without replacing Category permission semantics.
+- [ ] Native `/t/...` pages preserve Discourse Post Stream, composer, bookmarks, notifications, moderation controls, and keyboard behavior.
+- [ ] Topic pages can show Community context/rail without duplicating Topic or Post data into a parallel renderer.
+- [ ] Direct external `/c/...` and `/t/...` links load the same product UI as internal navigation.
+- [ ] Browser back/forward navigation remains correct across Home, Category, Topic, Explore, Popular, and Following.
+
+## 9. Release publication
+
+Only after all applicable sections above are complete:
 
 - [ ] Confirm `CHANGELOG.md` matches the release candidate.
 - [ ] Confirm plugin metadata version/required Discourse version are intentional.
@@ -124,7 +143,7 @@ Only after sections 1–7 are complete:
 - [ ] Record the exact tag SHA in the release notes.
 - [ ] Keep the previous known-good tag available for rollback.
 
-## 9. Rollback readiness
+## 10. Rollback readiness
 
 - [ ] Database backup exists before production rollout.
 - [ ] Previous known-good plugin tag/commit is recorded.
