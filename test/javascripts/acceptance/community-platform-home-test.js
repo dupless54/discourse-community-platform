@@ -50,7 +50,8 @@ function homePayload() {
         upvotes: 12,
         downvotes: 1,
         user_vote: 0,
-        excerpt: "The image and this bounded summary are intentionally visible together.",
+        excerpt:
+          "The image and this bounded summary are intentionally visible together.",
         image_url: "/uploads/default/original/1X/followed-preview.png",
         feed_source: "followed",
         author: {
@@ -162,9 +163,7 @@ acceptance("Community Platform | personalized home page", function (needs) {
     assert
       .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__excerpt")
       .includesText("The image and this bounded summary");
-    assert
-      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__more")
-      .exists();
+    assert.dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__more").exists();
     assert
       .dom(".dcp-home-card:nth-child(3) .dcp-home-card__source")
       .hasText("Popular");
