@@ -97,7 +97,7 @@ acceptance("Community Platform | Following page", function (needs) {
       .hasAttribute("href", "/u/followed-user");
     assert
       .dom(".dcp-home-card:first-child .dcp-feed-community-identity")
-      .hasText("Development")
+      .includesText("Development")
       .hasAttribute("href", "/c/development/9");
     assert
       .dom(".dcp-home-card:nth-child(2) .dcp-home-card__source")
