@@ -18,7 +18,7 @@
     "lint:css:fix": "pnpm stylelint 'assets/stylesheets/**/*.scss' --fix --allow-empty-input",
     "lint:js": "eslint {assets,admin/assets,test}/javascripts --cache --no-error-on-unmatched-pattern",
     "lint:js:fix": "eslint {assets,admin/assets,test}/javascripts --fix --no-error-on-unmatched-pattern",
-    "lint:prettier": "pnpm prettier 'assets/stylesheets/**/*.scss' '{assets,admin/assets,test}/javascripts/**/*.{js,gjs,ts,gts,mts,cts}' --write --no-error-on-unmatched-pattern && git diff -- assets/javascripts/discourse/connectors/above-category-heading/community-platform-native-category.gjs test/javascripts/integration/components/native-category-community-test.gjs assets/javascripts/discourse/components/community-platform/native-category-community.gjs test/javascripts/acceptance/community-platform-native-category-test.js && git diff --quiet",
+    "lint:prettier": "pnpm prettier 'assets/stylesheets/**/*.scss' '{assets,admin/assets,test}/javascripts/**/*.{js,gjs,ts,gts,mts,cts}' --check --no-error-on-unmatched-pattern",
     "lint:prettier:fix": "pnpm prettier 'assets/stylesheets/**/*.scss' '{assets,admin/assets,test}/javascripts/**/*.{js,gjs,ts,gts,mts,cts}' -w --no-error-on-unmatched-pattern",
     "lint:types": "ember-tsc -b",
     "lttf:ignore": "lint-to-the-future ignore"
