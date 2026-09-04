@@ -50,8 +50,7 @@ function homePayload() {
         upvotes: 12,
         downvotes: 1,
         user_vote: 0,
-        excerpt:
-          "The image and this bounded summary are intentionally visible together.",
+        excerpt: "The image and this bounded summary are intentionally visible together.",
         image_url: "/uploads/default/original/1X/followed-preview.png",
         feed_source: "followed",
         author: {
