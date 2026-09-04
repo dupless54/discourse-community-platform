@@ -28,21 +28,25 @@ module("Integration | Component | NativeCategoryCommunity", function (hooks) {
       can_leave: false,
     };
 
-    await render(<template>
-      <NativeCategoryCommunity
-        @category={{this.category}}
-        @community={{this.community}}
-      />
-    </template>);
+    await render(
+      <template>
+        <NativeCategoryCommunity
+          @category={{this.category}}
+          @community={{this.community}}
+        />
+      </template>
+    );
 
     assert
       .dom(".dcp-native-community")
-      .hasAttribute("data-category-id", "7", "the native Category id is retained");
+      .hasAttribute(
+        "data-category-id",
+        "7",
+        "the native Category id is retained"
+      );
     assert.dom(".dcp-community-title-wrap h1").hasText("Technology");
     assert.dom(".dcp-community-slug").hasText("Public");
-    assert
-      .dom(".dcp-community-description")
-      .hasText("Technology discussions");
+    assert.dom(".dcp-community-description").hasText("Technology discussions");
     assert
       .dom(".dcp-community-icon img")
       .hasAttribute("src", "/uploads/default/original/1X/community-logo.png");
