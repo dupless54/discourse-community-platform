@@ -65,7 +65,7 @@ acceptance("Community Platform | native Category Community", function (needs) {
     });
   });
 
-  test("enriches a mapped native Category without replacing its topic list", async function (assert) {
+  test("enriches a mapped Category and clears Community state on native navigation", async function (assert) {
     await visit("/c/technology");
 
     assert.dom(".dcp-native-community").exists();
@@ -73,6 +73,12 @@ acceptance("Community Platform | native Category Community", function (needs) {
     assert.dom(".dcp-community-action").hasText("Join");
     assert.dom(".topic-list").exists();
     assert.dom(document.body).hasClass("dcp-native-community-page");
+
+    await visit("/c/general");
+
+    assert.dom(".dcp-native-community").doesNotExist();
+    assert.dom(".topic-list").exists();
+    assert.dom(document.body).doesNotHaveClass("dcp-native-community-page");
   });
 
   test("leaves an ordinary native Category unchanged", async function (assert) {
