@@ -95,14 +95,14 @@ export default class CommunityPlatformShell extends Component {
         </div>
 
         <div class="dcp-platform-mobile-navigation">
-          <PlatformNavigation />
+          <PlatformNavigation @section={{@section}} />
         </div>
       </header>
 
       <div class="dcp-platform-layout">
         <aside class="dcp-platform-sidebar">
           <div class="dcp-platform-sidebar__sticky">
-            <PlatformNavigation />
+            <PlatformNavigation @section={{@section}} />
           </div>
         </aside>
 
