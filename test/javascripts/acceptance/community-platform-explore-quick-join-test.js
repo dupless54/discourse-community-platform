@@ -15,7 +15,7 @@ acceptance("Community Platform | Explore quick join", function (needs) {
             id: 17,
             name: "Hardware",
             slug: "hardware",
-            path: "/s/hardware",
+            path: "/c/hardware/17",
             description: "PC hardware discussions.",
             members_count: 84,
             icon_emoji: "🖥️",
@@ -36,7 +36,7 @@ acceptance("Community Platform | Explore quick join", function (needs) {
           id: 17,
           name: "Hardware",
           slug: "hardware",
-          path: "/s/hardware",
+          path: "/c/hardware/17",
           members_count: 85,
           is_member: true,
           can_join: false,
@@ -52,8 +52,8 @@ acceptance("Community Platform | Explore quick join", function (needs) {
     assert.dom(".dcp-explore-communities").doesNotExist();
     assert
       .dom(".dcp-explore-community-card__link")
-      .hasAttribute("href", "/s/hardware")
-      .includesText("s/hardware");
+      .hasAttribute("href", "/c/hardware/17")
+      .includesText("Hardware");
     assert
       .dom(".dcp-explore-community-card__join")
       .hasText("Join")
