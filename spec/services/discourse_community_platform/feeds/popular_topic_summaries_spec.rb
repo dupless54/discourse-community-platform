@@ -41,7 +41,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::PopularTopicSummaries do
     expect(summary[:path]).to eq(topic.relative_url)
     expect(summary[:score]).to eq(1)
     expect(summary.dig(:community, :slug)).to eq("technology")
-    expect(summary.dig(:community, :path)).to eq("/s/technology")
+    expect(summary.dig(:community, :path)).to eq(community.category.url)
     expect(summary).not_to have_key(:excerpt)
     expect(summary).not_to have_key(:image_url)
     expect(summary).not_to have_key(:author)

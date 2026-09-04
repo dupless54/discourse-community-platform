@@ -75,7 +75,7 @@ module ::DiscourseCommunityPlatform
         communities =
           Community
             .where(category_id: topics.map(&:category_id))
-            .includes(:icon_upload)
+            .includes(:category, :icon_upload)
             .index_by(&:category_id)
         votes = user_votes(topics)
         previews = TopicPreviews.call(topics:, guardian: @guardian)
@@ -130,7 +130,7 @@ module ::DiscourseCommunityPlatform
           id: community.id,
           name: community.name,
           slug: community.slug,
-          path: "/s/#{community.slug}",
+          path: community.path,
           icon_emoji: community.icon_emoji,
           icon_url:,
         }

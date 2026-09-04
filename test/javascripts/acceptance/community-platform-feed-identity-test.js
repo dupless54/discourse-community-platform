@@ -61,7 +61,7 @@ acceptance("Community Platform | Home community identity", function (needs) {
       id: 17,
       name: "Hardware",
       slug: "hardware",
-      path: "/s/hardware",
+      path: "/c/hardware/17",
       icon_emoji: "🖥️",
       icon_url: "/uploads/default/original/1X/hardware-logo.png",
     };
@@ -81,15 +81,15 @@ acceptance("Community Platform | Home community identity", function (needs) {
 
     assert
       .dom(".dcp-home-community-chip")
-      .hasAttribute("href", "/s/hardware")
-      .includesText("s/hardware");
+      .hasAttribute("href", "/c/hardware/17")
+      .includesText("Hardware");
     assert
       .dom(".dcp-home-community-chip .dcp-feed-community-identity__icon img")
       .hasAttribute("src", "/uploads/default/original/1X/hardware-logo.png");
     assert
       .dom(".dcp-home-card .dcp-feed-community-identity")
-      .hasAttribute("href", "/s/hardware")
-      .includesText("s/hardware");
+      .hasAttribute("href", "/c/hardware/17")
+      .includesText("Hardware");
     assert
       .dom(".dcp-home-card .dcp-feed-community-identity__icon img")
       .hasAttribute("src", "/uploads/default/original/1X/hardware-logo.png");
@@ -104,7 +104,7 @@ acceptance("Community Platform | Popular community identity", function (needs) {
       id: 18,
       name: "Technology",
       slug: "technology",
-      path: "/s/technology",
+      path: "/c/technology/18",
       icon_emoji: "💻",
       icon_url: "/uploads/default/original/1X/technology-logo.png",
     };
@@ -122,8 +122,8 @@ acceptance("Community Platform | Popular community identity", function (needs) {
 
     assert
       .dom(".dcp-popular-card .dcp-feed-community-identity")
-      .hasAttribute("href", "/s/technology")
-      .includesText("s/technology");
+      .hasAttribute("href", "/c/technology/18")
+      .includesText("Technology");
     assert
       .dom(".dcp-popular-card .dcp-feed-community-identity__icon img")
       .hasAttribute("src", "/uploads/default/original/1X/technology-logo.png");

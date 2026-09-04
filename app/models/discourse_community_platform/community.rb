@@ -32,6 +32,10 @@ module ::DiscourseCommunityPlatform
 
     scope :publicly_visible, -> { where(visibility: "public") }
 
+    def path
+      category.url
+    end
+
     def public?
       visibility == "public"
     end

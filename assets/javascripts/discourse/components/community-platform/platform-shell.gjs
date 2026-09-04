@@ -40,11 +40,11 @@ export default class CommunityPlatformShell extends Component {
       <header class="dcp-platform-header">
         <div class="dcp-platform-header__inner">
           <LinkTo
-            @route="community-platform-home"
+            @route="discovery.index"
             class="dcp-platform-brand"
             aria-label={{this.siteSettings.title}}
           >
-            <span class="dcp-platform-brand__mark" aria-hidden="true">s/</span>
+            <span class="dcp-platform-brand__mark" aria-hidden="true">C</span>
             <span
               class="dcp-platform-brand__name"
             >{{this.siteSettings.title}}</span>
@@ -95,14 +95,14 @@ export default class CommunityPlatformShell extends Component {
         </div>
 
         <div class="dcp-platform-mobile-navigation">
-          <PlatformNavigation />
+          <PlatformNavigation @section={{@section}} />
         </div>
       </header>
 
       <div class="dcp-platform-layout">
         <aside class="dcp-platform-sidebar">
           <div class="dcp-platform-sidebar__sticky">
-            <PlatformNavigation />
+            <PlatformNavigation @section={{@section}} />
           </div>
         </aside>
 

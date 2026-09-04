@@ -11,7 +11,7 @@ function homePayload() {
         id: 4,
         name: "Hardware",
         slug: "hardware",
-        path: "/s/hardware",
+        path: "/c/hardware/4",
       },
     ],
     topics: [
@@ -35,7 +35,7 @@ function homePayload() {
           id: 4,
           name: "Hardware",
           slug: "hardware",
-          path: "/s/hardware",
+          path: "/c/hardware/4",
         },
       },
       {
@@ -50,7 +50,8 @@ function homePayload() {
         upvotes: 12,
         downvotes: 1,
         user_vote: 0,
-        excerpt: "This excerpt is hidden because the topic has an image.",
+        excerpt:
+          "The image and this bounded summary are intentionally visible together.",
         image_url: "/uploads/default/original/1X/followed-preview.png",
         feed_source: "followed",
         author: {
@@ -63,7 +64,7 @@ function homePayload() {
           id: 9,
           name: "Development",
           slug: "development",
-          path: "/s/development",
+          path: "/c/development/9",
         },
       },
       {
@@ -85,7 +86,7 @@ function homePayload() {
           id: 8,
           name: "Gaming",
           slug: "gaming",
-          path: "/s/gaming",
+          path: "/c/gaming/8",
         },
       },
     ],
@@ -114,21 +115,18 @@ acceptance("Community Platform | personalized home page", function (needs) {
     });
   });
 
-  test("renders joined, followed, popular, and rich preview sources and allows voting", async function (assert) {
+  test("renders native home feed and voting", async function (assert) {
     await visit("/home");
 
     assert.dom(".dcp-feed-navigation").exists();
-    assert
-      .dom('[data-feed="home"]')
-      .hasClass("active")
-      .hasAttribute("href", "/home");
+    assert.dom('[data-feed="home"]').hasAttribute("href", "/");
     assert.dom('[data-feed="following"]').hasAttribute("href", "/following");
     assert.dom('[data-feed="popular"]').hasAttribute("href", "/popular");
     assert.dom(".dcp-home-hero h1").hasText("Home");
     assert
       .dom(".dcp-home-community-chip")
-      .includesText("s/hardware")
-      .hasAttribute("href", "/s/hardware");
+      .includesText("Hardware")
+      .hasAttribute("href", "/c/hardware/4");
     assert.dom(".dcp-home-card").exists({ count: 3 });
     assert
       .dom(".dcp-home-card:first-child .dcp-home-card__title")
@@ -157,11 +155,15 @@ acceptance("Community Platform | personalized home page", function (needs) {
       .hasText("@followed-user")
       .hasAttribute("href", "/u/followed-user");
     assert
-      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview--image img")
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview--rich")
+      .hasAttribute("href", "/t/followed-discussion/303");
+    assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__media img")
       .hasAttribute("src", "/uploads/default/original/1X/followed-preview.png");
     assert
-      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview--excerpt")
-      .doesNotExist();
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__excerpt")
+      .includesText("The image and this bounded summary");
+    assert.dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__more").exists();
     assert
       .dom(".dcp-home-card:nth-child(3) .dcp-home-card__source")
       .hasText("Popular");
@@ -192,7 +194,7 @@ acceptance("Community Platform | guest home page", function (needs) {
     await visit("/home");
 
     assert.dom(".dcp-feed-navigation").exists();
-    assert.dom('[data-feed="home"]').hasClass("active");
+    assert.dom('[data-feed="home"]').hasAttribute("href", "/");
     assert.dom(".dcp-home-card").exists({ count: 1 });
     assert.dom(".dcp-home-community-chip").doesNotExist();
     assert.dom(".dcp-vote-button").doesNotExist();

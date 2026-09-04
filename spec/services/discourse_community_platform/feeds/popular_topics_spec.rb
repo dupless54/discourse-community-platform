@@ -37,7 +37,7 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::PopularTopics do
     expect(result.map { |topic| topic[:id] }).to include(technology_topic.id, gaming_topic.id)
     expect(result.first[:id]).to eq(technology_topic.id)
     expect(result.first.dig(:community, :slug)).to eq("technology")
-    expect(result.first.dig(:community, :path)).to eq("/s/technology")
+    expect(result.first.dig(:community, :path)).to eq(technology.category.url)
     expect(result.first.dig(:author, :username)).to eq(owner.username)
     expect(result.first.dig(:author, :avatar_template)).to eq(owner.avatar_template)
     expect(result.first.dig(:author, :path)).to eq("/u/#{owner.username}")

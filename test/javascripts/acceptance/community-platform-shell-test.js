@@ -16,7 +16,7 @@ acceptance("Community Platform | platform shell", function (needs) {
             id: 4,
             name: "Hardware",
             slug: "hardware",
-            path: "/s/hardware",
+            path: "/c/hardware/4",
           },
         ],
         trending_topics: [
@@ -30,7 +30,7 @@ acceptance("Community Platform | platform shell", function (needs) {
               id: 7,
               name: "Gaming",
               slug: "gaming",
-              path: "/s/gaming",
+              path: "/c/gaming/7",
             },
           },
         ],
@@ -46,16 +46,16 @@ acceptance("Community Platform | platform shell", function (needs) {
     assert.dom('.dcp-platform-shell[data-platform-section="home"]').exists();
     assert.dom(".dcp-platform-header").exists();
     assert.dom(".dcp-platform-sidebar").exists();
-    assert.dom(".dcp-platform-right-rail").includesText("s/hardware");
-    assert.dom('.dcp-platform-right-rail a[href="/s/hardware"]').exists();
+    assert.dom(".dcp-platform-right-rail").includesText("Hardware");
+    assert.dom('.dcp-platform-right-rail a[href="/c/hardware/4"]').exists();
     assert
       .dom(
         '.dcp-platform-trending-item__title[href="/t/cached-trending-discussion/91"]'
       )
       .hasText("A cached trending discussion");
     assert
-      .dom('.dcp-platform-trending-community[href="/s/gaming"]')
-      .includesText("s/gaming");
+      .dom('.dcp-platform-trending-community[href="/c/gaming/7"]')
+      .includesText("Gaming");
     assert.dom(".dcp-platform-trending-item__meta").includesText("23 score");
     assert.dom('[data-platform-feed="home"]').exists({ count: 2 });
     assert.dom('[data-platform-feed="home"]').hasClass("active");

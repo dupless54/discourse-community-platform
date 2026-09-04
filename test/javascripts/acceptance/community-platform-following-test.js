@@ -12,7 +12,7 @@ function followingPayload() {
         id: 4,
         name: "Hardware",
         slug: "hardware",
-        path: "/s/hardware",
+        path: "/c/hardware/4",
       },
     ],
     topics: [
@@ -39,7 +39,7 @@ function followingPayload() {
           id: 9,
           name: "Development",
           slug: "development",
-          path: "/s/development",
+          path: "/c/development/9",
         },
       },
       {
@@ -59,7 +59,7 @@ function followingPayload() {
           id: 4,
           name: "Hardware",
           slug: "hardware",
-          path: "/s/hardware",
+          path: "/c/hardware/4",
         },
       },
     ],
@@ -79,7 +79,7 @@ acceptance("Community Platform | Following page", function (needs) {
     await visit("/following");
 
     assert.dom(".dcp-feed-navigation").exists();
-    assert.dom('[data-feed="home"]').hasAttribute("href", "/home");
+    assert.dom('[data-feed="home"]').hasAttribute("href", "/");
     assert
       .dom('[data-feed="following"]')
       .hasClass("active")
@@ -95,6 +95,10 @@ acceptance("Community Platform | Following page", function (needs) {
       .dom(".dcp-home-card:first-child .dcp-topic-context__author")
       .hasText("@followed-user")
       .hasAttribute("href", "/u/followed-user");
+    assert
+      .dom(".dcp-home-card:first-child .dcp-feed-community-identity")
+      .includesText("Development")
+      .hasAttribute("href", "/c/development/9");
     assert
       .dom(".dcp-home-card:nth-child(2) .dcp-home-card__source")
       .hasText("Joined");
@@ -119,6 +123,7 @@ acceptance("Community Platform | guest Following page", function (needs) {
     await visit("/following");
 
     assert.dom(".dcp-feed-navigation").exists();
+    assert.dom('[data-feed="home"]').hasAttribute("href", "/");
     assert.dom('[data-feed="following"]').hasClass("active");
     assert.dom(".dcp-home-hero h1").hasText("Following");
     assert.dom(".dcp-home-card").doesNotExist();

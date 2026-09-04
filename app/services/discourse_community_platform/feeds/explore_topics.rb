@@ -15,7 +15,7 @@ module ::DiscourseCommunityPlatform
         communities =
           Community
             .where(category_id: topics_by_id.values.map(&:category_id), visibility: "public")
-            .includes(:icon_upload)
+            .includes(:category, :icon_upload)
             .index_by(&:category_id)
         joined_category_ids = joined_category_ids_for(@guardian.user)
         community_counts = Hash.new(0)

@@ -1,4 +1,5 @@
 import { LinkTo } from "@ember/routing";
+import { eq } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
 
 export default <template>
@@ -7,8 +8,13 @@ export default <template>
     aria-label={{i18n "community_platform.navigation.aria_label"}}
   >
     <LinkTo
-      @route="community-platform-home"
-      class="dcp-platform-navigation__link"
+      @route="discovery.index"
+      class={{if
+        (eq @section "home")
+        "dcp-platform-navigation__link active"
+        "dcp-platform-navigation__link"
+      }}
+      aria-current={{if (eq @section "home") "page"}}
       data-platform-feed="home"
     >
       <span class="dcp-platform-navigation__icon" aria-hidden="true">⌂</span>
@@ -17,7 +23,12 @@ export default <template>
 
     <LinkTo
       @route="community-platform-following"
-      class="dcp-platform-navigation__link"
+      class={{if
+        (eq @section "following")
+        "dcp-platform-navigation__link active"
+        "dcp-platform-navigation__link"
+      }}
+      aria-current={{if (eq @section "following") "page"}}
       data-platform-feed="following"
     >
       <span class="dcp-platform-navigation__icon" aria-hidden="true">◎</span>
@@ -26,7 +37,12 @@ export default <template>
 
     <LinkTo
       @route="community-platform-explore"
-      class="dcp-platform-navigation__link"
+      class={{if
+        (eq @section "explore")
+        "dcp-platform-navigation__link active"
+        "dcp-platform-navigation__link"
+      }}
+      aria-current={{if (eq @section "explore") "page"}}
       data-platform-feed="explore"
     >
       <span class="dcp-platform-navigation__icon" aria-hidden="true">◇</span>
@@ -35,7 +51,12 @@ export default <template>
 
     <LinkTo
       @route="community-platform-popular"
-      class="dcp-platform-navigation__link"
+      class={{if
+        (eq @section "popular")
+        "dcp-platform-navigation__link active"
+        "dcp-platform-navigation__link"
+      }}
+      aria-current={{if (eq @section "popular") "page"}}
       data-platform-feed="popular"
     >
       <span class="dcp-platform-navigation__icon" aria-hidden="true">↗</span>

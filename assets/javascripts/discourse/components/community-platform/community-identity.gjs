@@ -2,7 +2,7 @@ import Component from "@glimmer/component";
 
 export default class CommunityPlatformCommunityIdentity extends Component {
   get initial() {
-    return this.args.community?.name?.charAt(0).toUpperCase() || "S";
+    return this.args.community?.name?.charAt(0).toUpperCase() || "C";
   }
 
   <template>
@@ -22,7 +22,7 @@ export default class CommunityPlatformCommunityIdentity extends Component {
       </span>
       <span
         class="dcp-feed-community-identity__label"
-      >s/{{@community.slug}}</span>
+      >{{@community.name}}</span>
     </a>
   </template>
 }
