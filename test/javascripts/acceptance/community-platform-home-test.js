@@ -115,76 +115,69 @@ acceptance("Community Platform | personalized home page", function (needs) {
     });
   });
 
-  test(
-    "renders native category links, combined rich previews, and voting",
-    async function (assert) {
-      await visit("/home");
+  test("renders native home feed and voting", async function (assert) {
+    await visit("/home");
 
-      assert.dom(".dcp-feed-navigation").exists();
-      assert.dom('[data-feed="home"]').hasAttribute("href", "/");
-      assert.dom('[data-feed="following"]').hasAttribute("href", "/following");
-      assert.dom('[data-feed="popular"]').hasAttribute("href", "/popular");
-      assert.dom(".dcp-home-hero h1").hasText("Home");
-      assert
-        .dom(".dcp-home-community-chip")
-        .includesText("Hardware")
-        .hasAttribute("href", "/c/hardware/4");
-      assert.dom(".dcp-home-card").exists({ count: 3 });
-      assert
-        .dom(".dcp-home-card:first-child .dcp-home-card__title")
-        .hasText("A discussion from a joined community")
-        .hasAttribute("href", "/t/joined-discussion/301");
-      assert
-        .dom(".dcp-home-card:first-child .dcp-home-card__source")
-        .hasText("Joined");
-      assert
-        .dom(".dcp-home-card:first-child .dcp-topic-preview--excerpt")
-        .includesText("A bounded preview from the first post")
-        .hasAttribute("href", "/t/joined-discussion/301");
-      assert
-        .dom(".dcp-home-card:first-child .dcp-feed-action--discussion")
-        .includesText("9 posts")
-        .hasAttribute("href", "/t/joined-discussion/301");
-      assert
-        .dom(".dcp-home-card:first-child .dcp-feed-actions")
-        .includesText("180 views")
-        .includesText("12 likes");
-      assert
-        .dom(".dcp-home-card:nth-child(2) .dcp-home-card__source")
-        .hasText("Following");
-      assert
-        .dom(".dcp-home-card:nth-child(2) .dcp-topic-context__author")
-        .hasText("@followed-user")
-        .hasAttribute("href", "/u/followed-user");
-      assert
-        .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview--rich")
-        .hasAttribute("href", "/t/followed-discussion/303");
-      assert
-        .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__media img")
-        .hasAttribute("src", "/uploads/default/original/1X/followed-preview.png");
-      assert
-        .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__excerpt")
-        .includesText("The image and this bounded summary");
-      assert
-        .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__more")
-        .exists();
-      assert
-        .dom(".dcp-home-card:nth-child(3) .dcp-home-card__source")
-        .hasText("Popular");
-      assert
-        .dom(".dcp-home-card:nth-child(3) .dcp-topic-preview")
-        .doesNotExist();
+    assert.dom(".dcp-feed-navigation").exists();
+    assert.dom('[data-feed="home"]').hasAttribute("href", "/");
+    assert.dom('[data-feed="following"]').hasAttribute("href", "/following");
+    assert.dom('[data-feed="popular"]').hasAttribute("href", "/popular");
+    assert.dom(".dcp-home-hero h1").hasText("Home");
+    assert
+      .dom(".dcp-home-community-chip")
+      .includesText("Hardware")
+      .hasAttribute("href", "/c/hardware/4");
+    assert.dom(".dcp-home-card").exists({ count: 3 });
+    assert
+      .dom(".dcp-home-card:first-child .dcp-home-card__title")
+      .hasText("A discussion from a joined community")
+      .hasAttribute("href", "/t/joined-discussion/301");
+    assert
+      .dom(".dcp-home-card:first-child .dcp-home-card__source")
+      .hasText("Joined");
+    assert
+      .dom(".dcp-home-card:first-child .dcp-topic-preview--excerpt")
+      .includesText("A bounded preview from the first post")
+      .hasAttribute("href", "/t/joined-discussion/301");
+    assert
+      .dom(".dcp-home-card:first-child .dcp-feed-action--discussion")
+      .includesText("9 posts")
+      .hasAttribute("href", "/t/joined-discussion/301");
+    assert
+      .dom(".dcp-home-card:first-child .dcp-feed-actions")
+      .includesText("180 views")
+      .includesText("12 likes");
+    assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-home-card__source")
+      .hasText("Following");
+    assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-context__author")
+      .hasText("@followed-user")
+      .hasAttribute("href", "/u/followed-user");
+    assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview--rich")
+      .hasAttribute("href", "/t/followed-discussion/303");
+    assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__media img")
+      .hasAttribute("src", "/uploads/default/original/1X/followed-preview.png");
+    assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__excerpt")
+      .includesText("The image and this bounded summary");
+    assert
+      .dom(".dcp-home-card:nth-child(2) .dcp-topic-preview__more")
+      .exists();
+    assert
+      .dom(".dcp-home-card:nth-child(3) .dcp-home-card__source")
+      .hasText("Popular");
+    assert.dom(".dcp-home-card:nth-child(3) .dcp-topic-preview").doesNotExist();
 
-      await click(".dcp-home-card:first-child .dcp-vote-button--up");
+    await click(".dcp-home-card:first-child .dcp-vote-button--up");
 
-      assert
-        .dom(".dcp-home-card:first-child .dcp-home-card__score")
-        .hasText("8");
-      assert
-        .dom(".dcp-home-card:first-child .dcp-vote-button--up")
-        .hasAttribute("aria-pressed", "true");
-    }
-  );
+    assert.dom(".dcp-home-card:first-child .dcp-home-card__score").hasText("8");
+    assert
+      .dom(".dcp-home-card:first-child .dcp-vote-button--up")
+      .hasAttribute("aria-pressed", "true");
+  });
 });
 
 acceptance("Community Platform | guest home page", function (needs) {
