@@ -22,7 +22,7 @@ export default class CommunityPlatformShell extends Component {
   get hasDiscoveryRecommendations() {
     return Boolean(
       this.args.recommendedCommunities?.length ||
-        this.args.recommendedPeople?.length
+      this.args.recommendedPeople?.length
     );
   }
 
