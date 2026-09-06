@@ -314,10 +314,10 @@ acceptance("Community Platform | native Category Community", function (needs) {
       "502",
       "the existing cover attachment remains in the PATCH contract"
     );
-    assert.deepEqual(
-      lastTechnologyPatchBody.getAll("community[rules][]"),
-      ["First native rule", "Second native rule"]
-    );
+    assert.deepEqual(lastTechnologyPatchBody.getAll("community[rules][]"), [
+      "First native rule",
+      "Second native rule",
+    ]);
 
     assert
       .dom(".dcp-community-description")
