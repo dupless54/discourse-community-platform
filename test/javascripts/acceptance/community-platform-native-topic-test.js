@@ -1,4 +1,4 @@
-import { currentURL, settled, visit } from "@ember/test-helpers";
+import { click, currentURL, settled, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import DiscoveryFixtures from "discourse/tests/fixtures/discovery-fixtures";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
@@ -93,25 +93,19 @@ acceptance(
     });
 
     test("restores the correct Community surface across browser back and forward", async function (assert) {
-      await visit("/c/technology/2");
-
-      assert.dom(".dcp-native-community").exists();
-      assert.dom("[data-test-topic-community-context]").doesNotExist();
-
       await visit("/t/internationalization-localization/280/1");
 
       assert.dom(".dcp-native-community").doesNotExist();
       assert.dom("[data-test-topic-community-context]").exists();
       assert.dom("#topic .cooked").exists();
 
-      window.history.back();
-      await settled();
+      await click(".dcp-topic-community-context__name");
 
       assert.true(currentURL().startsWith("/c/technology/2"));
       assert.dom(".dcp-native-community").exists();
       assert.dom("[data-test-topic-community-context]").doesNotExist();
 
-      window.history.forward();
+      window.history.back();
       await settled();
 
       assert.strictEqual(
@@ -121,6 +115,13 @@ acceptance(
       assert.dom(".dcp-native-community").doesNotExist();
       assert.dom("[data-test-topic-community-context]").exists();
       assert.dom("#topic .cooked").exists();
+
+      window.history.forward();
+      await settled();
+
+      assert.true(currentURL().startsWith("/c/technology/2"));
+      assert.dom(".dcp-native-community").exists();
+      assert.dom("[data-test-topic-community-context]").doesNotExist();
     });
   }
 );
