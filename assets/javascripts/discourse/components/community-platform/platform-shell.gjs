@@ -19,6 +19,17 @@ export default class CommunityPlatformShell extends Component {
     return this.args.section === "explore";
   }
 
+  get hasDiscoveryRecommendations() {
+    return Boolean(
+      this.args.recommendedCommunities?.length ||
+        this.args.recommendedPeople?.length
+    );
+  }
+
+  get showDiscoveryRail() {
+    return this.isExplore || this.hasDiscoveryRecommendations;
+  }
+
   get sidebarCommunities() {
     return (this.args.communities || []).slice(0, 5);
   }
@@ -162,7 +173,7 @@ export default class CommunityPlatformShell extends Component {
               </section>
             {{/if}}
 
-            {{#if this.isExplore}}
+            {{#if this.showDiscoveryRail}}
               <ExploreDiscoveryRail
                 @recommendedCommunities={{@recommendedCommunities}}
                 @recommendedPeople={{@recommendedPeople}}
@@ -198,26 +209,28 @@ export default class CommunityPlatformShell extends Component {
             {{/if}}
 
             {{#unless this.isExplore}}
-              <section
-                class="dcp-platform-rail-card dcp-platform-rail-card--discover"
-              >
-                <h2>{{i18n "community_platform.explore.title"}}</h2>
-                <p>{{i18n "community_platform.explore.description"}}</p>
-                <div class="dcp-platform-rail-actions">
-                  <LinkTo
-                    @route="community-platform-explore"
-                    class="btn btn-default"
-                  >
-                    {{i18n "community_platform.explore.title"}}
-                  </LinkTo>
-                  <LinkTo
-                    @route="community-platform-popular"
-                    class="btn btn-default"
-                  >
-                    {{i18n "community_platform.popular.title"}}
-                  </LinkTo>
-                </div>
-              </section>
+              {{#unless this.hasDiscoveryRecommendations}}
+                <section
+                  class="dcp-platform-rail-card dcp-platform-rail-card--discover"
+                >
+                  <h2>{{i18n "community_platform.explore.title"}}</h2>
+                  <p>{{i18n "community_platform.explore.description"}}</p>
+                  <div class="dcp-platform-rail-actions">
+                    <LinkTo
+                      @route="community-platform-explore"
+                      class="btn btn-default"
+                    >
+                      {{i18n "community_platform.explore.title"}}
+                    </LinkTo>
+                    <LinkTo
+                      @route="community-platform-popular"
+                      class="btn btn-default"
+                    >
+                      {{i18n "community_platform.popular.title"}}
+                    </LinkTo>
+                  </div>
+                </section>
+              {{/unless}}
             {{/unless}}
           </div>
         </aside>
