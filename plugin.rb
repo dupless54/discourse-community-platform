@@ -48,6 +48,11 @@ after_initialize do
     get "/explore" => "discourse_community_platform/home#index"
     get "/popular" => "discourse_community_platform/home#index"
 
+    # Keep historical Community links working without maintaining a second
+    # public renderer. The controller applies the same Guardian category
+    # visibility boundary before issuing the permanent native Category redirect.
+    get "/s/:slug" => "discourse_community_platform/legacy_communities#show"
+
     mount ::DiscourseCommunityPlatform::Engine, at: "/community-platform"
   end
 end
