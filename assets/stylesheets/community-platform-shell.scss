@@ -238,6 +238,62 @@ body.dcp-platform-shell-active #main-outlet {
   background: var(--tertiary-low);
 }
 
+.dcp-platform-sidebar-communities {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--primary-low);
+}
+
+.dcp-platform-sidebar-communities__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.55rem;
+  padding: 0 0.45rem;
+}
+
+.dcp-platform-sidebar-communities__heading h2 {
+  margin: 0;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+  font-weight: 800;
+}
+
+.dcp-platform-sidebar-communities__heading span {
+  min-width: 1.75rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  background: var(--secondary);
+  color: var(--primary-medium);
+  font-size: var(--font-down-2);
+  font-weight: 700;
+  text-align: center;
+}
+
+.dcp-platform-sidebar-community-list {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.dcp-platform-sidebar-community {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  padding: 0.5rem 0.6rem;
+  border-radius: 10px;
+  color: var(--primary);
+  font-size: var(--font-down-1);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dcp-platform-sidebar-community:hover,
+.dcp-platform-sidebar-community:focus-visible {
+  background: var(--secondary);
+  color: var(--tertiary-high-or-tertiary);
+}
+
 .dcp-platform-content {
   min-width: 0;
 }
@@ -402,6 +458,40 @@ body.dcp-platform-shell-active #main-outlet {
   .dcp-platform-mobile-navigation .dcp-platform-navigation__icon {
     width: 22px;
     height: 22px;
+  }
+
+  .dcp-platform-mobile-communities {
+    margin-top: 0.55rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--primary-low);
+  }
+
+  .dcp-platform-mobile-community-list {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+    gap: 0.4rem;
+  }
+
+  .dcp-platform-mobile-community {
+    display: flex;
+    min-height: 34px;
+    flex: 0 0 auto;
+    align-items: center;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--primary-low);
+    border-radius: 999px;
+    background: var(--primary-very-low);
+    color: var(--primary);
+    font-size: var(--font-down-1);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .dcp-platform-mobile-community:hover,
+  .dcp-platform-mobile-community:focus-visible {
+    border-color: var(--tertiary-low-mid, var(--tertiary));
+    color: var(--tertiary-high-or-tertiary);
   }
 }
 
