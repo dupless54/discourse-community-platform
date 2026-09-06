@@ -5,7 +5,6 @@ import { service } from "@ember/service";
 import { on } from "@ember/modifier";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
-import CommunityIdentity from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/community-identity";
 import FeedActions from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-actions";
 import FeedNavigation from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/feed-navigation";
 import TopicContext from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/topic-context";
@@ -128,27 +127,6 @@ export default class CommunityPlatformHomePage extends Component {
           </a>
         {{/unless}}
       </header>
-
-      {{#if @joinedCommunities.length}}
-        <section
-          class="dcp-home-communities"
-          aria-label={{i18n "community_platform.home.joined_title"}}
-        >
-          <div class="dcp-home-communities__heading">
-            <h2>{{i18n "community_platform.home.joined_title"}}</h2>
-            <span>{{@joinedCommunities.length}}</span>
-          </div>
-
-          <div class="dcp-home-community-list">
-            {{#each @joinedCommunities as |community|}}
-              <CommunityIdentity
-                @community={{community}}
-                class="dcp-home-community-chip"
-              />
-            {{/each}}
-          </div>
-        </section>
-      {{/if}}
 
       {{#if this.errorMessage}}
         <div class="alert alert-error dcp-home-feedback" role="alert">
