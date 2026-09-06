@@ -48,10 +48,7 @@ acceptance("Community Platform | platform shell", function (needs) {
     assert.dom(".dcp-platform-sidebar").exists();
     assert
       .dom(".dcp-platform-sidebar-communities")
-      .hasAttribute(
-        "aria-label",
-        i18n("community_platform.home.joined_title")
-      );
+      .hasAttribute("aria-label", i18n("community_platform.home.joined_title"));
     assert
       .dom('.dcp-platform-sidebar-community[href="/c/hardware/4"]')
       .includesText("Hardware");
