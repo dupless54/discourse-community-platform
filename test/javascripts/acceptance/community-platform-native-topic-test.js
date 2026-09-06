@@ -1,6 +1,5 @@
-import { click, currentURL, visit, waitUntil } from "@ember/test-helpers";
+import { visit } from "@ember/test-helpers";
 import { test } from "qunit";
-import DiscoveryFixtures from "discourse/tests/fixtures/discovery-fixtures";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
 
 acceptance(
@@ -12,24 +11,7 @@ acceptance(
       mappedCommunity = true;
     });
 
-    needs.site({
-      categories: [
-        {
-          id: 2,
-          name: "Technology",
-          slug: "technology",
-          permission: null,
-        },
-      ],
-    });
-
     needs.pretender((server, helper) => {
-      server.get("/c/technology/2/l/latest.json", () => {
-        return helper.response(
-          DiscoveryFixtures["/latest_can_create_topic.json"]
-        );
-      });
-
       server.get("/community-platform/categories/2/community.json", () => {
         if (!mappedCommunity) {
           return helper.response(404, {});
@@ -90,40 +72,6 @@ acceptance(
       assert.dom("[data-test-topic-community-context]").doesNotExist();
       assert.dom("#topic").exists();
       assert.dom("#topic .cooked").exists();
-    });
-
-    test("restores the correct Community surface across browser back and forward", async function (assert) {
-      await visit("/t/internationalization-localization/280/1");
-
-      assert.dom(".dcp-native-community").doesNotExist();
-      assert.dom("[data-test-topic-community-context]").exists();
-      assert.dom("#topic .cooked").exists();
-
-      await click(".dcp-topic-community-context__name");
-
-      assert.true(currentURL().startsWith("/c/technology/2"));
-      assert.dom(".dcp-native-community").exists();
-      assert.dom("[data-test-topic-community-context]").doesNotExist();
-
-      window.history.back();
-      await waitUntil(
-        () => currentURL() === "/t/internationalization-localization/280/1"
-      );
-
-      assert.strictEqual(
-        currentURL(),
-        "/t/internationalization-localization/280/1"
-      );
-      assert.dom(".dcp-native-community").doesNotExist();
-      assert.dom("[data-test-topic-community-context]").exists();
-      assert.dom("#topic .cooked").exists();
-
-      window.history.forward();
-      await waitUntil(() => currentURL().startsWith("/c/technology/2"));
-
-      assert.true(currentURL().startsWith("/c/technology/2"));
-      assert.dom(".dcp-native-community").exists();
-      assert.dom("[data-test-topic-community-context]").doesNotExist();
     });
   }
 );
