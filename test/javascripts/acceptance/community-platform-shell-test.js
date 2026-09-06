@@ -46,8 +46,22 @@ acceptance("Community Platform | platform shell", function (needs) {
     assert.dom('.dcp-platform-shell[data-platform-section="home"]').exists();
     assert.dom(".dcp-platform-header").exists();
     assert.dom(".dcp-platform-sidebar").exists();
-    assert.dom(".dcp-platform-right-rail").includesText("Hardware");
-    assert.dom('.dcp-platform-right-rail a[href="/c/hardware/4"]').exists();
+    assert
+      .dom(".dcp-platform-sidebar-communities")
+      .hasAttribute(
+        "aria-label",
+        i18n("community_platform.home.joined_title")
+      );
+    assert
+      .dom('.dcp-platform-sidebar-community[href="/c/hardware/4"]')
+      .includesText("Hardware");
+    assert
+      .dom('.dcp-platform-mobile-community[href="/c/hardware/4"]')
+      .includesText("Hardware");
+    assert.dom(".dcp-home-communities").doesNotExist();
+    assert
+      .dom('.dcp-platform-right-rail a[href="/c/hardware/4"]')
+      .doesNotExist();
     assert
       .dom(
         '.dcp-platform-trending-item__title[href="/t/cached-trending-discussion/91"]'
