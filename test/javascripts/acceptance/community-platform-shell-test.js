@@ -19,6 +19,20 @@ acceptance("Community Platform | platform shell", function (needs) {
             path: "/c/hardware/4",
           },
         ],
+        recommended_communities: [
+          {
+            id: 8,
+            name: "Development",
+            slug: "development",
+            path: "/c/development/8",
+            description: "Build and ship software together",
+            members_count: 54,
+            recent_topics_count: 7,
+            icon_emoji: "🛠️",
+            icon_url: null,
+            can_join: true,
+          },
+        ],
         trending_topics: [
           {
             id: 91,
@@ -59,6 +73,15 @@ acceptance("Community Platform | platform shell", function (needs) {
     assert
       .dom('.dcp-platform-right-rail a[href="/c/hardware/4"]')
       .doesNotExist();
+    assert
+      .dom('.dcp-explore-discovery-community__link[href="/c/development/8"]')
+      .includesText("Development");
+    assert.dom(".dcp-explore-discovery-community__meta").includesText("54 members");
+    assert
+      .dom(".dcp-explore-discovery-community__meta")
+      .includesText("7 active topics");
+    assert.dom(".dcp-explore-community-card__join").hasText("Join");
+    assert.dom(".dcp-platform-rail-card--discover").doesNotExist();
     assert
       .dom(
         '.dcp-platform-trending-item__title[href="/t/cached-trending-discussion/91"]'
