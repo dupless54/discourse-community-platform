@@ -1,4 +1,6 @@
 import Component from "@glimmer/component";
+import { action } from "@ember/object";
+import didUpdate from "@ember/render-modifiers/modifiers/did-update";
 import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import AutomodPanel from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/automod-panel";
@@ -14,6 +16,16 @@ export default class NativeCategoryManagerTools extends Component {
 
   constructor(owner, args) {
     super(owner, args);
+    void this.load();
+  }
+
+  @action
+  communityChanged() {
+    this.automodRules = [];
+    this.automodExecutions = [];
+    this.moderationInsights = null;
+    this.activityAnalytics = null;
+    this.loaded = false;
     void this.load();
   }
 
@@ -60,25 +72,27 @@ export default class NativeCategoryManagerTools extends Component {
   }
 
   <template>
-    {{#if this.loaded}}
-      <div
-        class="dcp-native-community-manager-tools dcp-automod-page-panel"
-        data-test-native-community-manager-tools
-      >
-        {{#if this.activityAnalytics}}
-          <CommunityActivityInsights @analytics={{this.activityAnalytics}} />
-        {{/if}}
+    <div {{didUpdate this.communityChanged @community.slug}}>
+      {{#if this.loaded}}
+        <div
+          class="dcp-native-community-manager-tools dcp-automod-page-panel"
+          data-test-native-community-manager-tools
+        >
+          {{#if this.activityAnalytics}}
+            <CommunityActivityInsights @analytics={{this.activityAnalytics}} />
+          {{/if}}
 
-        {{#if this.moderationInsights}}
-          <ModerationInsights @insights={{this.moderationInsights}} />
-        {{/if}}
+          {{#if this.moderationInsights}}
+            <ModerationInsights @insights={{this.moderationInsights}} />
+          {{/if}}
 
-        <AutomodPanel
-          @community={{@community}}
-          @rules={{this.automodRules}}
-          @executions={{this.automodExecutions}}
-        />
-      </div>
-    {{/if}}
+          <AutomodPanel
+            @community={{@community}}
+            @rules={{this.automodRules}}
+            @executions={{this.automodExecutions}}
+          />
+        </div>
+      {{/if}}
+    </div>
   </template>
 }
