@@ -6,6 +6,7 @@ import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import bodyClass from "discourse/helpers/body-class";
 import { ajax } from "discourse/lib/ajax";
+import NativeCategoryManagerTools from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/native-category-manager-tools";
 import { i18n } from "discourse-i18n";
 
 export default class NativeCategoryCommunity extends Component {
@@ -236,6 +237,10 @@ export default class NativeCategoryCommunity extends Component {
               </ol>
             </section>
           </div>
+
+          {{#if this.community.can_manage}}
+            <NativeCategoryManagerTools @community={{this.community}} />
+          {{/if}}
         </div>
       {{/if}}
     </div>
