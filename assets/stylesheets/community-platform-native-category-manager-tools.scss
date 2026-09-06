@@ -1,9 +1,48 @@
+.dcp-native-community-management,
+.dcp-native-community-manager-tools {
+  margin-top: 1rem;
+}
+
+.dcp-native-community-management {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.dcp-management-form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.dcp-management-branding-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.9rem;
+}
+
+.dcp-branding-field {
+  min-width: 0;
+}
+
+.dcp-management-save {
+  width: max-content;
+}
+
 .dcp-native-community-manager-tools {
   display: grid;
   gap: 1rem;
-  margin-top: 1rem;
 }
 
 .dcp-native-community-manager-tools > * {
   min-width: 0;
+}
+
+@media (width <= 700px) {
+  .dcp-management-branding-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dcp-management-save {
+    width: 100%;
+    justify-content: center;
+  }
 }
