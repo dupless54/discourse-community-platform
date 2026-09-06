@@ -21,13 +21,22 @@ export default class NativeCategoryManagementForm extends Component {
   @tracked bannerUrl = null;
   @tracked rulesText = "";
 
+  managementCommunityId;
+
   constructor(owner, args) {
     super(owner, args);
+    this.managementCommunityId = args.community?.id;
     this.syncManagementForm(args.community);
   }
 
   @action
   communityChanged() {
+    const communityId = this.args.community?.id;
+    if (communityId === this.managementCommunityId) {
+      return;
+    }
+
+    this.managementCommunityId = communityId;
     this.errorMessage = null;
     this.savedMessage = null;
     this.saving = false;
