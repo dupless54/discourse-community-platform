@@ -210,7 +210,9 @@ export default class NativeCategoryManagementForm extends Component {
           </div>
 
           <div class="dcp-field dcp-branding-field">
-            <strong>{{i18n "community_platform.management.banner_image"}}</strong>
+            <strong>{{i18n
+                "community_platform.management.banner_image"
+              }}</strong>
             <UppyImageUploader
               @imageUrl={{this.bannerUrl}}
               @onUploadDone={{this.bannerUploadDone}}
