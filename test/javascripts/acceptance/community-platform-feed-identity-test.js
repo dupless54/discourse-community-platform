@@ -80,11 +80,13 @@ acceptance("Community Platform | Home community identity", function (needs) {
     await visit("/home");
 
     assert
-      .dom(".dcp-home-community-chip")
+      .dom(".dcp-platform-sidebar-community")
       .hasAttribute("href", "/c/hardware/17")
       .includesText("Hardware");
     assert
-      .dom(".dcp-home-community-chip .dcp-feed-community-identity__icon img")
+      .dom(
+        ".dcp-platform-sidebar-community .dcp-feed-community-identity__icon img"
+      )
       .hasAttribute("src", "/uploads/default/original/1X/hardware-logo.png");
     assert
       .dom(".dcp-home-card .dcp-feed-community-identity")
