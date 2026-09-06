@@ -1,4 +1,4 @@
-import { click, currentURL, settled, visit } from "@ember/test-helpers";
+import { click, currentURL, visit, waitUntil } from "@ember/test-helpers";
 import { test } from "qunit";
 import DiscoveryFixtures from "discourse/tests/fixtures/discovery-fixtures";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
@@ -106,7 +106,9 @@ acceptance(
       assert.dom("[data-test-topic-community-context]").doesNotExist();
 
       window.history.back();
-      await settled();
+      await waitUntil(
+        () => currentURL() === "/t/internationalization-localization/280/1"
+      );
 
       assert.strictEqual(
         currentURL(),
@@ -117,7 +119,7 @@ acceptance(
       assert.dom("#topic .cooked").exists();
 
       window.history.forward();
-      await settled();
+      await waitUntil(() => currentURL().startsWith("/c/technology/2"));
 
       assert.true(currentURL().startsWith("/c/technology/2"));
       assert.dom(".dcp-native-community").exists();
