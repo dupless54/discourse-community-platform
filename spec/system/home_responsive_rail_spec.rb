@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Responsive Home discovery rail" do
+describe "Responsive platform discovery rails" do
   fab!(:owner, :user)
   fab!(:viewer, :user)
   fab!(:category, :category_with_definition) do
@@ -33,7 +33,7 @@ describe "Responsive Home discovery rail" do
     Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_KEY)
   end
 
-  it "keeps Community recommendations visible at tablet and mobile widths" do
+  it "keeps Home Community recommendations visible at tablet and mobile widths" do
     sign_in(viewer)
 
     resize_window(width: 900, height: 900) do
@@ -55,6 +55,24 @@ describe "Responsive Home discovery rail" do
         ".dcp-explore-discovery-community__link",
         text: community.name,
       )
+    end
+  end
+
+  it "keeps Following and Popular discovery actions visible on narrow screens" do
+    sign_in(viewer)
+
+    [900, 500].each do |width|
+      resize_window(width:, height: 900) do
+        %w[following popular].each do |section|
+          visit("/#{section}")
+
+          expect(page).to have_css(
+            ".dcp-platform-shell[data-platform-section=\"#{section}\"]",
+          )
+          expect(page).to have_css(".dcp-platform-right-rail")
+          expect(page).to have_css(".dcp-platform-rail-card--discover")
+        end
+      end
     end
   end
 end
