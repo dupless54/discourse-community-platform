@@ -96,6 +96,22 @@ export default class CommunityPlatformShell extends Component {
 
         <div class="dcp-platform-mobile-navigation">
           <PlatformNavigation @section={{@section}} />
+
+          {{#if this.hasSidebarCommunities}}
+            <section
+              class="dcp-platform-mobile-communities"
+              aria-label={{i18n @sidebarHeadingKey}}
+            >
+              <div class="dcp-platform-mobile-community-list">
+                {{#each this.sidebarCommunities as |community|}}
+                  <CommunityIdentity
+                    @community={{community}}
+                    class="dcp-platform-mobile-community"
+                  />
+                {{/each}}
+              </div>
+            </section>
+          {{/if}}
         </div>
       </header>
 
@@ -103,6 +119,27 @@ export default class CommunityPlatformShell extends Component {
         <aside class="dcp-platform-sidebar">
           <div class="dcp-platform-sidebar__sticky">
             <PlatformNavigation @section={{@section}} />
+
+            {{#if this.hasSidebarCommunities}}
+              <section
+                class="dcp-platform-sidebar-communities"
+                aria-label={{i18n @sidebarHeadingKey}}
+              >
+                <div class="dcp-platform-sidebar-communities__heading">
+                  <h2>{{i18n @sidebarHeadingKey}}</h2>
+                  <span>{{this.sidebarCommunities.length}}</span>
+                </div>
+
+                <div class="dcp-platform-sidebar-community-list">
+                  {{#each this.sidebarCommunities as |community|}}
+                    <CommunityIdentity
+                      @community={{community}}
+                      class="dcp-platform-sidebar-community"
+                    />
+                  {{/each}}
+                </div>
+              </section>
+            {{/if}}
           </div>
         </aside>
 
@@ -161,20 +198,6 @@ export default class CommunityPlatformShell extends Component {
             {{/if}}
 
             {{#unless this.isExplore}}
-              {{#if this.hasSidebarCommunities}}
-                <section class="dcp-platform-rail-card">
-                  <h2>{{i18n @sidebarHeadingKey}}</h2>
-                  <div class="dcp-platform-rail-community-list">
-                    {{#each this.sidebarCommunities as |community|}}
-                      <CommunityIdentity
-                        @community={{community}}
-                        class="dcp-platform-rail-community"
-                      />
-                    {{/each}}
-                  </div>
-                </section>
-              {{/if}}
-
               <section
                 class="dcp-platform-rail-card dcp-platform-rail-card--discover"
               >
