@@ -1,53 +1,51 @@
 # frozen_string_literal: true
 
-RSpec.describe DiscourseCommunityPlatform::LegacyCommunitiesController do
+RSpec.describe "Legacy Community permalinks" do
   fab!(:owner, :user)
   fab!(:member, :user)
-  fab!(:private_group, :group)
-  fab!(:category, :category_with_definition) do
-    category = Fabricate(:category_with_definition)
-    category.set_permissions(everyone: :full)
-    category.save!
-    category
+
+  before do
+    SiteSetting.community_platform_allow_user_community_creation = true
+    SiteSetting.community_platform_min_trust_level_to_create = 0
+    SiteSetting.community_platform_max_communities_per_user = 10
   end
-  fab!(:community) do
-    DiscourseCommunityPlatform::Community.create!(
-      name: "Technology",
-      slug: "technology",
-      description: "Technology discussions",
-      category: category,
-      owner: owner,
-      visibility: "public",
+
+  def create_community(visibility: "public", slug: "technology")
+    DiscourseCommunityPlatform::Communities::Create.call(
+      user: owner,
+      params: { name: slug.titleize, slug:, visibility: },
     )
   end
 
   describe "GET /s/:slug" do
-    it "permanently redirects a visible Community to its native Category URL" do
+    it "creates a native category permalink and permanently redirects a visible Community" do
+      community = create_community
+
+      permalink = Permalink.find_by_url("/s/#{community.slug}")
+      expect(permalink&.category_id).to eq(community.category_id)
+
       get "/s/#{community.slug}"
 
       expect(response.status).to eq(301)
-      expect(response.location).to end_with(category.url)
+      expect(response.location).to end_with(community.category.url)
     end
 
-    it "does not reveal a Community when the current Guardian cannot see its Category" do
-      category.set_permissions(private_group => :full)
-      category.save!
+    it "does not reveal a private Community when the current Guardian cannot see its Category" do
+      community = create_community(visibility: "private", slug: "private-tech")
 
       get "/s/#{community.slug}"
 
       expect(response.status).to eq(404)
     end
 
-    it "redirects an authorized user for a private Category" do
-      category.set_permissions(private_group => :full)
-      category.save!
-      private_group.add(member)
-      sign_in(member)
+    it "redirects an authorized user for a private Community" do
+      community = create_community(visibility: "private", slug: "owner-tech")
+      sign_in(owner)
 
       get "/s/#{community.slug}"
 
       expect(response.status).to eq(301)
-      expect(response.location).to end_with(category.url)
+      expect(response.location).to end_with(community.category.url)
     end
 
     it "returns not found for an unknown legacy Community slug" do
