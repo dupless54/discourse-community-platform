@@ -170,6 +170,7 @@ export default class NativeCategoryManagementForm extends Component {
             rows="4"
             value={{this.description}}
             disabled={{this.saving}}
+            data-test-native-community-description
             {{on "input" this.updateDescription}}
           ></textarea>
         </label>
@@ -179,6 +180,7 @@ export default class NativeCategoryManagementForm extends Component {
           <select
             value={{this.visibility}}
             disabled={{this.saving}}
+            data-test-native-community-visibility
             {{on "change" this.updateVisibility}}
           >
             <option value="public">
@@ -229,6 +231,7 @@ export default class NativeCategoryManagementForm extends Component {
             type="text"
             value={{this.iconEmoji}}
             disabled={{this.saving}}
+            data-test-native-community-icon-emoji
             {{on "input" this.updateIconEmoji}}
           />
         </label>
@@ -239,6 +242,7 @@ export default class NativeCategoryManagementForm extends Component {
             type="text"
             value={{this.bannerColor}}
             disabled={{this.saving}}
+            data-test-native-community-banner-color
             {{on "input" this.updateBannerColor}}
           />
         </label>
@@ -249,6 +253,7 @@ export default class NativeCategoryManagementForm extends Component {
             rows="6"
             value={{this.rulesText}}
             disabled={{this.saving}}
+            data-test-native-community-rules
             {{on "input" this.updateRules}}
           ></textarea>
           <small>{{i18n "community_platform.management.rules_hint"}}</small>
@@ -258,6 +263,7 @@ export default class NativeCategoryManagementForm extends Component {
           type="submit"
           class="btn btn-primary dcp-management-save"
           disabled={{this.saving}}
+          data-test-native-community-save
         >
           {{#if this.saving}}
             {{i18n "community_platform.management.saving"}}
