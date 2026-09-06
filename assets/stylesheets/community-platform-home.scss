@@ -73,63 +73,6 @@
   flex: 0 0 auto;
 }
 
-.dcp-home-communities {
-  margin-bottom: 1rem;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--primary-low);
-  border-radius: 16px;
-  background: var(--secondary);
-}
-
-.dcp-home-communities__heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.7rem;
-}
-
-.dcp-home-communities__heading h2 {
-  margin: 0;
-  font-size: var(--font-up-1);
-}
-
-.dcp-home-communities__heading span {
-  min-width: 2rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  background: var(--primary-very-low);
-  color: var(--primary-medium);
-  font-size: var(--font-down-2);
-  font-weight: 700;
-  text-align: center;
-}
-
-.dcp-home-community-list {
-  display: flex;
-  overflow-x: auto;
-  gap: 0.5rem;
-  padding-bottom: 0.15rem;
-  scrollbar-width: thin;
-}
-
-.dcp-home-community-chip {
-  flex: 0 0 auto;
-  padding: 0.45rem 0.7rem;
-  border: 1px solid var(--primary-low);
-  border-radius: 999px;
-  background: var(--primary-very-low);
-  color: var(--primary);
-  font-size: var(--font-down-1);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.dcp-home-community-chip:hover {
-  border-color: var(--tertiary-low-mid, var(--tertiary));
-  color: var(--tertiary-high-or-tertiary);
-}
-
 .dcp-home-feedback {
   margin-bottom: 1rem;
 }
@@ -269,11 +212,6 @@
   .dcp-home-popular-link {
     width: 100%;
     justify-content: center;
-  }
-
-  .dcp-home-communities {
-    padding: 0.85rem;
-    border-radius: 13px;
   }
 
   .dcp-home-card {

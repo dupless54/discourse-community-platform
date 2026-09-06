@@ -124,9 +124,10 @@ acceptance("Community Platform | personalized home page", function (needs) {
     assert.dom('[data-feed="popular"]').hasAttribute("href", "/popular");
     assert.dom(".dcp-home-hero h1").hasText("Home");
     assert
-      .dom(".dcp-home-community-chip")
+      .dom(".dcp-platform-sidebar-community")
       .includesText("Hardware")
       .hasAttribute("href", "/c/hardware/4");
+    assert.dom(".dcp-home-communities").doesNotExist();
     assert.dom(".dcp-home-card").exists({ count: 3 });
     assert
       .dom(".dcp-home-card:first-child .dcp-home-card__title")
@@ -196,7 +197,8 @@ acceptance("Community Platform | guest home page", function (needs) {
     assert.dom(".dcp-feed-navigation").exists();
     assert.dom('[data-feed="home"]').hasAttribute("href", "/");
     assert.dom(".dcp-home-card").exists({ count: 1 });
-    assert.dom(".dcp-home-community-chip").doesNotExist();
+    assert.dom(".dcp-platform-sidebar-communities").doesNotExist();
+    assert.dom(".dcp-platform-mobile-communities").doesNotExist();
     assert.dom(".dcp-vote-button").doesNotExist();
     assert.dom(".dcp-home-card__source").hasText("Popular");
   });

@@ -10,7 +10,6 @@ export default <template>
   >
     <HomePage
       @topics={{@controller.model.topics}}
-      @joinedCommunities={{@controller.model.joinedCommunities}}
       @personalized={{@controller.model.personalized}}
     />
   </PlatformShell>
