@@ -50,9 +50,9 @@ acceptance(
         .dom(".dcp-topic-community-context__name")
         .hasText("Technology")
         .hasAttribute("href", "/c/technology/2");
-      assert.dom(".dcp-topic-community-context__description").hasText(
-        "Technology discussions"
-      );
+      assert
+        .dom(".dcp-topic-community-context__description")
+        .hasText("Technology discussions");
       assert
         .dom(".dcp-topic-community-context__meta")
         .includesText("Public")
