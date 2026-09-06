@@ -26,7 +26,9 @@ export default class NativeCategoryManagerTools extends Component {
 
     const slug = encodeURIComponent(communitySlug);
     const [rules, executions, insights, analytics] = await Promise.all([
-      this.safeFetch(`/community-platform/communities/${slug}/automod-rules.json`),
+      this.safeFetch(
+        `/community-platform/communities/${slug}/automod-rules.json`
+      ),
       this.safeFetch(
         `/community-platform/communities/${slug}/automod-executions.json`
       ),
@@ -45,8 +47,7 @@ export default class NativeCategoryManagerTools extends Component {
     this.automodRules = rules?.automod_rules || [];
     this.automodExecutions = executions?.automod_executions || [];
     this.moderationInsights = insights?.moderation_insights || null;
-    this.activityAnalytics =
-      analytics?.community_activity_analytics || null;
+    this.activityAnalytics = analytics?.community_activity_analytics || null;
     this.loaded = true;
   }
 
