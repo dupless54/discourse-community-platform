@@ -22,6 +22,7 @@ register_asset "stylesheets/community-platform-social-actions.scss"
 register_asset "stylesheets/community-platform-community-shell.scss"
 register_asset "stylesheets/community-platform-native-category-manager-tools.scss"
 register_asset "stylesheets/community-platform-explore-rail.scss"
+register_asset "stylesheets/community-platform-topic-context.scss"
 
 register_homepage(
   "community-home",
