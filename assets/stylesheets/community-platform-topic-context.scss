@@ -1,0 +1,120 @@
+.dcp-topic-community-context-container {
+  margin-top: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+.dcp-topic-community-context {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 16px;
+  background: var(--secondary);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 4%);
+}
+
+.dcp-topic-community-context__identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dcp-topic-community-context__icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--primary-low);
+  border-radius: 50%;
+  background: var(--primary-very-low);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.dcp-topic-community-context__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dcp-topic-community-context__copy {
+  min-width: 0;
+}
+
+.dcp-topic-community-context__copy .dcp-eyebrow {
+  margin: 0 0 0.15rem;
+}
+
+.dcp-topic-community-context__name {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 1.05rem;
+  font-weight: 750;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dcp-topic-community-context__description {
+  display: -webkit-box;
+  max-width: 58ch;
+  margin: 0.2rem 0 0;
+  overflow: hidden;
+  color: var(--primary-medium);
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.dcp-topic-community-context__meta {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+}
+
+.dcp-topic-community-context__open:focus-visible,
+.dcp-topic-community-context__name:focus-visible {
+  outline: 2px solid var(--tertiary);
+  outline-offset: 2px;
+}
+
+@media (width <= 700px) {
+  .dcp-topic-community-context {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dcp-topic-community-context__meta {
+    flex-wrap: wrap;
+  }
+
+  .dcp-topic-community-context__open {
+    margin-left: auto;
+  }
+}
+
+@media (width <= 430px) {
+  .dcp-topic-community-context-container {
+    margin-top: 0.55rem;
+  }
+
+  .dcp-topic-community-context {
+    padding: 0.75rem;
+    border-radius: 13px;
+  }
+
+  .dcp-topic-community-context__open {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
+}
