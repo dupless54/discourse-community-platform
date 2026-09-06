@@ -10,9 +10,13 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     SiteSetting.community_platform_min_trust_level_to_create = 1
     SiteSetting.community_platform_max_communities_per_user = 5
     Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_KEY)
   end
 
-  after { Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY) }
+  after do
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::PopularTopics::CACHE_KEY)
+    Discourse.cache.delete(DiscourseCommunityPlatform::Feeds::ExploreCommunities::CACHE_KEY)
+  end
 
   def create_community(name:, slug:)
     DiscourseCommunityPlatform::Communities::Create.call(
@@ -21,7 +25,7 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     )
   end
 
-  it "returns a personalized home payload for a signed-in community member" do
+  it "returns a personalized home payload with cached unjoined Community recommendations" do
     joined_community = create_community(name: "Hardware", slug: "hardware")
     popular_community = create_community(name: "Gaming", slug: "gaming")
     DiscourseCommunityPlatform::Memberships::Join.call(user: member, community: joined_community)
@@ -30,6 +34,7 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     popular_topic = Fabricate(:topic, category: popular_community.category, user: owner)
     DiscourseCommunityPlatform::Votes::Cast.call(user: voter, topic: popular_topic, value: 1)
     DiscourseCommunityPlatform::Feeds::PopularTopics.rebuild_cache
+    DiscourseCommunityPlatform::Feeds::ExploreCommunities.rebuild_cache
     sign_in(member)
 
     get "/community-platform/feeds/home.json"
@@ -44,6 +49,9 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["topics"].map { |topic| topic["id"] }).to include(popular_topic.id)
     expect(payload["topics"].first).not_to have_key("raw")
     expect(payload["topics"].first).not_to have_key("posts")
+    expect(payload["recommended_communities"].map { |community| community["slug"] }).to eq(
+      ["gaming"],
+    )
   end
 
   it "returns a non-personalized popular fallback to guests" do
@@ -58,6 +66,7 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     payload = response.parsed_body
     expect(payload["personalized"]).to eq(false)
     expect(payload["joined_communities"]).to eq([])
+    expect(payload["recommended_communities"]).to eq([])
     expect(payload["topics"].first["id"]).to eq(topic.id)
     expect(payload["topics"].first["feed_source"]).to eq("popular")
   end

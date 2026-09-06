@@ -5,12 +5,21 @@ module ::DiscourseCommunityPlatform
     requires_plugin PLUGIN_NAME
 
     TRENDING_LIMIT = 5
+    HOME_RECOMMENDATION_LIMIT = 4
 
     def home
       limit = params[:limit].presence || Feeds::HomeTopics::DEFAULT_LIMIT
       payload = Feeds::HomeTopics.call(guardian:, limit:)
 
-      render json: payload.merge(trending_topics: trending_topics)
+      render json:
+               payload.merge(
+                 recommended_communities:
+                   Feeds::ExploreCommunities.call(
+                     guardian:,
+                     limit: HOME_RECOMMENDATION_LIMIT,
+                   ),
+                 trending_topics: trending_topics,
+               )
     end
 
     def following
