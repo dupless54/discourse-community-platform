@@ -57,6 +57,7 @@ module("Integration | Component | NativeCategoryCommunity", function (hooks) {
     assert.dom(".dcp-community-action").hasText("Join");
     assert.dom(".dcp-rules-list li").exists({ count: 2 });
     assert.dom(".dcp-rules-list li:first-child").hasText("Be respectful");
+    assert.dom("[data-test-native-community-management]").doesNotExist();
     assert.dom("[data-test-native-community-manager-tools]").doesNotExist();
     assert.dom(document.body).hasClass("dcp-native-community-page");
   });

@@ -1,10 +1,12 @@
-import { visit } from "@ember/test-helpers";
+import { click, fillIn, select, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import DiscoveryFixtures from "discourse/tests/fixtures/discovery-fixtures";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
 
 acceptance("Community Platform | native Category Community", function (needs) {
   needs.user();
+
+  let lastTechnologyPatchBody;
 
   needs.site({
     categories: [
@@ -62,9 +64,11 @@ acceptance("Community Platform | native Category Community", function (needs) {
           owner_username: "owner",
           rules: ["Be respectful"],
           icon_emoji: "💻",
-          icon_url: null,
+          icon_upload_id: 501,
+          icon_url: "/uploads/default/original/1X/community-logo.png",
           banner_color: "112233",
-          banner_url: null,
+          banner_upload_id: 502,
+          banner_url: "/uploads/default/original/1X/community-cover.jpg",
           is_member: true,
           can_join: false,
           can_leave: false,
@@ -72,6 +76,38 @@ acceptance("Community Platform | native Category Community", function (needs) {
         },
       });
     });
+
+    server.patch(
+      "/community-platform/communities/technology.json",
+      (request) => {
+        lastTechnologyPatchBody = new URLSearchParams(request.requestBody);
+
+        return helper.response({
+          community: {
+            id: 1,
+            name: "Technology",
+            slug: "technology",
+            description: "Updated native description",
+            visibility: "restricted",
+            members_count: 42,
+            category_id: 7,
+            category_url: "/c/technology/7",
+            owner_username: "owner",
+            rules: ["First native rule", "Second native rule"],
+            icon_emoji: "🚀",
+            icon_upload_id: 501,
+            icon_url: "/uploads/default/original/1X/community-logo.png",
+            banner_color: "445566",
+            banner_upload_id: 502,
+            banner_url: "/uploads/default/original/1X/community-cover.jpg",
+            is_member: true,
+            can_join: false,
+            can_leave: false,
+            can_manage: true,
+          },
+        });
+      }
+    );
 
     server.get("/community-platform/categories/9/community.json", () => {
       return helper.response({
@@ -87,9 +123,11 @@ acceptance("Community Platform | native Category Community", function (needs) {
           owner_username: "owner",
           rules: ["Keep spoilers tagged"],
           icon_emoji: "🎮",
-          icon_url: null,
+          icon_upload_id: 601,
+          icon_url: "/uploads/default/original/1X/gaming-logo.png",
           banner_color: "334455",
-          banner_url: null,
+          banner_upload_id: 602,
+          banner_url: "/uploads/default/original/1X/gaming-cover.jpg",
           is_member: true,
           can_join: false,
           can_leave: false,
@@ -215,6 +253,9 @@ acceptance("Community Platform | native Category Community", function (needs) {
     assert.dom(".dcp-community-member-state").exists();
     assert.dom(".topic-list").exists();
     assert.dom(document.body).hasClass("dcp-native-community-page");
+    assert.dom("[data-test-native-community-management]").exists();
+    assert.dom("#dcp-native-community-logo-uploader").hasClass("has-image");
+    assert.dom("#dcp-native-community-banner-uploader").hasClass("has-image");
     assert.dom("[data-test-native-community-manager-tools]").exists();
     assert.dom("[data-test-community-activity-insights]").includesText("4");
     assert.dom("[data-test-moderation-insights]").exists();
@@ -223,9 +264,98 @@ acceptance("Community Platform | native Category Community", function (needs) {
     await visit("/c/general");
 
     assert.dom(".dcp-native-community").doesNotExist();
+    assert.dom("[data-test-native-community-management]").doesNotExist();
     assert.dom("[data-test-native-community-manager-tools]").doesNotExist();
     assert.dom(".topic-list").exists();
     assert.dom(document.body).doesNotHaveClass("dcp-native-community-page");
+  });
+
+  test("saves native Community settings and refreshes the visible Community state", async function (assert) {
+    lastTechnologyPatchBody = null;
+    await visit("/c/technology");
+
+    await fillIn(
+      "[data-test-native-community-description]",
+      "Updated native description"
+    );
+    await select("[data-test-native-community-visibility]", "restricted");
+    await fillIn("[data-test-native-community-icon-emoji]", "🚀");
+    await fillIn("[data-test-native-community-banner-color]", "445566");
+    await fillIn(
+      "[data-test-native-community-rules]",
+      "First native rule\nSecond native rule"
+    );
+    await click("[data-test-native-community-save]");
+
+    assert.ok(lastTechnologyPatchBody, "the manager PATCH request is sent");
+    assert.strictEqual(
+      lastTechnologyPatchBody.get("community[description]"),
+      "Updated native description"
+    );
+    assert.strictEqual(
+      lastTechnologyPatchBody.get("community[visibility]"),
+      "restricted"
+    );
+    assert.strictEqual(
+      lastTechnologyPatchBody.get("community[icon_emoji]"),
+      "🚀"
+    );
+    assert.strictEqual(
+      lastTechnologyPatchBody.get("community[banner_color]"),
+      "445566"
+    );
+    assert.strictEqual(
+      lastTechnologyPatchBody.get("community[icon_upload_id]"),
+      "501",
+      "the existing logo attachment remains in the PATCH contract"
+    );
+    assert.strictEqual(
+      lastTechnologyPatchBody.get("community[banner_upload_id]"),
+      "502",
+      "the existing cover attachment remains in the PATCH contract"
+    );
+    assert.deepEqual(lastTechnologyPatchBody.getAll("community[rules][]"), [
+      "First native rule",
+      "Second native rule",
+    ]);
+
+    assert
+      .dom(".dcp-community-description")
+      .hasText("Updated native description");
+    assert.dom(".dcp-community-slug").hasText("Restricted");
+    assert.dom(".dcp-rules-list li").exists({ count: 2 });
+    assert.dom(".dcp-rules-list li:first-child").hasText("First native rule");
+    assert
+      .dom("[data-test-native-community-management] [role='status']")
+      .includesText("Community settings saved");
+    assert.dom("#dcp-native-community-logo-uploader").hasClass("has-image");
+    assert.dom("#dcp-native-community-banner-uploader").hasClass("has-image");
+  });
+
+  test("resets unsaved manager form state between mapped Categories", async function (assert) {
+    await visit("/c/technology");
+
+    await fillIn(
+      "[data-test-native-community-description]",
+      "Unsaved technology draft"
+    );
+    await fillIn(
+      "[data-test-native-community-rules]",
+      "Unsaved technology rule"
+    );
+
+    await visit("/c/gaming");
+
+    assert.dom(".dcp-community-title-wrap h1").hasText("Gaming");
+    assert
+      .dom("[data-test-native-community-description]")
+      .hasValue("Gaming discussions");
+    assert
+      .dom("[data-test-native-community-rules]")
+      .hasValue("Keep spoilers tagged");
+    assert.dom("[data-test-native-community-visibility]").hasValue("public");
+    assert.dom("#dcp-native-community-logo-uploader").hasClass("has-image");
+    assert.dom("#dcp-native-community-banner-uploader").hasClass("has-image");
   });
 
   test("reloads manager data when navigating between mapped Categories", async function (assert) {
@@ -246,6 +376,7 @@ acceptance("Community Platform | native Category Community", function (needs) {
     await visit("/c/general");
 
     assert.dom(".dcp-native-community").doesNotExist();
+    assert.dom("[data-test-native-community-management]").doesNotExist();
     assert.dom("[data-test-native-community-manager-tools]").doesNotExist();
     assert.dom(".topic-list").exists();
     assert.dom(document.body).doesNotHaveClass("dcp-native-community-page");
