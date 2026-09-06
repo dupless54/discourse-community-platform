@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Native Community browser history", type: :system do
+describe "Native Community browser history" do
   fab!(:owner, :user)
   fab!(:category, :category_with_definition) do
     category = Fabricate(:category_with_definition, name: "Technology")
