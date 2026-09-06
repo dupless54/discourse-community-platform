@@ -23,6 +23,14 @@ module ::DiscourseCommunityPlatform
       render_serialized(find_visible_community, CommunitySerializer, root: :community)
     end
 
+    def show_by_category
+      render_serialized(
+        find_visible_community_by_category,
+        CommunitySerializer,
+        root: :community,
+      )
+    end
+
     def topics
       community = find_visible_community
       order = params[:order].presence || "hot"
@@ -79,18 +87,25 @@ module ::DiscourseCommunityPlatform
     end
 
     def find_visible_community
-      community =
-        Community
-          .includes(
-            :category,
-            :owner,
-            :member_group,
-            :moderator_group,
-            :icon_upload,
-            :banner_upload,
-          )
-          .find_by!(slug: params[:slug])
+      ensure_visible_community!(community_scope.find_by!(slug: params[:slug]))
+    end
 
+    def find_visible_community_by_category
+      ensure_visible_community!(community_scope.find_by!(category_id: params[:category_id]))
+    end
+
+    def community_scope
+      Community.includes(
+        :category,
+        :owner,
+        :member_group,
+        :moderator_group,
+        :icon_upload,
+        :banner_upload,
+      )
+    end
+
+    def ensure_visible_community!(community)
       # Do not reveal that a private/restricted community exists unless Discourse's
       # own category permission model allows the current guardian to see it.
       raise Discourse::NotFound unless guardian.can_see_category?(community.category)

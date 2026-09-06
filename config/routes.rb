@@ -4,6 +4,7 @@ DiscourseCommunityPlatform::Engine.routes.draw do
   scope "/", defaults: { format: :json } do
     post "communities" => "communities#create"
     get "communities/:slug" => "communities#show"
+    get "categories/:category_id/community" => "communities#show_by_category"
     get "communities/:slug/topics" => "communities#topics"
     patch "communities/:slug" => "communities#update"
     put "communities/:slug" => "communities#update"
