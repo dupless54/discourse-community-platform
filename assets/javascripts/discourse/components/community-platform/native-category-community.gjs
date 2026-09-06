@@ -6,6 +6,7 @@ import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import bodyClass from "discourse/helpers/body-class";
 import { ajax } from "discourse/lib/ajax";
+import NativeCategoryManagementForm from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/native-category-management-form";
 import NativeCategoryManagerTools from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/native-category-manager-tools";
 import { i18n } from "discourse-i18n";
 
@@ -47,6 +48,17 @@ export default class NativeCategoryCommunity extends Component {
 
     if (!this.args.community) {
       void this.loadCommunity();
+    }
+  }
+
+  @action
+  communityUpdated(community) {
+    if (
+      community?.category_id === this.args.category?.id &&
+      community?.slug === this.community?.slug
+    ) {
+      this.community = community;
+      this.errorMessage = null;
     }
   }
 
@@ -239,6 +251,10 @@ export default class NativeCategoryCommunity extends Component {
           </div>
 
           {{#if this.community.can_manage}}
+            <NativeCategoryManagementForm
+              @community={{this.community}}
+              @onCommunityUpdated={{this.communityUpdated}}
+            />
             <NativeCategoryManagerTools @community={{this.community}} />
           {{/if}}
         </div>
