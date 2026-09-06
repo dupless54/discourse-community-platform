@@ -22,6 +22,24 @@ describe "Native Community browser history" do
   fab!(:topic) { Fabricate(:topic, category:) }
   fab!(:post) { Fabricate(:post, topic:, raw: "Native Community history topic") }
 
+  let(:topic_list) { PageObjects::Components::TopicList.new }
+
+  it "loads a native Community Category directly and preserves Community context on Topic navigation" do
+    visit(category.url)
+
+    expect(page).to have_current_path(category.url, ignore_query: true)
+    expect(page).to have_css(".dcp-native-community")
+    expect(page).to have_no_css("[data-test-topic-community-context]")
+    expect(topic_list).to have_topic(topic)
+
+    topic_list.visit_topic(topic)
+
+    expect(page).to have_current_path(topic.url, ignore_query: true)
+    expect(page).to have_css("[data-test-topic-community-context]")
+    expect(page).to have_css("#topic .cooked", text: post.raw)
+    expect(page).to have_no_css(".dcp-native-community")
+  end
+
   it "restores native Topic and Category Community surfaces across back and forward" do
     visit(topic.url)
 
