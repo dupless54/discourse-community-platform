@@ -40,6 +40,12 @@ require_relative "lib/discourse_community_platform/engine"
 require_relative "lib/discourse_community_platform/community_authorization"
 
 after_initialize do
+  # Historical `/s/:slug` links must beat Discourse's Ember catch-all so direct
+  # HTTP requests receive the Guardian-gated permanent native Category redirect.
+  Discourse::Application.routes.prepend do
+    get "/s/:slug" => "discourse_community_platform/legacy_communities#show"
+  end
+
   Discourse::Application.routes.append do
     # `/home` remains the registered homepage implementation path. When the
     # `community-home` homepage option is selected, Discourse exposes it at `/`.
@@ -47,11 +53,6 @@ after_initialize do
     get "/following" => "discourse_community_platform/home#index"
     get "/explore" => "discourse_community_platform/home#index"
     get "/popular" => "discourse_community_platform/home#index"
-
-    # Keep historical Community links working without maintaining a second
-    # public renderer. The controller applies the same Guardian category
-    # visibility boundary before issuing the permanent native Category redirect.
-    get "/s/:slug" => "discourse_community_platform/legacy_communities#show"
 
     mount ::DiscourseCommunityPlatform::Engine, at: "/community-platform"
   end
