@@ -39,17 +39,25 @@ module ::DiscourseCommunityPlatform
           Permissions::Apply.call(category:, visibility:, member_group:, moderator_group:)
           CategoryModerationGroup.create!(category:, group: moderator_group)
 
-          Community.create!(
-            name:,
-            slug:,
-            description:,
-            visibility:,
-            category:,
-            owner: @user,
-            member_group:,
-            moderator_group:,
-            members_count: 1,
-          )
+          community =
+            Community.create!(
+              name:,
+              slug:,
+              description:,
+              visibility:,
+              category:,
+              owner: @user,
+              member_group:,
+              moderator_group:,
+              members_count: 1,
+            )
+
+          # Keep historical Community links on Discourse's native permalink path.
+          # Core PermalinksController applies Guardian visibility to category targets
+          # and returns the permanent redirect to the Category's canonical URL.
+          Permalink.create!(url: "s/#{slug}", category:)
+
+          community
         end
       end
 
