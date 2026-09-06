@@ -2,7 +2,6 @@
 
 RSpec.describe "Legacy Community permalinks" do
   fab!(:owner, :user)
-  fab!(:member, :user)
 
   before do
     SiteSetting.community_platform_allow_user_community_creation = true
@@ -48,10 +47,13 @@ RSpec.describe "Legacy Community permalinks" do
       expect(response.location).to end_with(community.category.url)
     end
 
-    it "returns not found for an unknown legacy Community slug" do
+    it "does not redirect an unknown legacy Community slug" do
+      expect(Permalink.find_by_url("/s/does-not-exist")).to be_nil
+
       get "/s/does-not-exist"
 
-      expect(response.status).to eq(404)
+      expect(response.status).to eq(200)
+      expect(response.headers["Location"]).to be_blank
     end
   end
 end

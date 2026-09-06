@@ -54,14 +54,11 @@ acceptance("Community Platform | legacy Community redirect", function (needs) {
     });
   });
 
-  test(
-    "replaces an old /s URL with the native Category route",
-    async function (assert) {
-      await visit("/s/technology");
+  test("replaces an old /s URL with the native Category route", async function (assert) {
+    await visit("/s/technology");
 
-      assert.strictEqual(currentURL(), "/c/technology/7");
-      assert.dom(".dcp-native-community").exists();
-      assert.dom(".dcp-community-title-wrap h1").hasText("Technology");
-    }
-  );
+    assert.strictEqual(currentURL(), "/c/technology/7");
+    assert.dom(".dcp-native-community").exists();
+    assert.dom(".dcp-community-title-wrap h1").hasText("Technology");
+  });
 });
