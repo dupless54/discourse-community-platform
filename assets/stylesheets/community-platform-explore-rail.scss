@@ -179,8 +179,10 @@
 @media (width <= 1040px) {
   .dcp-platform-shell[data-platform-section="explore"] .dcp-platform-right-rail,
   .dcp-platform-shell[data-platform-section="home"] .dcp-platform-right-rail,
-  .dcp-platform-shell[data-platform-section="following"] .dcp-platform-right-rail,
-  .dcp-platform-shell[data-platform-section="popular"] .dcp-platform-right-rail {
+  .dcp-platform-shell[data-platform-section="following"]
+    .dcp-platform-right-rail,
+  .dcp-platform-shell[data-platform-section="popular"]
+    .dcp-platform-right-rail {
     display: block;
     grid-column: 2;
     margin-top: 1rem;
@@ -206,8 +208,10 @@
 @media (width <= 820px) {
   .dcp-platform-shell[data-platform-section="explore"] .dcp-platform-right-rail,
   .dcp-platform-shell[data-platform-section="home"] .dcp-platform-right-rail,
-  .dcp-platform-shell[data-platform-section="following"] .dcp-platform-right-rail,
-  .dcp-platform-shell[data-platform-section="popular"] .dcp-platform-right-rail {
+  .dcp-platform-shell[data-platform-section="following"]
+    .dcp-platform-right-rail,
+  .dcp-platform-shell[data-platform-section="popular"]
+    .dcp-platform-right-rail {
     margin-top: 0.85rem;
   }
 }
