@@ -76,7 +76,9 @@ acceptance("Community Platform | platform shell", function (needs) {
     assert
       .dom('.dcp-explore-discovery-community__link[href="/c/development/8"]')
       .includesText("Development");
-    assert.dom(".dcp-explore-discovery-community__meta").includesText("54 members");
+    assert
+      .dom(".dcp-explore-discovery-community__meta")
+      .includesText("54 members");
     assert
       .dom(".dcp-explore-discovery-community__meta")
       .includesText("7 active topics");
