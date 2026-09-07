@@ -1,23 +1,17 @@
 # frozen_string_literal: true
 
 describe "Responsive Home rich topic previews" do
-  fab!(:owner, :user)
+  fab!(:owner, :admin)
   fab!(:viewer, :user)
-  fab!(:category, :category_with_definition) do
-    category = Fabricate(:category_with_definition, name: "Photography")
-    category.set_permissions(everyone: :full)
-    category.save!
-    category
-  end
   fab!(:community) do
-    DiscourseCommunityPlatform::Community.create!(
-      name: "Photography",
-      slug: "photography",
-      description: "Share photos and camera techniques",
-      category:,
-      owner:,
-      visibility: "public",
-      rules: ["Be constructive"],
+    DiscourseCommunityPlatform::Communities::Create.call(
+      user: owner,
+      params: {
+        name: "Photography",
+        slug: "photography",
+        description: "Share photos and camera techniques",
+        visibility: "public",
+      },
     )
   end
   fab!(:upload) do
@@ -30,7 +24,9 @@ describe "Responsive Home rich topic previews" do
       height: 800,
     )
   end
-  fab!(:topic) { Fabricate(:topic, category:, user: owner, image_upload: upload) }
+  fab!(:topic) do
+    Fabricate(:topic, category: community.category, user: owner, image_upload: upload)
+  end
   fab!(:post) do
     Fabricate(
       :post,
@@ -42,6 +38,7 @@ describe "Responsive Home rich topic previews" do
   end
 
   before do
+    community.update!(rules: ["Be constructive"])
     DiscourseCommunityPlatform::Memberships::Join.call(user: viewer, community:)
   end
 
