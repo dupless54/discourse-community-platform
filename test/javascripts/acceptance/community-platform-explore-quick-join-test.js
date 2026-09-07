@@ -3,6 +3,8 @@ import { test } from "qunit";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
 
 acceptance("Community Platform | Explore quick join", function (needs) {
+  let joinResponseStatus = 200;
+
   needs.user();
 
   needs.pretender((server, helper) => {
@@ -31,6 +33,10 @@ acceptance("Community Platform | Explore quick join", function (needs) {
     });
 
     server.post("/community-platform/communities/hardware/join.json", () => {
+      if (joinResponseStatus !== 200) {
+        return helper.response(joinResponseStatus, {});
+      }
+
       return helper.response({
         community: {
           id: 17,
@@ -45,7 +51,8 @@ acceptance("Community Platform | Explore quick join", function (needs) {
     });
   });
 
-  test("keeps one rail-owned join state while preserving separate navigation", async function (assert) {
+  test("keeps navigation and join as separate keyboard targets and announces success", async function (assert) {
+    joinResponseStatus = 200;
     await visit("/explore");
 
     assert.dom("[data-test-explore-discovery]").exists({ count: 1 });
@@ -59,12 +66,47 @@ acceptance("Community Platform | Explore quick join", function (needs) {
       .hasText("Join")
       .isNotDisabled();
 
+    const communityLink = document.querySelector(
+      ".dcp-explore-community-card__link"
+    );
+    const joinButton = document.querySelector(
+      ".dcp-explore-community-card__join"
+    );
+
+    assert.strictEqual(communityLink?.tagName, "A");
+    assert.strictEqual(joinButton?.tagName, "BUTTON");
+    assert.strictEqual(communityLink?.tabIndex, 0);
+    assert.strictEqual(joinButton?.tabIndex, 0);
+    assert.false(communityLink?.contains(joinButton));
+    assert.false(joinButton?.contains(communityLink));
+
     await click(".dcp-explore-community-card__join");
 
     assert.dom(".dcp-explore-community-card__join").doesNotExist();
-    assert.dom(".dcp-explore-community-card__joined").hasText("Joined");
+    assert
+      .dom(".dcp-explore-community-card__joined")
+      .hasText("Joined")
+      .hasAttribute("role", "status");
     assert.dom(".dcp-explore-community-card__meta").includesText("85 members");
     assert.dom(".dcp-explore-membership-error").doesNotExist();
     assert.dom("[data-test-explore-discovery]").exists({ count: 1 });
+  });
+
+  test("announces membership errors and restores the join control", async function (assert) {
+    joinResponseStatus = 500;
+    await visit("/explore");
+
+    await click(".dcp-explore-community-card__join");
+
+    assert
+      .dom(".dcp-explore-membership-error")
+      .exists({ count: 1 })
+      .hasAttribute("role", "alert");
+    assert
+      .dom(".dcp-explore-community-card__join")
+      .exists({ count: 1 })
+      .hasText("Join")
+      .isNotDisabled();
+    assert.dom(".dcp-explore-community-card__joined").doesNotExist();
   });
 });
