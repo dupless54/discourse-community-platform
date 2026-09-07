@@ -25,7 +25,7 @@ acceptance("Community Platform | interactive nesting", function (needs) {
       id: 4,
       name: "Hardware",
       slug: "hardware",
-      path: "/s/hardware",
+      path: "/c/hardware/4",
       icon_emoji: "🖥️",
       icon_url: null,
     };
@@ -85,5 +85,6 @@ acceptance("Community Platform | interactive nesting", function (needs) {
     assert.dom(".dcp-feed-action--discussion").exists();
     assert.dom(".dcp-platform-right-rail a").exists();
     assert.dom(NESTED_INTERACTIVE_SELECTOR).doesNotExist();
+    assert.dom('.dcp-platform-shell a[href^="/s/"]').doesNotExist();
   });
 });
