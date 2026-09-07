@@ -44,14 +44,17 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["order"]).to eq("home")
     expect(payload["personalized"]).to eq(true)
     expect(payload["joined_communities"].first["slug"]).to eq("hardware")
+    expect(payload["joined_communities"].first["path"]).to eq(joined_community.category.url)
     expect(payload["topics"].first["id"]).to eq(joined_topic.id)
     expect(payload["topics"].first["feed_source"]).to eq("joined")
+    expect(payload["topics"].first.dig("community", "path")).to eq(joined_community.category.url)
     expect(payload["topics"].map { |topic| topic["id"] }).to include(popular_topic.id)
     expect(payload["topics"].first).not_to have_key("raw")
     expect(payload["topics"].first).not_to have_key("posts")
     expect(payload["recommended_communities"].map { |community| community["slug"] }).to eq(
       ["gaming"],
     )
+    expect(payload["recommended_communities"].first["path"]).to eq(popular_community.category.url)
   end
 
   it "returns a non-personalized popular fallback to guests" do
@@ -69,5 +72,6 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["recommended_communities"]).to eq([])
     expect(payload["topics"].first["id"]).to eq(topic.id)
     expect(payload["topics"].first["feed_source"]).to eq("popular")
+    expect(payload["topics"].first.dig("community", "path")).to eq(community.category.url)
   end
 end

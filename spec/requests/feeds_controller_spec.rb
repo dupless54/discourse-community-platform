@@ -34,10 +34,14 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["order"]).to eq("popular")
     expect(payload["topics"].first["id"]).to eq(topic.id)
     expect(payload["topics"].first.dig("community", "slug")).to eq("technology")
+    expect(payload["topics"].first.dig("community", "path")).to eq(community.category.url)
     expect(payload["topics"].first).not_to have_key("raw")
     expect(payload["topics"].first).not_to have_key("posts")
     expect(payload["trending_topics"].first["id"]).to eq(topic.id)
     expect(payload["trending_topics"].first.dig("community", "slug")).to eq("technology")
+    expect(payload["trending_topics"].first.dig("community", "path")).to eq(
+      community.category.url,
+    )
     expect(payload["trending_topics"].first).not_to have_key("excerpt")
     expect(payload["trending_topics"].first).not_to have_key("author")
     expect(payload["trending_topics"].first).not_to have_key("user_vote")
@@ -68,10 +72,15 @@ RSpec.describe DiscourseCommunityPlatform::FeedsController do
     expect(payload["order"]).to eq("explore")
     expect(payload["personalized"]).to eq(false)
     expect(payload["recommended_communities"].first["id"]).to eq(community.id)
+    expect(payload["recommended_communities"].first["path"]).to eq(community.category.url)
     expect(payload["recommended_communities"].first["recent_topics_count"]).to eq(3)
     expect(payload["trending_topics"].first["id"]).to eq(topic.id)
+    expect(payload["trending_topics"].first.dig("community", "path")).to eq(
+      community.category.url,
+    )
     expect(payload["topics"].first["id"]).to eq(topic.id)
     expect(payload["topics"].first.dig("community", "slug")).to eq("gaming")
+    expect(payload["topics"].first.dig("community", "path")).to eq(community.category.url)
     expect(payload["topics"].first).not_to have_key("raw")
     expect(payload["topics"].first).not_to have_key("posts")
   end
