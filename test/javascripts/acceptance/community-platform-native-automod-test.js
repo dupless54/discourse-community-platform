@@ -125,6 +125,20 @@ acceptance(
     test("creates an AutoModerator rule from the native Category manager surface", async function (assert) {
       await visit("/c/technology/7");
 
+      assert
+        .dom("[data-test-community-activity-insights]")
+        .hasAttribute(
+          "aria-labelledby",
+          "dcp-community-activity-insights-title"
+        );
+      assert
+        .dom("[data-test-moderation-insights]")
+        .hasAttribute("aria-labelledby", "dcp-moderation-insights-title");
+      assert
+        .dom("[data-test-automod-region]")
+        .hasAttribute("role", "region")
+        .hasAttribute("aria-label", "AutoModerator");
+
       await fillIn('.dcp-automod-form input[type="text"]', "Scam links");
       await fillIn("[data-test-automod-max-account-age]", "7");
       await select("[data-test-automod-max-trust-level]", "0");
