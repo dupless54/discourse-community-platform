@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Community Platform feed query scaling" do
+RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
   fab!(:owner) { Fabricate(:user, trust_level: 1) }
   fab!(:member, :user)
 
@@ -61,7 +61,7 @@ RSpec.describe "Community Platform feed query scaling" do
     queries =
       track_sql_queries do
         payload =
-          DiscourseCommunityPlatform::Feeds::HomeTopics.call(
+          described_class.call(
             guardian: Guardian.new(member),
             limit: communities.length,
           )
