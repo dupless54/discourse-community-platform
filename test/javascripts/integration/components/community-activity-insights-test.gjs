@@ -40,18 +40,16 @@ module("Integration | Component | CommunityActivityInsights", function (hooks) {
     assert
       .dom(".dcp-community-activity-insights__table")
       .hasAttribute("role", "table")
-      .hasAttribute("aria-labelledby", "dcp-community-activity-insights-title");
-    assert.dom("[role='row']").exists({ count: 6 });
-    assert.dom("[role='columnheader']").exists({ count: 2 });
-    assert.dom("[role='rowheader']").exists({ count: 5 });
-    assert.dom("[role='cell']").exists({ count: 10 });
-    assert
-      .dom("[role='rowheader']")
+      .hasAttribute("aria-labelledby", "dcp-community-activity-insights-title")
       .includesText("New topics")
       .includesText("Posts")
       .includesText("Replies")
       .includesText("Active topics")
       .includesText("Contributors");
+    assert.dom("[role='row']").exists({ count: 6 });
+    assert.dom("[role='columnheader']").exists({ count: 2 });
+    assert.dom("[role='rowheader']").exists({ count: 5 });
+    assert.dom("[role='cell']").exists({ count: 10 });
   });
 
   test("exposes warming as a non-interactive status without a keyboard trap", async function (assert) {
@@ -69,6 +67,9 @@ module("Integration | Component | CommunityActivityInsights", function (hooks) {
     );
 
     const sentinel = document.querySelector("[data-test-focus-sentinel]");
+    const warmingStatus = document.querySelector(
+      ".dcp-community-activity-insights__warming"
+    );
     sentinel.focus();
 
     assert.strictEqual(document.activeElement, sentinel);
@@ -76,11 +77,13 @@ module("Integration | Component | CommunityActivityInsights", function (hooks) {
       .dom(".dcp-community-activity-insights__warming")
       .hasAttribute("role", "status")
       .doesNotHaveAttribute("tabindex")
-      .includesText("Activity analytics are warming up");
+      .hasText(
+        "Activity analytics are warming up. The next background rebuild will populate this panel."
+      );
     assert.strictEqual(
-      document
-        .querySelector(".dcp-community-activity-insights__warming")
-        .querySelectorAll("a, button, input, select, textarea, [tabindex]").length,
+      warmingStatus.querySelectorAll(
+        "a, button, input, select, textarea, [tabindex]"
+      ).length,
       0,
       "the asynchronous status introduces no keyboard targets"
     );
