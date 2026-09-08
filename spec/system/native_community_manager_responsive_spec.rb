@@ -81,4 +81,79 @@ describe "Native Community manager responsive surfaces" do
       ).to eq(1)
     end
   end
+
+  it "keeps branding upload controls keyboard operable with visible context on mobile" do
+    sign_in(owner)
+    image_file = file_from_fixtures("logo.png", "images")
+
+    resize_window(width: 500, height: 900) do
+      visit(community.category.url)
+
+      logo_selector = "#dcp-native-community-logo-uploader"
+      banner_selector = "#dcp-native-community-banner-uploader"
+
+      expect(page).to have_css(
+        ".dcp-branding-field strong",
+        text: I18n.t("js.community_platform.management.logo"),
+      )
+      expect(page).to have_css(
+        ".dcp-branding-field small",
+        text: I18n.t("js.community_platform.management.logo_hint"),
+      )
+      expect(page).to have_css(
+        ".dcp-branding-field strong",
+        text: I18n.t("js.community_platform.management.banner_image"),
+      )
+      expect(page).to have_css(
+        ".dcp-branding-field small",
+        text: I18n.t("js.community_platform.management.banner_image_hint"),
+      )
+
+      expect(page).to have_css(
+        "#{logo_selector} label.btn[tabindex='0']",
+        text: I18n.t("js.upload_selector.select_file"),
+      )
+      expect(page).to have_css(
+        "#{banner_selector} label.btn[tabindex='0']",
+        text: I18n.t("js.upload_selector.select_file"),
+      )
+
+      logo_uploader =
+        PageObjects::Components::UppyImageUploader.new(find(logo_selector))
+      banner_uploader =
+        PageObjects::Components::UppyImageUploader.new(find(banner_selector))
+
+      logo_uploader.select_image_with_keyboard(image_file.path)
+      expect(logo_uploader).to have_uploaded_image
+      expect(page).to have_css(
+        "#{logo_selector} label.btn[tabindex='0']",
+        text: I18n.t("js.upload_selector.change"),
+      )
+      expect(page).to have_css(
+        "#{logo_selector} .btn-danger",
+        text: I18n.t("js.upload_selector.delete"),
+      )
+
+      banner_uploader.select_image_with_keyboard(image_file.path)
+      expect(banner_uploader).to have_uploaded_image
+      expect(page).to have_css(
+        "#{banner_selector} label.btn[tabindex='0']",
+        text: I18n.t("js.upload_selector.change"),
+      )
+      expect(page).to have_css(
+        "#{banner_selector} .btn-danger",
+        text: I18n.t("js.upload_selector.delete"),
+      )
+
+      logo_uploader.remove_image_with_keyboard
+      expect(page).to have_no_css("#{logo_selector} .btn-danger")
+      expect(page).to have_css(
+        "#{logo_selector} label.btn[tabindex='0']",
+        text: I18n.t("js.upload_selector.select_file"),
+      )
+
+      expect_surface_within_viewport(logo_selector)
+      expect_surface_within_viewport(banner_selector)
+    end
+  end
 end
