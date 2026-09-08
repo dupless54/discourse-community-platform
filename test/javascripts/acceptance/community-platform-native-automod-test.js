@@ -127,7 +127,10 @@ acceptance(
 
       assert
         .dom("[data-test-community-activity-insights]")
-        .hasAttribute("aria-labelledby", "dcp-community-activity-insights-title");
+        .hasAttribute(
+          "aria-labelledby",
+          "dcp-community-activity-insights-title"
+        );
       assert
         .dom("[data-test-moderation-insights]")
         .hasAttribute("aria-labelledby", "dcp-moderation-insights-title");
