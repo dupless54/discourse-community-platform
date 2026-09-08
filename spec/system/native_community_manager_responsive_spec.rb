@@ -50,6 +50,10 @@ describe "Native Community manager responsive surfaces" do
     ).to eq(true)
   end
 
+  def focus_element(selector)
+    page.execute_script("document.querySelector(#{selector.to_json}).focus()")
+  end
+
   it "keeps scoped owner management usable without horizontal overflow on mobile" do
     expect(owner.admin?).to eq(false)
     expect(owner.moderator?).to eq(false)
@@ -154,6 +158,38 @@ describe "Native Community manager responsive surfaces" do
 
       expect_surface_within_viewport(logo_selector)
       expect_surface_within_viewport(banner_selector)
+    end
+  end
+
+  it "keeps the native management form keyboard operable on mobile" do
+    sign_in(owner)
+
+    resize_window(width: 500, height: 900) do
+      visit(community.category.url)
+
+      focus_element("[data-test-native-community-description]")
+      page.active_element.send_keys([:control, "a"], "Keyboard managed description")
+
+      focus_element("[data-test-native-community-visibility]")
+      page.active_element.send_keys(:down)
+      expect(find("[data-test-native-community-visibility]").value).to eq("restricted")
+
+      focus_element("[data-test-native-community-rules]")
+      page.active_element.send_keys([:control, "a"], "Keyboard rule one\nKeyboard rule two")
+      page.active_element.send_keys(:tab)
+
+      expect(page.active_element).to eq(find("[data-test-native-community-save]"))
+      page.active_element.send_keys(:enter)
+
+      expect(page).to have_css(
+        "[data-test-native-community-management] [role='status']",
+        text: I18n.t("js.community_platform.management.saved"),
+      )
+
+      community.reload
+      expect(community.description).to eq("Keyboard managed description")
+      expect(community.visibility).to eq("restricted")
+      expect(community.rules).to eq(["Keyboard rule one", "Keyboard rule two"])
     end
   end
 end
