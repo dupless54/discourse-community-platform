@@ -50,6 +50,10 @@ describe "Native Community manager responsive surfaces" do
     ).to eq(true)
   end
 
+  def focus_element(selector)
+    page.execute_script("document.querySelector(#{selector.to_json}).focus()")
+  end
+
   it "keeps scoped owner management usable without horizontal overflow on mobile" do
     expect(owner.admin?).to eq(false)
     expect(owner.moderator?).to eq(false)
@@ -163,27 +167,19 @@ describe "Native Community manager responsive surfaces" do
     resize_window(width: 500, height: 900) do
       visit(community.category.url)
 
-      description = find("[data-test-native-community-description]")
-      description.focus
-      description.send_keys([:control, "a"], "Keyboard managed description")
+      focus_element("[data-test-native-community-description]")
+      page.active_element.send_keys([:control, "a"], "Keyboard managed description")
 
-      visibility = find("[data-test-native-community-visibility]")
-      visibility.focus
-      visibility.send_keys(:arrow_down)
-      expect(visibility.value).to eq("restricted")
+      focus_element("[data-test-native-community-visibility]")
+      page.active_element.send_keys(:arrow_down)
+      expect(find("[data-test-native-community-visibility]").value).to eq("restricted")
 
-      rules = find("[data-test-native-community-rules]")
-      rules.focus
-      rules.send_keys([:control, "a"], "Keyboard rule one\nKeyboard rule two")
-      rules.send_keys(:tab)
+      focus_element("[data-test-native-community-rules]")
+      page.active_element.send_keys([:control, "a"], "Keyboard rule one\nKeyboard rule two")
+      page.active_element.send_keys(:tab)
 
-      expect(
-        page.evaluate_script(
-          'document.activeElement.matches("[data-test-native-community-save]")',
-        ),
-      ).to eq(true)
-
-      page.send_keys(:enter)
+      expect(page.active_element).to eq(find("[data-test-native-community-save]"))
+      page.active_element.send_keys(:enter)
 
       expect(page).to have_css(
         "[data-test-native-community-management] [role='status']",
