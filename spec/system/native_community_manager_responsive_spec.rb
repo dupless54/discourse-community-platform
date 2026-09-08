@@ -156,4 +156,44 @@ describe "Native Community manager responsive surfaces" do
       expect_surface_within_viewport(banner_selector)
     end
   end
+
+  it "keeps the native management form keyboard operable on mobile" do
+    sign_in(owner)
+
+    resize_window(width: 500, height: 900) do
+      visit(community.category.url)
+
+      description = find("[data-test-native-community-description]")
+      description.focus
+      description.send_keys([:control, "a"], "Keyboard managed description")
+
+      visibility = find("[data-test-native-community-visibility]")
+      visibility.focus
+      visibility.send_keys(:arrow_down)
+      expect(visibility.value).to eq("restricted")
+
+      rules = find("[data-test-native-community-rules]")
+      rules.focus
+      rules.send_keys([:control, "a"], "Keyboard rule one\nKeyboard rule two")
+      rules.send_keys(:tab)
+
+      expect(
+        page.evaluate_script(
+          'document.activeElement.matches("[data-test-native-community-save]")',
+        ),
+      ).to eq(true)
+
+      page.send_keys(:enter)
+
+      expect(page).to have_css(
+        "[data-test-native-community-management] [role='status']",
+        text: I18n.t("js.community_platform.management.saved"),
+      )
+
+      community.reload
+      expect(community.description).to eq("Keyboard managed description")
+      expect(community.visibility).to eq("restricted")
+      expect(community.rules).to eq(["Keyboard rule one", "Keyboard rule two"])
+    end
+  end
 end
