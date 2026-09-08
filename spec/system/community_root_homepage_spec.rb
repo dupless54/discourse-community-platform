@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Community platform root homepage" do
-  fab!(:viewer, :user)
-
   around do |example|
     original_homepage = SiteSetting.default_homepage
     SiteSetting.default_homepage = "community-home"
@@ -16,9 +14,7 @@ describe "Community platform root homepage" do
     Rails.application.reload_routes!
   end
 
-  it "renders Community Home at root and keeps primary Home navigation on root" do
-    sign_in(viewer)
-
+  it "renders the selected Community Home at root for anonymous visitors" do
     visit("/")
 
     expect(page).to have_current_path("/", ignore_query: true)
@@ -26,6 +22,18 @@ describe "Community platform root homepage" do
     expect(page).to have_css("[data-platform-feed=\"home\"][aria-current=\"page\"]")
     expect(page).to have_css("[data-platform-feed=\"home\"][href=\"/\"]", minimum: 1)
     expect(page).to have_no_css("[data-platform-feed=\"home\"][href=\"/home\"]")
+  end
+
+  it "keeps a member without a personal homepage override on Community Home" do
+    viewer = Fabricate(:user)
+    viewer.user_option.update!(homepage_id: nil)
+    sign_in(viewer)
+
+    visit("/")
+
+    expect(page).to have_current_path("/", ignore_query: true)
+    expect(page).to have_css(".dcp-platform-shell[data-platform-section=\"home\"]")
+    expect(page).to have_css("[data-platform-feed=\"home\"][aria-current=\"page\"]")
 
     first("[data-platform-feed=\"following\"]").click
 
