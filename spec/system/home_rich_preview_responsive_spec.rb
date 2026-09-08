@@ -49,6 +49,8 @@ describe "Responsive Home rich topic previews" do
         const rect = element.getBoundingClientRect();
 
         return {
+          top: rect.top,
+          bottom: rect.bottom,
           left: rect.left,
           right: rect.right,
           width: rect.width,
@@ -84,11 +86,15 @@ describe "Responsive Home rich topic previews" do
 
       expect(card["left"]).to be >= 0
       expect(card["right"]).to be <= viewport_width + 1
+      expect(vote["left"]).to be >= card["left"] - 1
+      expect(vote["right"]).to be <= card["right"] + 1
+      expect(content["left"]).to be >= card["left"] - 1
+      expect(content["right"]).to be <= card["right"] + 1
       expect(preview["left"]).to be >= 0
       expect(preview["right"]).to be <= viewport_width + 1
       expect(preview["scrollWidth"]).to be <= preview["clientWidth"] + 1
       expect(content["scrollWidth"]).to be <= content["clientWidth"] + 1
-      expect(vote["right"]).to be <= content["left"]
+      expect(vote["bottom"]).to be <= content["top"] + 1
     end
   end
 end
