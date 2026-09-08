@@ -6,6 +6,7 @@ import { ajax } from "discourse/lib/ajax";
 import AutomodPanel from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/automod-panel";
 import CommunityActivityInsights from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/community-activity-insights";
 import ModerationInsights from "discourse/plugins/discourse-community-platform/discourse/components/community-platform/moderation-insights";
+import { i18n } from "discourse-i18n";
 
 export default class NativeCategoryManagerTools extends Component {
   @tracked automodRules = [];
@@ -86,11 +87,17 @@ export default class NativeCategoryManagerTools extends Component {
             <ModerationInsights @insights={{this.moderationInsights}} />
           {{/if}}
 
-          <AutomodPanel
-            @community={{@community}}
-            @rules={{this.automodRules}}
-            @executions={{this.automodExecutions}}
-          />
+          <div
+            role="region"
+            aria-label={{i18n "community_platform.automod.title"}}
+            data-test-automod-region
+          >
+            <AutomodPanel
+              @community={{@community}}
+              @rules={{this.automodRules}}
+              @executions={{this.automodExecutions}}
+            />
+          </div>
         </div>
       {{/if}}
     </div>
