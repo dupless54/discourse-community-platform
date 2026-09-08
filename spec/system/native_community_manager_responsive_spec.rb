@@ -171,7 +171,7 @@ describe "Native Community manager responsive surfaces" do
       page.active_element.send_keys([:control, "a"], "Keyboard managed description")
 
       focus_element("[data-test-native-community-visibility]")
-      page.active_element.send_keys(:arrow_down)
+      page.active_element.send_keys(:down)
       expect(find("[data-test-native-community-visibility]").value).to eq("restricted")
 
       focus_element("[data-test-native-community-rules]")
