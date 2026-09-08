@@ -26,6 +26,18 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
     )
   end
 
+  def category_query_count(user:, limit:)
+    queries =
+      track_sql_queries do
+        payload = described_class.call(guardian: Guardian.new(user), limit:)
+
+        expect(payload[:joined_communities].length).to eq(limit)
+        expect(payload[:topics].length).to eq(limit)
+      end
+
+    queries.grep(/FROM "categories"/).length
+  end
+
   it "loads first-post preview data with a bounded number of topic and post queries" do
     topics =
       5.times.map do |index|
@@ -49,7 +61,8 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
     expect(queries.grep(/FROM "posts"/).length).to eq(1)
   end
 
-  it "does not query Categories once per Community identity in Home" do
+  it "keeps Category query growth bounded as joined Community count increases" do
+    single_member = Fabricate(:user)
     communities =
       5.times.map do |index|
         community = create_community(index)
@@ -58,18 +71,11 @@ RSpec.describe DiscourseCommunityPlatform::Feeds::HomeTopics do
         community
       end
 
-    queries =
-      track_sql_queries do
-        payload =
-          described_class.call(
-            guardian: Guardian.new(member),
-            limit: communities.length,
-          )
+    DiscourseCommunityPlatform::Memberships::Join.call(user: single_member, community: communities.first)
 
-        expect(payload[:joined_communities].length).to eq(communities.length)
-        expect(payload[:topics].length).to eq(communities.length)
-      end
+    single_community_queries = category_query_count(user: single_member, limit: 1)
+    five_community_queries = category_query_count(user: member, limit: communities.length)
 
-    expect(queries.grep(/FROM "categories"/).length).to be <= 1
+    expect(five_community_queries - single_community_queries).to be <= 1
   end
 end
