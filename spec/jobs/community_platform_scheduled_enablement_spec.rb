@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Community Platform scheduled job enablement" do
+RSpec.describe Jobs::DiscourseCommunityPlatform do
   around do |example|
     original_enabled = SiteSetting.community_platform_enabled
 
