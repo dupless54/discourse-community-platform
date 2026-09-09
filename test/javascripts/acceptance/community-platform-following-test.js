@@ -125,7 +125,7 @@ acceptance("Community Platform | empty Following page", function (needs) {
     await visit("/following");
 
     assert.dom(".dcp-home-card").doesNotExist();
-    assert.dom(".dcp-home-empty h2").hasText("Nothing here yet");
+    assert.dom(".dcp-home-empty h2").hasText("Nothing new from your network");
     assert
       .dom(".dcp-home-empty .btn-primary")
       .hasText("Open Home")
