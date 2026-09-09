@@ -106,6 +106,33 @@ acceptance("Community Platform | Following page", function (needs) {
   });
 });
 
+acceptance("Community Platform | empty Following page", function (needs) {
+  needs.user();
+
+  needs.pretender((server, helper) => {
+    server.get("/community-platform/feeds/following.json", () => {
+      return helper.response({
+        order: "following",
+        personalized: true,
+        login_required: false,
+        joined_communities: [],
+        topics: [],
+      });
+    });
+  });
+
+  test("links the signed-in empty state back to canonical Home", async function (assert) {
+    await visit("/following");
+
+    assert.dom(".dcp-home-card").doesNotExist();
+    assert.dom(".dcp-home-empty h2").hasText("Nothing here yet");
+    assert
+      .dom(".dcp-home-empty .btn-primary")
+      .hasText("Open Home")
+      .hasAttribute("href", "/");
+  });
+});
+
 acceptance("Community Platform | guest Following page", function (needs) {
   needs.pretender((server, helper) => {
     server.get("/community-platform/feeds/following.json", () => {
