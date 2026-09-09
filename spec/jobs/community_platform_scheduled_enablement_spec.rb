@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe Jobs::DiscourseCommunityPlatform do
-  around do |example|
-    original_enabled = SiteSetting.community_platform_enabled
-
-    begin
-      SiteSetting.community_platform_enabled = false
-      example.run
-    ensure
-      SiteSetting.community_platform_enabled = original_enabled
-    end
+  before do
+    @original_enabled = SiteSetting.community_platform_enabled
+    SiteSetting.community_platform_enabled = false
   end
+
+  after { SiteSetting.community_platform_enabled = @original_enabled }
 
   it "does not rebuild Explore recommendations while the plugin is disabled" do
     allow(DiscourseCommunityPlatform::Feeds::ExploreCommunities).to receive(:rebuild_cache)
