@@ -22,7 +22,7 @@ Use this checklist before publishing a Discourse Community Platform release cand
 - [ ] Plugin RSpec passes.
 - [ ] Ember Build passes.
 - [ ] Plugin QUnit passes.
-- [ ] System tests are either successful or explicitly skipped because the plugin has no applicable system-test suite.
+- [ ] Plugin System Tests run (are not skipped) and pass in real Chrome.
 - [ ] Any workflow step reported as `skipped` is recorded as skipped rather than being counted as a passing gate.
 
 ## 2. Staging install / upgrade and native-route smoke test
@@ -43,7 +43,7 @@ Run these checks on a non-production Discourse instance using the exact release-
 - [ ] Join and leave update the mapped member Group correctly.
 - [ ] An eligible signed-in user can join a recommended public Community directly from Explore and the returned member count is reflected without a page reload.
 - [ ] Guests and suspended/staged users are not offered Explore quick join; server-side membership checks remain authoritative.
-- [ ] Hot/new/top/rising ordering can be switched without a full-page failure.
+- [ ] The Community topic ranking API returns `hot`, `new`, `top`, and `rising` orderings with Guardian visibility preserved; RC3 does not require restoring the legacy `/s/:slug` order-control UI.
 - [ ] Upvote/downvote works for an authenticated user and does not replace Discourse likes/posts.
 
 ## 3. Rich feed preview and Community branding smoke test
@@ -109,7 +109,7 @@ For AutoModerator rules, audit history, moderation insights, and Community activ
 Check desktop, tablet, and mobile widths, including an iPad-class width with the Discourse sidebar behavior exercised.
 
 - [ ] Community title and major manager insight sections have usable accessible names.
-- [ ] Feed order controls are exposed as one named group, and each order button exposes its pressed state.
+- [ ] Any feed order controls present on the candidate are exposed as one named group, and each order button exposes its pressed state.
 - [ ] Vote buttons expose labels and pressed state.
 - [ ] Platform-shell account avatar/username and feed author avatar/username remain separate sibling profile links; no profile control nests one anchor inside another.
 - [ ] Navigation, Topic/Community links, vote controls, and Explore quick-join buttons do not nest interactive controls inside another interactive control.
