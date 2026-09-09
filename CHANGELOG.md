@@ -24,6 +24,7 @@ The project is still pre-stable. Until the first stable release, breaking change
 ### Fixed
 
 - Disabling `community_platform_enabled` now makes Popular, Explore recommendation, activity analytics, AutoModerator audit-pruning, and already-queued AutoModerator evaluation jobs no-op at execution time; re-enabling the plugin preserves existing Community mappings, Group membership, votes, and topic scores.
+- Legacy Community permalink backfill rollback is now explicitly irreversible instead of deleting matching Discourse `Permalink` rows whose migration provenance cannot be proven, preventing a pre-existing alias from being removed during rollback.
 - The signed-in empty Following state now links back to canonical Home `/` instead of exposing the `/home` compatibility URL.
 - Native Community and manager layouts remain width-bounded on constrained tablet/mobile viewports, including rich Home previews, branding upload controls, management fields, and discovery rails.
 
@@ -50,6 +51,8 @@ The project is still pre-stable. Until the first stable release, breaking change
 
 - Official Discourse Plugin CI now treats the real Chrome plugin system-test suite as a required RC gate alongside backend RSpec, frontend QUnit, annotations, Ember build, lint, formatting, and type checks.
 - Real Chrome regressions cover the registered root Community homepage, Home voting persistence, platform feed history, direct native Category → Topic navigation, native Category/Topic back-forward history, and the combined root Home → native Category → native Topic history chain.
+- Scheduled Community Platform jobs now have regression coverage for MiniScheduler registration, the default queue, and their exact configured cadences.
+- RC3 upgrade coverage verifies that the legacy permalink backfill preserves existing Community mappings and Group membership, votes and TopicScore aggregates, AutoModerator rules, and execution/audit history while adding only the missing compatibility alias.
 - Release documentation now reflects native `/c/...` Community pages and `/t/...` Topic pages as the active public product surfaces; `/s/:slug` and `/home` are compatibility/implementation paths rather than primary UI routes.
 
 ## [0.1.0-rc.2] - 2026-09-02
