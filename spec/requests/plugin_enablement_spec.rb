@@ -16,26 +16,25 @@ RSpec.describe "Community Platform enablement" do
   end
   fab!(:topic) { Fabricate(:topic, category: community.category, user: owner) }
 
-  around do |example|
-    original_enabled = SiteSetting.community_platform_enabled
-    original_homepage = SiteSetting.default_homepage
-
-    begin
-      SiteSetting.community_platform_enabled = true
-      SiteSetting.default_homepage = "community-home"
-      Site.clear_cache
-      example.run
-    ensure
-      SiteSetting.community_platform_enabled = original_enabled
-      SiteSetting.default_homepage = original_homepage
-      Site.clear_cache
-    end
-  end
-
   before do
+    @original_enabled = SiteSetting.community_platform_enabled
+    @original_homepage = SiteSetting.default_homepage
+
+    SiteSetting.community_platform_enabled = true
+    SiteSetting.default_homepage = "community-home"
+    Site.clear_cache
+    Rails.application.reload_routes!
+
     DiscourseCommunityPlatform::Memberships::Join.call(user: viewer, community:)
     DiscourseCommunityPlatform::Votes::Cast.call(user: viewer, topic:, value: 1)
     sign_in(viewer)
+  end
+
+  after do
+    SiteSetting.community_platform_enabled = @original_enabled
+    SiteSetting.default_homepage = @original_homepage
+    Site.clear_cache
+    Rails.application.reload_routes!
   end
 
   it "removes plugin surfaces while disabled and restores them without deleting Community data" do
@@ -58,6 +57,7 @@ RSpec.describe "Community Platform enablement" do
 
     SiteSetting.community_platform_enabled = false
     Site.clear_cache
+    Rails.application.reload_routes!
 
     expect(
       DiscoursePluginRegistry.homepage_options.any? { |option| option[:id] == "community-home" },
@@ -79,6 +79,7 @@ RSpec.describe "Community Platform enablement" do
 
     SiteSetting.community_platform_enabled = true
     Site.clear_cache
+    Rails.application.reload_routes!
 
     expect(
       DiscoursePluginRegistry.homepage_options.any? { |option| option[:id] == "community-home" },
