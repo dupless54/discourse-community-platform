@@ -106,9 +106,9 @@ The RC3 migration intentionally separates product presentation from content owne
 /t/<topic>/<id>       -> discussion page (native Discourse Topic)
 ```
 
-`/home` may remain temporarily as the registered homepage implementation/compatibility path, but primary navigation points to `/`. Legacy `/s/:slug` UI code is transitional only while Category-page management features are ported; new product work must not depend on it.
+`/home` may remain temporarily as the registered homepage implementation/compatibility path, but primary navigation points to `/`. Old `/s/:slug` links are compatibility-only: server-side Discourse permalinks handle direct loads and the small Ember redirect shim sends in-app legacy navigation to the mapped native Category. No active Community product UI should depend on `/s/:slug`.
 
-The next native-UI slices will enrich Category pages with Community hero/membership/rules/branding/manager tools and enrich Topic pages with Community context while retaining the native Discourse Post Stream and composer.
+Native Category pages now host Community hero, membership, rules, branding, and manager tooling through supported integration points. Native Topic pages retain the normal Discourse Post Stream and composer while adding Community context. Future product work should continue through those native surfaces rather than restoring a parallel Community route tree.
 
 ## Feed backend contracts
 
@@ -170,7 +170,7 @@ Management-only AutoModerator and analytics endpoints are marked `noindex, nofol
 
 - The product is pre-stable and the native Category/Topic visual integration is still being migrated.
 - `/home` remains a temporary registered-homepage implementation/compatibility route; real Home navigation targets `/`.
-- Legacy `/s/:slug` frontend code is temporary until native Category-page Community management reaches feature parity.
+- Legacy `/s/:slug` compatibility handling remains for old links, but active Community UI and navigation use the mapped native Category URL.
 - Feed topic images depend on Discourse's topic image/thumbnail pipeline and may briefly fall back to text before metadata is populated.
 - Activity/recommendation caches can briefly report a cold/warming state after restart until their scheduled jobs run.
 - Official Discourse Plugin CI runs the plugin's request/frontend checks and real Chrome system tests; release confidence still requires the staging checks in [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
@@ -186,12 +186,11 @@ Management-only AutoModerator and analytics endpoints are marked `noindex, nofol
 
 ## RC3 roadmap
 
-1. Complete native Category URL conversion and regression coverage.
+1. Keep native Category/Topic route integration and regression coverage green while retaining compatibility redirects for old `/s/:slug` links.
 2. Validate the Community registered homepage at real `/` in staging.
-3. Port Community hero, membership, rules, branding, AutoModerator, and analytics UI into supported native Category-page integration points.
-4. Integrate Community context into native `/t/...` Topic pages without replacing Post Stream/composer.
-5. Rework Home toward the approved Senin Community design: left navigation/Community list, center social topic cards/order controls, right trends/recommendations/about rail.
-6. Run install/upgrade, permission, performance, accessibility, desktop/tablet/mobile, and staging release gates before choosing an RC3 candidate.
+3. Rework Home toward the approved Senin Community design: left navigation/Community list, center social topic cards/order controls, right trends/recommendations/about rail.
+4. Complete remaining install/upgrade, permission, performance, accessibility, desktop/tablet/mobile, and staging release gates.
+5. Freeze an exact RC3 candidate only after those gates are ready, then update release metadata/changelog intentionally and run the final exact-head CI plus staging validation.
 
 ## License
 
