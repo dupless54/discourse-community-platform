@@ -65,12 +65,14 @@ RC3 direction:
 - Feed cards render a bounded excerpt even when a visible topic image exists; the image and text summary complement each other.
 - `/home` may remain as the registered homepage implementation/compatibility path during the migration, but primary navigation must point to `/`.
 - Legacy `/s/:slug` handling is compatibility-only for old links. Hard loads and in-app legacy navigation must resolve to the mapped native Category; do not add new features that depend on `/s/:slug` or restore a separate Community UI there.
+- The responsive Senin Community feed shell is already landed: desktop uses left navigation/joined-Community context, a center social topic feed, and a right discovery/trending rail; tablet/mobile preserve the same information without rendering duplicate rails.
+- Home has its own personalized `home` feed contract. Community `hot`/`new`/`top`/`rising` ordering is not a generic Home-order contract; do not copy those controls onto Home unless distinct Home ordering semantics are intentionally designed, implemented, and tested.
 
 Next slices:
 
 1. Keep native Category/Topic route integration, direct-load behavior, browser history, and permission regressions green while preserving compatibility redirects for old `/s/:slug` links.
 2. Validate the registered Community homepage at real `/` in staging and document the exact `default_homepage` deployment selection.
-3. Evolve the Home visual system toward the approved Senin Community layout: left navigation/community list, center social topic cards and order controls, right trends/recommendations/about rail.
+3. Polish and validate the landed Home visual system across desktop/tablet/mobile, including left Community navigation, center social topic cards, and right trends/recommendations. Add Home-specific order controls only if an explicit Home feed-order contract is approved; do not reuse Community ranking semantics implicitly.
 4. Close remaining high-value automated release gaps without duplicating coverage already enforced by request/service/Chrome regressions.
 5. Re-run desktop/tablet/mobile, permission, performance, accessibility, install/upgrade, and staging checks before selecting an exact RC3 candidate.
 6. Update changelog/version/release metadata only when that exact candidate is ready; then require exact-head CI plus staging before tagging or publishing.

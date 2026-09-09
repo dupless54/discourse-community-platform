@@ -168,7 +168,7 @@ Management-only AutoModerator and analytics endpoints are marked `noindex, nofol
 
 ## Known limitations during RC3 migration
 
-- The product is pre-stable and the native Category/Topic visual integration is still being migrated.
+- Native Category/Topic Community integration and the responsive three-column Community feed shell are implemented; exact visual fidelity and deployment behavior still require staging validation on the candidate revision.
 - `/home` remains a temporary registered-homepage implementation/compatibility route; real Home navigation targets `/`.
 - Legacy `/s/:slug` compatibility handling remains for old links, but active Community UI and navigation use the mapped native Category URL.
 - Feed topic images depend on Discourse's topic image/thumbnail pipeline and may briefly fall back to text before metadata is populated.
@@ -188,7 +188,7 @@ Management-only AutoModerator and analytics endpoints are marked `noindex, nofol
 
 1. Keep native Category/Topic route integration and regression coverage green while retaining compatibility redirects for old `/s/:slug` links.
 2. Validate the Community registered homepage at real `/` in staging.
-3. Rework Home toward the approved Senin Community design: left navigation/Community list, center social topic cards/order controls, right trends/recommendations/about rail.
+3. Polish and validate the landed Senin Community Home layout: left navigation/joined-Community list, center social topic cards, and right trends/recommendations rail. Home currently has its own personalized `home` feed semantics; do not reuse Community `hot`/`new`/`top`/`rising` ordering there unless a separate Home-order contract is intentionally designed and tested.
 4. Complete remaining install/upgrade, permission, performance, accessibility, desktop/tablet/mobile, and staging release gates.
 5. Freeze an exact RC3 candidate only after those gates are ready, then update release metadata/changelog intentionally and run the final exact-head CI plus staging validation.
 
