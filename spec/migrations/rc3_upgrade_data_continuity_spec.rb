@@ -6,7 +6,7 @@ require File.expand_path(
   __dir__,
 )
 
-RSpec.describe "RC3 upgrade data continuity" do
+RSpec.describe BackfillCommunityLegacyPermalinks do
   fab!(:owner) { Fabricate(:user, trust_level: 1) }
   fab!(:voter, :user)
   fab!(:author, :user)
@@ -74,7 +74,7 @@ RSpec.describe "RC3 upgrade data continuity" do
     Permalink.find_by_url("s/#{community.slug}").destroy!
     expect(Permalink.find_by_url("s/#{community.slug}")).to be_nil
 
-    BackfillCommunityLegacyPermalinks.new.up
+    described_class.new.up
 
     expect(community.reload.attributes).to eq(snapshots[:community])
     expect(vote.reload.attributes).to eq(snapshots[:vote])
