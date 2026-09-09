@@ -6,6 +6,52 @@ The project is still pre-stable. Until the first stable release, breaking change
 
 ## [Unreleased]
 
+### Added
+
+- Mapped Communities now enrich native Discourse `/c/...` Category pages with Community identity, branding, rules, membership state, and scoped management while preserving the native TopicList and Category behavior.
+- Community managers can use the existing management form, branding uploaders, AutoModerator controls, moderation insights, and activity analytics directly on the mapped native Category page without gaining global staff privileges.
+- Native `/t/...` Topic pages can show compact mapped Community context through a supported plugin outlet while leaving Discourse Post Stream, composer, bookmarks, notifications, moderation, and canonical Topic URLs intact.
+- Home can show a bounded set of cached, Guardian-filtered Community recommendations in the existing discovery rail without introducing request-time ranking work or a second recommendation store.
+- Joined Communities are available from the platform navigation rail on desktop and a horizontal navigation strip on narrower layouts, keeping the center column focused on topic content.
+
+### Changed
+
+- Public Community navigation is now pinned to native Discourse Category URLs, while Topic navigation remains on native `/t/...` URLs.
+- The registered `community-home` homepage is validated as the product Home at the real site root `/`; primary Home navigation and empty-state return actions now use `/`, while `/home` remains only as an implementation/compatibility path.
+- The standalone `/s/:slug` Community renderer has been retired. Historical aliases are handled by native Discourse permalinks and redirect to the mapped Category, with the Ember compatibility route remaining redirect-only for in-app legacy navigation.
+- Home, Following, Popular, and Explore retain their existing discovery/trend rails on tablet and mobile by moving the same rail below the feed rather than hiding it or rendering a duplicate copy.
+
+### Fixed
+
+- Disabling `community_platform_enabled` now makes Popular, Explore recommendation, activity analytics, AutoModerator audit-pruning, and already-queued AutoModerator evaluation jobs no-op at execution time; re-enabling the plugin preserves existing Community mappings, Group membership, votes, and topic scores.
+- The signed-in empty Following state now links back to canonical Home `/` instead of exposing the `/home` compatibility URL.
+- Native Community and manager layouts remain width-bounded on constrained tablet/mobile viewports, including rich Home previews, branding upload controls, management fields, and discovery rails.
+
+### Security and privacy
+
+- Legacy `/s/:slug` redirects use Discourse `Permalink` records and core Category visibility checks, so private Community aliases do not disclose inaccessible destinations.
+- Native Category Community lookup and native Topic Community context continue to resolve behind the current Guardian Category boundary; unmapped or invisible Categories fail soft without Community UI.
+- Plugin shutdown now prevents stale scheduled or queued plugin-owned moderation/cache work from continuing after the enablement setting is turned off.
+
+### Accessibility and responsive UI
+
+- Native Community manager tools remain keyboard-usable on narrow mobile layouts, including management-form submission and Discourse `UppyImageUploader` logo/cover selection and removal.
+- Explore quick join keeps Category navigation and membership actions as separate keyboard targets, announces successful joins with status semantics, and reports failures through an alert.
+- Activity Insights, Moderation Insights, and AutoModerator manager regions expose usable accessible names and preserve existing table/status semantics.
+- Native Topic Community links remain keyboard reachable while Discourse's normal Reply action continues to open the core composer with the native Post Stream intact.
+- Real-browser responsive regressions cover native Category/Topic Community surfaces and Home/Following/Popular/Explore layouts at constrained tablet and mobile widths.
+
+### Performance
+
+- Feed query-scaling regressions enforce bounded first-post preview loading and prevent joined-Community Category hydration from regressing into per-topic or per-community N+1 query growth.
+- Home Community recommendations continue to reuse the scheduled Explore recommendation cache and remain bounded instead of rebuilding ranking signals during requests.
+
+### Development and release quality
+
+- Official Discourse Plugin CI now treats the real Chrome plugin system-test suite as a required RC gate alongside backend RSpec, frontend QUnit, annotations, Ember build, lint, formatting, and type checks.
+- Real Chrome regressions cover the registered root Community homepage, Home voting persistence, platform feed history, direct native Category → Topic navigation, native Category/Topic back-forward history, and the combined root Home → native Category → native Topic history chain.
+- Release documentation now reflects native `/c/...` Community pages and `/t/...` Topic pages as the active public product surfaces; `/s/:slug` and `/home` are compatibility/implementation paths rather than primary UI routes.
+
 ## [0.1.0-rc.2] - 2026-09-02
 
 ### Added
