@@ -173,7 +173,7 @@ Management-only AutoModerator and analytics endpoints are marked `noindex, nofol
 - Legacy `/s/:slug` frontend code is temporary until native Category-page Community management reaches feature parity.
 - Feed topic images depend on Discourse's topic image/thumbnail pipeline and may briefly fall back to text before metadata is populated.
 - Activity/recommendation caches can briefly report a cold/warming state after restart until their scheduled jobs run.
-- The current Official Discourse Plugin CI has no applicable plugin system-test suite; release confidence also requires the staging checks in [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
+- Official Discourse Plugin CI runs the plugin's request/frontend checks and real Chrome system tests; release confidence still requires the staging checks in [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
 
 ## Release process
 
@@ -187,7 +187,7 @@ Management-only AutoModerator and analytics endpoints are marked `noindex, nofol
 ## RC3 roadmap
 
 1. Complete native Category URL conversion and regression coverage.
-2. Validate the Community registered homepage at real `/`.
+2. Validate the Community registered homepage at real `/` in staging.
 3. Port Community hero, membership, rules, branding, AutoModerator, and analytics UI into supported native Category-page integration points.
 4. Integrate Community context into native `/t/...` Topic pages without replacing Post Stream/composer.
 5. Rework Home toward the approved Senin Community design: left navigation/Community list, center social topic cards/order controls, right trends/recommendations/about rail.
