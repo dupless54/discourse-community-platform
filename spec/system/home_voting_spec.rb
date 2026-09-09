@@ -15,7 +15,14 @@ describe "Community Home voting" do
     )
   end
   fab!(:topic) { Fabricate(:topic, category: community.category, user: owner) }
-  fab!(:post) { Fabricate(:post, topic:, user: owner, raw: "Voting must not replace Discourse posts or likes.") }
+  fab!(:post) do
+    Fabricate(
+      :post,
+      topic:,
+      user: owner,
+      raw: "Voting must not replace Discourse posts or likes.",
+    )
+  end
 
   before { DiscourseCommunityPlatform::Memberships::Join.call(user: viewer, community:) }
 
