@@ -201,7 +201,7 @@ export default class CommunityPlatformHomePage extends Component {
                   {{i18n "community_platform.following.log_in"}}
                 </a>
               {{else}}
-                <a class="btn btn-primary" href="/home">
+                <a class="btn btn-primary" href="/">
                   {{i18n "community_platform.following.open_home"}}
                 </a>
               {{/if}}
