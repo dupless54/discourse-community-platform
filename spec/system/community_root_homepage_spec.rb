@@ -23,6 +23,7 @@ describe "Community platform root homepage" do
     visit("/")
 
     expect(page).to have_current_path("/", ignore_query: true)
+    expect_platform_shell_active
     expect(page).to have_css(
       "meta[name=\"discourse_current_homepage\"][content=\"community-home\"]",
       visible: false,
@@ -46,6 +47,7 @@ describe "Community platform root homepage" do
     visit("/")
 
     expect(page).to have_current_path("/", ignore_query: true)
+    expect_platform_shell_active
     expect(page).to have_css(
       "meta[name=\"discourse_current_homepage\"][content=\"community-home\"]",
       visible: false,
@@ -56,11 +58,13 @@ describe "Community platform root homepage" do
     first("[data-platform-feed=\"following\"]").click
 
     expect(page).to have_current_path("/following", ignore_query: true)
+    expect_platform_shell_active
     expect(page).to have_css(".dcp-platform-shell[data-platform-section=\"following\"]")
 
     first("[data-platform-feed=\"home\"]").click
 
     expect(page).to have_current_path("/", ignore_query: true)
+    expect_platform_shell_active
     expect(page).to have_css(".dcp-platform-shell[data-platform-section=\"home\"]")
     expect(page).to have_css("[data-platform-feed=\"home\"][aria-current=\"page\"]")
   end
@@ -76,5 +80,13 @@ describe "Community platform root homepage" do
       server_side: false,
     )
     expect(HomepageSiteSetting.choices).to include("community-home")
+  end
+
+  def expect_platform_shell_active
+    expect(
+      page.evaluate_script(
+        'document.body.classList.contains("dcp-platform-shell-active")',
+      ),
+    ).to eq(true)
   end
 end
