@@ -59,21 +59,21 @@ RC3 direction:
 - The real Discourse homepage `/` is the Community feed. The plugin's registered `community-home` homepage is the implementation surface selected through Discourse's supported homepage mechanism.
 - User-facing Community links use the mapped native Discourse Category URL instead of `/s/:slug`.
 - Topic cards continue to link to the real Discourse `/t/...` topic URL. Do not create a parallel discussion URL.
-- Native Category pages are progressively styled/enriched as Community pages instead of maintaining a separate Community route tree.
-- Native Topic pages are progressively integrated into the Community shell while keeping Discourse Post Stream, composer, permissions, notifications, moderation, search, and SEO intact.
+- Native Category pages host Community hero, membership, rules, branding, and manager tooling through supported Discourse integration points; continue new Community-page work there instead of recreating a separate route tree.
+- Native Topic pages can add Community context while keeping Discourse Post Stream, composer, permissions, notifications, moderation, search, and SEO intact.
 - Product language and visuals should be original Community UX, not Reddit-specific prefixes or cloning.
 - Feed cards render a bounded excerpt even when a visible topic image exists; the image and text summary complement each other.
 - `/home` may remain as the registered homepage implementation/compatibility path during the migration, but primary navigation must point to `/`.
-- Legacy `/s/:slug` code is transitional only. Do not add new features that depend on it; remove it after native Category management/community UI reaches parity.
+- Legacy `/s/:slug` handling is compatibility-only for old links. Hard loads and in-app legacy navigation must resolve to the mapped native Category; do not add new features that depend on `/s/:slug` or restore a separate Community UI there.
 
 Next slices:
 
-1. Finish native Category URL conversion and exact-head regression coverage.
-2. Validate the registered Community homepage at real `/` in staging and document the `default_homepage` selection.
-3. Port Community hero, membership, rules, branding, manager tools, AutoModerator, and analytics into supported native Category-page integration points.
-4. Integrate Community context into native `/t/...` topic pages without replacing Discourse Post Stream/composer.
-5. Evolve the Home visual system toward the approved Senin Community layout: left navigation/community list, center social topic cards and order controls, right trends/recommendations/about rail.
-6. Re-run desktop/tablet/mobile, permission, performance, accessibility, install/upgrade, and release checks before selecting an RC3 candidate.
+1. Keep native Category/Topic route integration, direct-load behavior, browser history, and permission regressions green while preserving compatibility redirects for old `/s/:slug` links.
+2. Validate the registered Community homepage at real `/` in staging and document the exact `default_homepage` deployment selection.
+3. Evolve the Home visual system toward the approved Senin Community layout: left navigation/community list, center social topic cards and order controls, right trends/recommendations/about rail.
+4. Close remaining high-value automated release gaps without duplicating coverage already enforced by request/service/Chrome regressions.
+5. Re-run desktop/tablet/mobile, permission, performance, accessibility, install/upgrade, and staging checks before selecting an exact RC3 candidate.
+6. Update changelog/version/release metadata only when that exact candidate is ready; then require exact-head CI plus staging before tagging or publishing.
 
 ## SEO contract
 
