@@ -6,6 +6,8 @@ module Jobs
       every 10.minutes
 
       def execute(_args = {})
+        return unless SiteSetting.community_platform_enabled
+
         ::DiscourseCommunityPlatform::Feeds::ExploreCommunities.rebuild_cache
       end
     end

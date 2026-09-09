@@ -32,4 +32,18 @@ RSpec.describe Jobs::DiscourseCommunityPlatform::EvaluateAutomodPost do
 
     expect(DiscourseCommunityPlatform::Automod::EvaluatePost).not_to have_received(:call)
   end
+
+  it "does not evaluate an already queued post after the plugin is disabled" do
+    original_enabled = SiteSetting.community_platform_enabled
+    allow(DiscourseCommunityPlatform::Automod::EvaluatePost).to receive(:call)
+
+    begin
+      SiteSetting.community_platform_enabled = false
+      described_class.new.execute(post_id: post.id)
+
+      expect(DiscourseCommunityPlatform::Automod::EvaluatePost).not_to have_received(:call)
+    ensure
+      SiteSetting.community_platform_enabled = original_enabled
+    end
+  end
 end
