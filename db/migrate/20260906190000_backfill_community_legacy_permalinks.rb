@@ -19,11 +19,6 @@ class BackfillCommunityLegacyPermalinks < ActiveRecord::Migration[7.0]
   end
 
   def down
-    execute <<~SQL
-      DELETE FROM permalinks
-      USING discourse_community_platform_communities AS communities
-      WHERE permalinks.url = 's/' || communities.slug
-        AND permalinks.category_id = communities.category_id
-    SQL
+    raise ActiveRecord::IrreversibleMigration
   end
 end
