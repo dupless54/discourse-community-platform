@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 describe "Community platform root homepage" do
-  around do |example|
-    original_homepage = SiteSetting.default_homepage
+  before do
+    @original_homepage = SiteSetting.default_homepage
     SiteSetting.default_homepage = "community-home"
     Site.clear_cache
     Rails.application.reload_routes!
+  end
 
-    example.run
-  ensure
-    SiteSetting.default_homepage = original_homepage
+  after do
+    SiteSetting.default_homepage = @original_homepage
     Site.clear_cache
     Rails.application.reload_routes!
   end
