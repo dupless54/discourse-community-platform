@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Community Platform scheduled job registration" do
+RSpec.describe Jobs::DiscourseCommunityPlatform do
   scheduled_jobs = {
     Jobs::DiscourseCommunityPlatform::RebuildPopularFeed => 5.minutes,
     Jobs::DiscourseCommunityPlatform::RebuildExploreRecommendations => 10.minutes,
