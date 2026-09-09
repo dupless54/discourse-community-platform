@@ -3,6 +3,9 @@
 RSpec.describe "Community platform homepage" do
   before do
     @original_homepage = SiteSetting.default_homepage
+    @original_login_hint = SiteSetting.has_login_hint
+
+    SiteSetting.has_login_hint = false
     SiteSetting.default_homepage = "community-home"
     Site.clear_cache
     Rails.application.reload_routes!
@@ -10,6 +13,7 @@ RSpec.describe "Community platform homepage" do
 
   after do
     SiteSetting.default_homepage = @original_homepage
+    SiteSetting.has_login_hint = @original_login_hint
     Site.clear_cache
     Rails.application.reload_routes!
   end
